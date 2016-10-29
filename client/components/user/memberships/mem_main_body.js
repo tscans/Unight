@@ -1,20 +1,48 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
-import {UProfile} from '../../../../imports/collections/uprofile';
 import {Pages} from '../../../../imports/collections/pages';
 import MemMainList from './mem_main_list';
-import MemMainLeft from './mem_main_left';
 
 class MemMainBody extends Component {
+    zipcode(event){
+        event.preventDefault();
+        var zipcode = this.refs.zipcode.value.trim();
+        var profile = this.props.uprofile
+        console.log(profile)
+        Meteor.call('uprofile.updateData', profile, zipcode, (error, data) => {
+            if(error){
+                console.log("There was an error");
+                console.log(error);
+            }
+            else{
+                console.log('completed without error');
+                this.forceUpdate();
+                console.log(zipcode)
+                browserHistory.push(`/user/memberships/${zipcode}/`)
+
+            }
+        });
+    }
     render() {
         return (
         	<div className="container-fluid bg-3 text-center">
-                <div className="col-md-3">
-                    <MemMainLeft uprofile={this.props.uprofile}/>
+        		<div>
+                <div className="col-md-4">
+                    <form className="card-3 white-back" onSubmit={this.zipcode.bind(this)}>
+                    <div className="lower"></div>
+                    <div className="col-md-10 col-md-offset-1">
+                      <div className="form-group">
+                        <label htmlFor="exampleInputEmail1">Zip Code</label>
+                        <input type="text" className="form-control foc-card" ref="zipcode" placeholder="Zip Code"/>
+                      </div>
+                      </div>
+                      <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save Changes</button>
+                    </form>
                 </div>
-        		<div className="col-md-9">
-				    <MemMainList allPages={this.props.allPages}/>
+                    <div className="col-md-8">
+				        <MemMainList/>
+                    </div>
 				</div>
         	</div>
         );
@@ -22,10 +50,7 @@ class MemMainBody extends Component {
 }
 
 export default createContainer((props)=>{
-	Meteor.subscribe('uprofile');
-    Meteor.subscribe('allPages');
-
-    return {uprofile: UProfile.findOne(), allPages: Pages.find({})}
+    return {noob: 4}
 
 	
 }, MemMainBody);  

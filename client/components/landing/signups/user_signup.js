@@ -16,7 +16,7 @@ class UserSignup extends Component {
         	console.log('mismatch passwords');
         }
         else{
-            Meteor.call('uprofile.makeUser', ema, pss1, (error, data)=> {
+            Meteor.call('profile.makeUser', ema, pss1, (error, data)=> {
             	if(error){
             		console.log("There was an error");
             		console.log(error);
@@ -26,7 +26,7 @@ class UserSignup extends Component {
             		Meteor.loginWithPassword(ema, pss1);
             		var usid = data.toString();
 					
-            		Meteor.call('uprofile.insertData', name, usid, (error, data) => {
+            		Meteor.call('profile.insertData', name, usid, (error, data) => {
             			if(error){
             				console.log("There was an error");
             				console.log(error);

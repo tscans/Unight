@@ -9,18 +9,20 @@ class AdminSelectMain extends Component {
 		return this.props.pages.map(page=>{
 			const url = `/admin/${page._id}/`;
 			return(
-				<Link to={url} key={page._id}>
-					<div className="panel panel-default card-1">
-					  <div className="panel-heading">
-					    <h3 className="panel-title">{page.orgName}</h3>
-					  </div>
-					  <div className="panel-body">
-					    ID: {page._id}<br/>
-					    Address: {page.phyAddress}<br/>
-					    Number of Members: {page.pageUsers.length}
-					  </div>
-					</div>
-				</Link>
+				<div key={page._id}>
+					<Link to={url}>
+						<div className="panel panel-default card-1">
+						  <div className="panel-heading">
+						    <h3 className="panel-title">{page.orgName}</h3>
+						  </div>
+						  <div className="panel-body">
+						    Address: {page.phyAddress}<br/>
+						    About: {page.aboutUs}<br/>
+						    Number of Members: {page.pageUsers.length}
+						  </div>
+						</div>
+					</Link>
+				</div>
 			)
 		})
 	}
@@ -29,10 +31,10 @@ class AdminSelectMain extends Component {
 	}
 	makePage(event){
 		event.preventDefault();
-		var orgName = 'Your Business Name Here'
+		var orgName = ''
 		var proPict = 'http://i.imgur.com/ahJEDUm.png'
-		var phyAddress = 'Your Address Here'
-		var zipCode = 'Zip Code Here'
+		var phyAddress = ''
+		var zipCode = ''
 		var aboutUs = 'Tell users about your business here!'
 		Meteor.call('pages.makePage', orgName, proPict, phyAddress, zipCode, aboutUs, (error, data)=> {
             	if(error){
@@ -48,9 +50,11 @@ class AdminSelectMain extends Component {
             			if(error){
             				console.log("There was an error making the addowner");
             				console.log(error);
+
             			}
             			else{
-					        
+					        var marr = "/admin/" + pageId + "/";
+            				browserHistory.push(marr)
             			}
             		})
             		

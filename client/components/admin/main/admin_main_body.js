@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'; 
 import AdminMainCenter from './admin_main_center';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Profile} from '../../../../imports/collections/profile';
@@ -13,8 +13,10 @@ class AdminMainBody extends Component {
         this.state = {
             editPage: false
         }
+        this.editBtn = this.editBtn.bind(this)
     }
     editBtn(){
+        console.log('editpageswitch')
         this.setState({editPage: !this.state.editPage})
     }
     render() {
@@ -57,7 +59,7 @@ class AdminMainBody extends Component {
                     <div className="col-md-6">
                         <button onClick={this.editBtn.bind(this)} className="btn btn-success btn-extend"><h4><span className="glyphicon glyphicon-ok"></span> View Profile</h4></button>
                         <div className="dat-gap"></div>
-                        <AdminMainEdit profile={this.props.profile} pages={this.props.pages} />
+                        <AdminMainEdit profile={this.props.profile} back={this.editBtn} pages={this.props.pages} />
                     </div>
                     <div className="col-md-3">
                         <AdminMainRight />
@@ -79,7 +81,7 @@ export default createContainer((props)=>{
 	Meteor.subscribe('profile');
     Meteor.subscribe('pages');
 
-    return {profile: Profile.findOne(), pages: Pages.findOne({_id: pageID})}
+    return {profile: Profile.findOne({}), pages: Pages.findOne({_id: pageID})}
 
 	
 }, AdminMainBody); 

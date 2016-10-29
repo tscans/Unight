@@ -10,18 +10,63 @@ Meteor.methods({
 			phyAddress: phyAddress,
 			pageUsers: [],
 			zipCode: zipCode,
-			aboutUs: aboutUs
+			aboutUs: aboutUs,
+			hasDeals: false
 		});
 	},
-	'pages.updatePage': function(page, name, address, pic, zip, about){
-		return Pages.update(page._id, {$set: {
+	'pages.dealsBool': function(hasDeals){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const forPage = Page.findOne({
+			ownedBy: {$elemMatch: {$eq: user}}
+		})
+		return Pages.update(forPage._id, {$set: {
+			hasDeals: hasDeals
+		}})
+	},
+	'pages.updatePage': function(pageID, name, address, zip, about, hasDeals){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		if(page.ownedBy[0] != user){
+			console.log('failed authentication')
+			return;
+		}
+		console.log(page._id)
+
+		return Pages.update(pageID, {$set: {
 			orgName: name,
-			proPict: pic,
 			phyAddress: address,
 			zipCode: zip,
 			aboutUs: about,
+			hasDeals: hasDeals
 		}})
 	},
+	'pages.updateImage': function(pageID, pic){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		if(page.ownedBy[0] != user){
+			console.log('failed authentication')
+			return;
+		}
+		return Pages.update(pageID, {$set: {
+			proPict: pic
+		}})
+	}
 });
 
 export const Pages = new Mongo.Collection('pages');

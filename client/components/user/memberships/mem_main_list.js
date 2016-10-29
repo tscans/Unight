@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Pages} from '../../../../imports/collections/pages';
+import Zipcodes from 'zipcodes';
 
 class MemMainList extends Component {
 	renderList(){
-		
 		return this.props.allPages.map(page=>{
-			const url = `/admin/${page._id}/`;
+			const url = `/user/membership/${page._id}/`;
 			return(
 				<Link to={url} key={page._id}>
 					<div className="panel panel-default card-1 max-100">
@@ -29,16 +29,19 @@ class MemMainList extends Component {
     render() {
         return (
         	<div>
-        		{this.renderList()}	  
+        		{this.renderList()}	
         	</div>
         );
     }
 }
 
 export default createContainer(()=>{
-    Meteor.subscribe('allPages');
-
+    
+    var str = window.location.pathname;
+    var res = str.substring(str.lastIndexOf('/memberships') + 13, str.lastIndexOf('/'));
+    console.log(res)
+	Meteor.subscribe('allPages', res);
     return {allPages: Pages.find({}).fetch()}
 
 	
-}, MemMainList);  
+}, MemMainList);

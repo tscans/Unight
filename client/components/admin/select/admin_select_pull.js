@@ -19,7 +19,7 @@ export default createContainer((props)=>{
 	Meteor.subscribe('profile');
 	Meteor.subscribe('pages');
 
-	return {profile: Profile.findOne(), pages: Pages.find({})}
+	return {profile: Profile.findOne(), pages: Pages.find({}).fetch()}
 
 	
 }, AdminSelectPull); 

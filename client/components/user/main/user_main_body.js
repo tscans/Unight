@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
-import {UProfile} from '../../../../imports/collections/uprofile';
 import {Pages} from '../../../../imports/collections/pages';
+import {Profile} from '../../../../imports/collections/profile';
+import {TomBook} from '../../../../imports/collections/tombook';
 
 class UserMainBody extends Component {
     render() {
@@ -15,10 +16,11 @@ class UserMainBody extends Component {
 }
 
 export default createContainer((props)=>{
-	Meteor.subscribe('uprofile');
     Meteor.subscribe('allPages');
+    Meteor.subscribe('profile');
+    Meteor.subscribe('tombook');
 
-    return {uprofile: UProfile.findOne(), allPages: Pages.find({})}
+    return {allPages: Pages.find({}), profile: Profile.find({}), tombook: TomBook.find({})}
 
 	
 }, UserMainBody);  
