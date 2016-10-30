@@ -1,14 +1,7 @@
 import React from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
-import {DandE} from '../../../../imports/collections/dande';
 
 class MemMaps extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			loading: true
-		}
-	}
 	dealSort(){
 		
     	var cube = this.props.wgot[0]
@@ -23,41 +16,43 @@ class MemMaps extends React.Component {
 	componentWillReceiveProps(props){
     	var cube3 = props.wgot
     	console.log(cube3)
-    	if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            var map = new google.maps.Map(document.getElementById('mapid'), {
-          zoom: 4,
-          center: pos
-        });
-        	})
-        } else {
-          // Browser doesn't support Geolocation
-          console.log('failed')
-        }
-      
     	var geocoder = new google.maps.Geocoder();
-    	
+    	var uluru = {lat: -25.363, lng: 131.044};
+        var map = new google.maps.Map(document.getElementById('mapid'), {
+          zoom: 4,
+          center: uluru
+        });
         
-        
+        geocoder.geocode({address: "60655"}, function(results, status) {
+
+            if (status == google.maps.GeocoderStatus.OK) {
+
+              map.setCenter(results[0].geometry.location);
+              map.setZoom(11);
+            }
+        });
+
         var tempPos;
-        
+        function createMarker(latlng) {
+           marker = new google.maps.Marker({
+              map: map,
+              position: latlng
+           });
+
+        }
+        console.log(cube3)
         cube3.map((c)=>{
-        	geocoder.geocode({'address': "2614 w 106th pl Chicago IL"}, function(results, status) {
-	          if (status === 'OK') {
-	              tempPos = results[0].geometry.location
-	          } else {
-	            alert('Geocode was not successful for the following reason: ' + status);
-	          }
-	      	});
+        	geocoder.geocode({address: c.phyAddress}, function(results, status) {
+
+                if (status == google.maps.GeocoderStatus.OK) {
+
+                  tempPos = results[0].geometry.location;
+                  console.log(tempPos)
+                  createMarker(tempPos);
+                }
+            });
 	      	console.log(c.phyAddress)
-        	var marker = new google.maps.Marker({
-	          position: tempPos,
-	          map: map
-	        });
+        	
         });
 	}
 	rero(){
@@ -75,7 +70,7 @@ class MemMaps extends React.Component {
 }
 
 export default createContainer((props)=>{
-    Meteor.subscribe('wgot', 2);
-
-	return {wgot: DandE.find({}).fetch()}
+    var wgotFor = props.wgot;
+    console.log(props)
+	return {wgot: wgotFor}
 }, MemMaps); 
