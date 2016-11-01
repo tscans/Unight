@@ -1,16 +1,19 @@
 import React from 'react';
 import ImageUploadS from './image_upload_s';
+import DatePicker from "react-bootstrap-date-picker";
 
 class AdminDealCenterS extends React.Component {
     constructor(props){
 		super(props);
+		var value = new Date().toISOString();
 		this.state = {
 			silver: {
 				title: '',
 				desc: '',
 				expi: ''
 			},
-			checker: false
+			checker: false,
+			value: value
 		}
 	}
 	check(){
@@ -21,7 +24,7 @@ class AdminDealCenterS extends React.Component {
 		event.preventDefault();
 		var title = this.refs.title.value;
         var desc = this.refs.desc.value;
-        var expi = this.refs.expi.value;
+        var expi = this.state.value;
 
         var str = window.location.pathname;
 	    var res = str.substring(7, str.lastIndexOf('/deal'));
@@ -47,9 +50,15 @@ class AdminDealCenterS extends React.Component {
 		console.log('here')
 		this.refs.title.value = this.props.deals.title;
 		this.refs.desc.value = this.props.deals.description;
-		this.refs.expi.value = this.props.deals.expiration;
-		this.setState({checker: this.props.deals.dealsOn})
+		this.setState({value: this.props.deals.expiration});
+		this.setState({checker: this.props.deals.dealsOn});
 		console.log('here', this.state.checker)
+	}
+	handleChange(value){
+		this.setState({
+	      value: value
+	    });
+	    console.log(value)
 	}
     render() {
     	if(!this.props.deals){
@@ -71,12 +80,11 @@ class AdminDealCenterS extends React.Component {
 					    <input type="text" className="form-control foc-card" ref="desc" defaultValue={this.state.silver.desc} placeholder="Deal Description"/>
 					  </div>
 					  <div className="form-group">
-					    <label htmlFor="exampleInputEmail1">Expiration</label>
-					    <input type="text" className="form-control foc-card" ref="expi" defaultValue={this.state.silver.expi} placeholder="Expiration"/>
-					  </div>
-					  <div className="form-group">
 					    <label htmlFor="exampleInputEmail1">Do you want to offer this deal now?</label>
 					    <input type="checkbox" className="form-control" ref="cb" onClick={this.check.bind(this)} checked={this.state.checker}/>
+					  </div>
+					  <div className="form-group foc-card">
+					  	<DatePicker ref="expi" value={this.state.value} onChange={this.handleChange.bind(this)} />
 					  </div>
 				  </div>
 				  <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save Changes</button>

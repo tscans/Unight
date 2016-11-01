@@ -29,6 +29,8 @@ Meteor.methods({
 			phyAddress: page.phyAddress,
 			image: 'http://i.imgur.com/urR5bHp.png',
 			numAttending: 0,
+			upvotes: 0,
+			upvotedBy: [],
 			dateTime: "Date",
 			title: 'Title',
 			description: 'Description',
@@ -147,6 +149,31 @@ Meteor.methods({
 			
 		}})
 	},
+	'dande.upvotes': function(dandeID){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const deal = DandE.findOne({
+			_id: dandeID
+		})
+		console.log(theUserId)
+		if(deal.upvotedBy.includes(theUserId)){
+			DandE.update(dandeID, {$pull: {
+				upvotedBy: theUserId
+			}})
+			return DandE.update(dandeID, {$set: {
+				upvotes: deal.upvotes - 1
+			}})
+		}
+		DandE.update(dandeID, {$push: {
+			upvotedBy: theUserId
+		}})
+		return DandE.update(dandeID, {$set: {
+			upvotes: deal.upvotes + 1
+		}})
+	}
 });
 
 export const DandE = new Mongo.Collection('dande');

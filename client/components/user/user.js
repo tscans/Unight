@@ -6,26 +6,13 @@ import MemMaps from './navs/mem_maps';
 
 export default (props) => {
 	var urlName = window.location.pathname;
-	if(urlName.includes('wgot')){
-		return(
-			<div>
-				<UserNav />
-				<div className="bump-body">
-					<MemMaps />
-					{props.children}
-				</div>
+	return(
+		<div>
+			<UserNav />
+			<MemMaps />
+			<div className="bump-body">
+				{props.children}
 			</div>
-		)
-	}
-	else{
-		return(
-			<div>
-				<UserNav />
-				<div className="bump-body">
-					{props.children}
-				</div>
-				<UserFooter />
-			</div>
-		)
-	}
+		</div>
+	)
 }

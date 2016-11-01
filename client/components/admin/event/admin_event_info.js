@@ -1,5 +1,6 @@
 import React from 'react';
 import ImageUpload from './image_upload';
+import {browserHistory} from 'react-router';
 
 class AdminEventInfo extends React.Component {
 	constructor(props){
@@ -11,6 +12,19 @@ class AdminEventInfo extends React.Component {
 			desc: "",
 			address: ""
 		}
+	}
+	deleteEvent(){
+		var eventID = this.props.page.info.params.pageId[1];
+		var pageID = this.props.page.info.params.pageId[0]
+		Meteor.call('dande.removeDandE', eventID, (error, data)=>{
+			if(error){
+				console.log(error)
+			}
+			else{
+				console.log('removed successfully')
+				browserHistory.push("/admin/"+pageID+"/events/")
+			}
+		})
 	}
 	submitForm(event){
 		event.preventDefault();
@@ -66,7 +80,7 @@ class AdminEventInfo extends React.Component {
     	if(!this.props.event){
     		return <div></div>
     	}
-    	console.log(this.props.event)
+    	console.log(this.props.page.info.params.pageId)
         return (
         	<div>
         		<div className="col-md-6">
@@ -96,7 +110,7 @@ class AdminEventInfo extends React.Component {
 								    <label htmlFor="exampleInputEmail1">Event Address</label>
 								    <input type="text" className="form-control foc-card" ref="address" defaultValue={this.state.address} placeholder="Event Description"/>
 								  </div>
-								  	<label>Is this event public</label>
+								  	<label>Make This Event Seen by Users (public)</label>
 								  	<br/>
 								  <a href="#" onClick={this.flipPub.bind(this)}>
 								  	<div className="card-1 btn btn-success deals-par">
@@ -113,6 +127,8 @@ class AdminEventInfo extends React.Component {
 							  <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save Changes</button>
 						</form>
         			</div>
+        			<br />
+        			<div className="btn btn-danger card-1 btn-extend" onClick={this.deleteEvent.bind(this)}><h4>Delete Event</h4></div>
         		</div>
         		<div className="col-md-5">
         			<div className="card-2">

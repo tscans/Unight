@@ -16,6 +16,7 @@ class AdminSelectMain extends Component {
 						    <h3 className="panel-title">{page.orgName}</h3>
 						  </div>
 						  <div className="panel-body">
+						  	<img src={page.proPict} className="surround map-cards-img" />
 						    Address: {page.phyAddress}<br/>
 						    About: {page.aboutUs}<br/>
 						    Number of Members: {page.pageUsers.length}

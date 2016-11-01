@@ -2,9 +2,11 @@ import React from 'react';
 import {Profile} from '../../../../imports/collections/profile';
 import {createContainer} from 'meteor/react-meteor-data';
 import {DandE} from '../../../../imports/collections/dande';
+import moment from 'moment';
 
 class MemTblist extends React.Component {
 	onRemove(t){
+		console.log(t)
 		Meteor.call('tombook.removeItem', t._id, (error,data)=>{
 			if(error){
 				console.log(error)
@@ -18,30 +20,13 @@ class MemTblist extends React.Component {
 	renderList(){
 		console.log(this.props.tblist)
 		return this.props.tblist.map((t)=>{
+			console.log(t)
 			return(
 				<div className="card-1 tombook-cards" key={t._id}>
-					<a className="float-right btn btn-danger" href="#" data-toggle="modal" data-target="#myModal"><span className="glyphicon glyphicon-remove"></span></a>
+					<a className="float-right btn btn-danger" href="#" onClick={() => {this.onRemove(t)}}><span className="glyphicon glyphicon-remove"></span></a>
+					<img src={t.image} className="surround map-cards-img" />
 					<h2>{t.title}</h2>
-					  <div className="modal fade" id="myModal" role="dialog">
-					    <div className="modal-dialog">
-					    
-					     
-					      <div className="modal-content">
-					        <div className="modal-header">
-					          <button type="button" className="close" data-dismiss="modal">&times;</button>
-					          <h4 className="modal-title">Remove Deal</h4>
-					        </div>
-					        <div className="modal-body">
-					          <p>Are you sure you want to remove this deal from your TomBook?</p>
-					        </div>
-					        <div className="modal-footer">
-					          <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={() => {this.onRemove(t)}}>Remove</button>
-							  <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-					        </div>
-					      </div>
-					      
-					    </div>
-					  </div>
+					<h4>Expires: {moment(t.expiration.toString()).endOf('day').fromNow()}</h4>
 				</div>
 			)
 		})
@@ -49,8 +34,10 @@ class MemTblist extends React.Component {
 	
 	render(){
 		return(
-			<div className="col-md-8 col-md-offset-2">
-				{this.renderList()}
+			<div>
+				<div className="col-md-offset-6">
+					{this.renderList()}
+				</div>
 			</div>
 		)
 	}
@@ -63,7 +50,7 @@ export default createContainer((props)=>{
 	})
 
     Meteor.subscribe('tblist', tbcb);
-    return {tblist: DandE.find({}).fetch()}
+    return {tblist: DandE.find({_id: {$in:tbcb}}).fetch()}
 
     
 }, MemTblist);  

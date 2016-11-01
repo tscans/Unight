@@ -1,5 +1,7 @@
 import React from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
+import {DandE} from '../../../../imports/collections/dande';
+import {Profile} from '../../../../imports/collections/profile';
 
 class MemMaps extends React.Component {
 	dealSort(){
@@ -14,21 +16,22 @@ class MemMaps extends React.Component {
     	return cube3;
 	}
 	componentWillReceiveProps(props){
+        console.log('maps come up')
     	var cube3 = props.wgot
     	console.log(cube3)
     	var geocoder = new google.maps.Geocoder();
-    	var uluru = {lat: -25.363, lng: 131.044};
+    	var uluru = {lat: 41.8781, lng: -87.6298};
         var map = new google.maps.Map(document.getElementById('mapid'), {
           zoom: 4,
           center: uluru
         });
-        
-        geocoder.geocode({address: "60655"}, function(results, status) {
+        console.log('got here')
+        geocoder.geocode({address: props.profile.userZip.toString() }, function(results, status) {
 
             if (status == google.maps.GeocoderStatus.OK) {
 
               map.setCenter(results[0].geometry.location);
-              map.setZoom(11);
+              map.setZoom(12);
             }
         });
 
@@ -55,9 +58,6 @@ class MemMaps extends React.Component {
         	
         });
 	}
-	rero(){
-		this.forceUpdate();
-	}
     render() {
         return (
         	<div>
@@ -70,7 +70,9 @@ class MemMaps extends React.Component {
 }
 
 export default createContainer((props)=>{
-    var wgotFor = props.wgot;
-    console.log(props)
-	return {wgot: wgotFor}
+    var bar = props.limit_page;
+    Meteor.subscribe('wgot', bar);
+    Meteor.subscribe('profile');
+
+    return {wgot: DandE.find({}).fetch(), profile: Profile.findOne({})}
 }, MemMaps); 

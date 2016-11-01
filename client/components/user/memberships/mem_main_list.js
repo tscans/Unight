@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
-import {Pages} from '../../../../imports/collections/pages';
 import Zipcodes from 'zipcodes';
 
 class MemMainList extends Component {
@@ -35,13 +34,9 @@ class MemMainList extends Component {
     }
 }
 
-export default createContainer(()=>{
-    
-    var str = window.location.pathname;
-    var res = str.substring(str.lastIndexOf('/memberships') + 13, str.lastIndexOf('/'));
-    console.log(res)
-	Meteor.subscribe('allPages', res);
-    return {allPages: Pages.find({}).fetch()}
+export default createContainer((props)=>{
+
+    return {allPages: props.allPages}
 
 	
 }, MemMainList);

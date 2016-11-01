@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link, browserHistory} from 'react-router';
+import moment from 'moment';
 
 class AdminDealsSilver extends React.Component {
 	constructor(props){
@@ -111,7 +112,7 @@ class AdminDealsSilver extends React.Component {
 			        			<img src={deal.image} className="panel-img-head surround" />
 			        			<p>{deal.title}</p>
 			        			<p>{deal.description}</p>
-			        			<p>{deal.expiration}</p>
+			        			<p>{moment(deal.expiration).format("MMM Do YY")}</p>
 			        		</div>
 						</Link>
 					</div>

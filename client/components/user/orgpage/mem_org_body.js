@@ -13,7 +13,7 @@ class MemOrgBody extends Component {
         }
         return (
         	<div className="container-fluid bg-3 text-center bump-push-bar">
-        		<div className="col-md-9 col-md-offset-3">
+        		<div className="col-md-6 col-md-offset-6">
         			<MemOrgRight pages={this.props.memOrgPage} />
         		</div>
         	</div>
@@ -23,10 +23,8 @@ class MemOrgBody extends Component {
 
 export default createContainer((props)=>{
 	const theId = Meteor.userId();
-    var str = window.location.pathname;
-    var res = str.substring(18, str.length - 1);
-    console.log(res)
-    var pageID = res;
+    
+    var pageID = props.params.pageId;
     Meteor.subscribe('memOrgPage');
 
     return {memOrgPage: Pages.findOne({_id: pageID})}

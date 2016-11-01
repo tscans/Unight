@@ -1,16 +1,19 @@
 import React from 'react';
 import ImageUploadG from './image_upload_g';
+import DatePicker from "react-bootstrap-date-picker";
 
 class AdminDealCenterG extends React.Component {
     constructor(props){
 		super(props);
+		var value = new Date().toISOString();
 		this.state = {
 			gold: {
 				title: '',
 				desc: '',
 				expi: ''
 			},
-			checker: false
+			checker: false,
+			value: value
 		}
 	}
 	check(){
@@ -21,7 +24,7 @@ class AdminDealCenterG extends React.Component {
 		event.preventDefault();
 		var title = this.refs.title.value;
         var desc = this.refs.desc.value;
-        var expi = this.refs.expi.value;
+        var expi = this.state.value;
 
         var str = window.location.pathname;
 	    var res = str.substring(7, str.lastIndexOf('/deal'));
@@ -51,6 +54,12 @@ class AdminDealCenterG extends React.Component {
 		this.setState({checker: this.props.deals.dealsOn})
 		console.log('here', this.state.checker)
 	}
+	handleChange(value){
+		this.setState({
+	      value: value
+	    });
+	    console.log(value)
+	}
     render() {
     	if(!this.props.deals){
     		return <div></div>
@@ -71,12 +80,11 @@ class AdminDealCenterG extends React.Component {
 					    <input type="text" className="form-control foc-card" ref="desc" defaultValue={this.state.gold.desc} placeholder="Deal Description"/>
 					  </div>
 					  <div className="form-group">
-					    <label htmlFor="exampleInputEmail1">Expiration</label>
-					    <input type="text" className="form-control foc-card" ref="expi" defaultValue={this.state.gold.expi} placeholder="Expiration"/>
-					  </div>
-					  <div className="form-group">
 					    <label htmlFor="exampleInputEmail1">Do you want to offer this deal now?</label>
 					    <input type="checkbox" className="form-control" ref="cb" onClick={this.check.bind(this)} checked={this.state.checker}/>
+					  </div>
+					  <div className="form-group foc-card">
+					  	<DatePicker value={this.state.value} onChange={this.handleChange.bind(this)} />
 					  </div>
 				  </div>
 				  <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save Changes</button>

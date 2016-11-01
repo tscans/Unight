@@ -18,16 +18,14 @@ Meteor.startup(() => {
 			ownedBy: {$elemMatch: {$eq: user}}
 		})
 	});
-	Meteor.publish('allPages', function(zippy){
+	Meteor.publish('allPages', function(){
 		var user = this.userId.toString();
-		var allb = UProfile.find({ownerId: user}).fetch()
-		var zip = allb[0].zipCode
+		console.log(user)
 		if(!user){
 			return;
 		}
 
 		return Pages.find({
-			zipCode: zippy
 		})
 	});
 	Meteor.publish('memOrgPage', function(){
@@ -89,7 +87,7 @@ Meteor.startup(() => {
 			return;
 		}
 		
-		return DandE.find({}, { limit: per_page })
+		return DandE.find({}, { limit: per_page, sort: {upvotes: -1}})
 	});
 	Meteor.publish('tombook', function(){
 		var user = this.userId.toString();

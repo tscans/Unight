@@ -9,9 +9,7 @@ class LandingBody extends Component {
 				  <h1 className="margin">WELCOME TO UNIGHT</h1>
 				  <img src="http://i.imgur.com/urR5bHp.jpg" className="img-responsive margin center-img card-sup obj-buffer" width="350" height="350" />
 				  <form className="form-inline obj-buffer">
-				  	<h3>Sign Up Here</h3>
-				    <Link to="/user_signup"><button type="button" className="btn btn-success obj-buffer-sides card-1"><h4>Sign Up User</h4></button></Link>
-				    <Link to="/org_signup"><button type="button" className="btn btn-default obj-buffer-sides card-1"><h4>Sign Up Organization</h4></button></Link>
+				    <Link to="/org_signup"><button type="button" className="btn btn-success obj-buffer-sides card-1"><h3>Unight Sign Up</h3></button></Link>
 				  </form>
 				</div>
 				<div className="container-fluid bg-2 text-center">

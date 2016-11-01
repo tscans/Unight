@@ -8,8 +8,10 @@ class OrgSignup extends Component {
         var pss1 = this.refs.password.value.trim();
         var pss2 = this.refs.password2.value.trim();
         var name = this.refs.name.value.trim();
+        var cell = this.refs.cell.value.trim();
+        var zip = this.refs.zip.value.trim();
 
-        if(ema == "" || pss1 == "" || pss2 == "" || name == ""){
+        if(ema == "" || pss1 == "" || pss2 == "" || name == "" || cell == "" || zip == ""){
             console.log("enter data");
         }
         else if(pss1 != pss2){
@@ -26,7 +28,7 @@ class OrgSignup extends Component {
             		Meteor.loginWithPassword(ema, pss1);
             		var usid = data.toString();
 					
-            		Meteor.call('profile.insertData', name, usid, (error, data) => {
+            		Meteor.call('profile.insertData', name, usid, cell, zip, (error, data) => {
             			if(error){
             				console.log("There was an error");
             				console.log(error);
@@ -36,7 +38,9 @@ class OrgSignup extends Component {
 					        this.refs.password.value = "";
 					        this.refs.password2.value = "";
 					        this.refs.name.value = "";
-					        browserHistory.push('/admin-select/')
+                            this.refs.cell.value = "";
+                            this.refs.zip.value = "";
+					        browserHistory.push('/login')
             			}
             		})
             		
@@ -52,7 +56,7 @@ class OrgSignup extends Component {
         return (
         	<div>
         		<div className="container-fluid bg-1 text-center">
-				  <h2 className="margin">Sign Up As an Organization</h2>
+				  <h2 className="margin">Unight Sign Up</h2>
 				  <form className="col-xs-6 col-xs-offset-3 card-3 white-back" onSubmit={this.register.bind(this)}>
         			<div className="lower"></div>
 					  <div className="form-group">
@@ -63,13 +67,21 @@ class OrgSignup extends Component {
 					    <label htmlFor="exampleInputEmail1">Your Name</label>
 					    <input type="text" className="form-control foc-card" ref="name" placeholder="Name"/>
 					  </div>
+                      <div className="form-group">
+                        <label htmlFor="exampleInputEmail1">Cell Phone</label>
+                        <input type="text" className="form-control foc-card" ref="cell" placeholder="Cell Phone"/>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="exampleInputEmail1">Zip Code</label>
+                        <input type="text" className="form-control foc-card" ref="zip" placeholder="Zip Code"/>
+                      </div>
 					  <div className="form-group">
 					    <label htmlFor="exampleInputPassword1">Password</label>
 					    <input type="password" className="form-control foc-card" ref="password" id="exampleInputPassword1" placeholder="Password"/>
 					  </div>
 					  <div className="form-group">
 					    <label htmlFor="exampleInputPassword1">Confirm Password</label>
-					    <input type="password" className="form-control foc-card" ref="password2" id="exampleInputPassword2" placeholder="Password"/>
+					    <input type="password" className="form-control foc-card" ref="password2" id="exampleInputPassword2" placeholder="Confirm Password"/>
 					  </div>
 					  <button type="submit" className="btn btn-success card-1 top-bot-not">Sign Up</button>
 					</form>

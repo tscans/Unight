@@ -8,9 +8,8 @@ class MemMainBody extends Component {
     zipcode(event){
         event.preventDefault();
         var zipcode = this.refs.zipcode.value.trim();
-        var profile = this.props.uprofile
-        console.log(profile)
-        Meteor.call('uprofile.updateData', profile, zipcode, (error, data) => {
+        Meteor.subscribe('allPages', zipcode);
+        Meteor.call('profile.updateZip', zipcode, (error, data) => {
             if(error){
                 console.log("There was an error");
                 console.log(error);
@@ -18,9 +17,6 @@ class MemMainBody extends Component {
             else{
                 console.log('completed without error');
                 this.forceUpdate();
-                console.log(zipcode)
-                browserHistory.push(`/user/memberships/${zipcode}/`)
-
             }
         });
     }
@@ -28,20 +24,16 @@ class MemMainBody extends Component {
         return (
         	<div className="container-fluid bg-3 text-center">
         		<div>
-                <div className="col-md-4">
-                    <form className="card-3 white-back" onSubmit={this.zipcode.bind(this)}>
+                <div className="col-md-4 col-md-offset-2">
+                    <form onSubmit={this.zipcode.bind(this)}>
                     <div className="lower"></div>
                     <div className="col-md-10 col-md-offset-1">
-                      <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Zip Code</label>
-                        <input type="text" className="form-control foc-card" ref="zipcode" placeholder="Zip Code"/>
-                      </div>
-                      </div>
-                      <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save Changes</button>
+                      
+                    </div>
                     </form>
                 </div>
-                    <div className="col-md-8">
-				        <MemMainList/>
+                    <div className="col-md-6">
+				        <MemMainList allPages={this.props.allPages} />
                     </div>
 				</div>
         	</div>
@@ -50,7 +42,13 @@ class MemMainBody extends Component {
 }
 
 export default createContainer((props)=>{
-    return {noob: 4}
-
+    
+    Meteor.subscribe('allPages');
+    return {allPages: Pages.find({}).fetch()}
 	
 }, MemMainBody);  
+
+//<div className="form-group map-search">
+   // <input type="text" className="form-control foc-card" ref="zipcode" placeholder="Zip Code"/>
+    //<button type="submit" className="btn btn-primary card-1 top-bot-not map-search-save">Search</button>
+   // </div>

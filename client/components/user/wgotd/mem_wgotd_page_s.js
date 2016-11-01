@@ -1,6 +1,7 @@
 import React from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
 import {DandE} from '../../../../imports/collections/dande';
+import moment from 'moment';
 
 class MemWgotdPageS extends React.Component {
     render() {
@@ -16,7 +17,7 @@ class MemWgotdPageS extends React.Component {
                     <img src={this.props.wgot.image} className="surround wgot-img" />
                 </div>
                 <h4>Expiration</h4>
-                <h6>{this.props.wgot.expiration}</h6>
+                <h6>{moment(this.props.wgot.expiration.toString()).format("MMMM Do YYYY")}</h6>
                 <h4>Description</h4>
                 <h6>{this.props.wgot.description}</h6>
             </div>

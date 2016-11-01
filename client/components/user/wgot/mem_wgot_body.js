@@ -2,10 +2,15 @@ import React from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
 import {DandE} from '../../../../imports/collections/dande';
 import MemWgotList from './mem_wgot_list';
+import MemMaps from '../navs/mem_maps';
 
-var load_amount = 3;
 class MemWgotBody extends React.Component {
-
+    constructor(props){
+        super(props);
+        this.state = {
+            limpage: this.props.limpage
+        }
+    }
     render() {
     	if(!this.props.wgot){
     		return <div></div>
@@ -16,7 +21,8 @@ class MemWgotBody extends React.Component {
         		<div className="col-md-6" className="container-fluid bg-3 text-center bump-push-bar">
         			<div className="map-push">
         				<MemWgotList wgot={this.props.wgot}/>
-                        <button onClick={() => {Meteor.subscribe('wgot', 80)}}>Load More....</button>
+                        <br />
+                        <button className="btn btn-extend btn-primary card-1" onClick={() => {this.setState({limpage: this.state.limpage+2});Meteor.subscribe('wgot', this.state.limpage+2)}}><h4>Load More....</h4></button>
         			</div>
         		</div>
         	</div>
@@ -25,8 +31,9 @@ class MemWgotBody extends React.Component {
 }
 
 export default createContainer((props)=>{
-    Meteor.subscribe('wgot', load_amount);
+    var limit_page = 1;
+    Meteor.subscribe('wgot', limit_page);
 
-	return {wgot: DandE.find({}).fetch()}
+	return {wgot: DandE.find({}).fetch(), limpage: limit_page}
 }, MemWgotBody); 
 

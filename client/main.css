@@ -7,9 +7,9 @@ a:link {
     
 }
 #mapid { 
-  height: 660px; 
+  height: 89vh;
   width: 100%;
-  margin-top:40px;
+  margin-top:80px;
   margin-left: -15px;
   margin-bottom: -70px;
 }
@@ -382,4 +382,20 @@ a:link {
 .tombook-cards{
   height: 100px;
   margin-bottom: 15px;
+}
+.map-search{
+  margin-left: 75px;
+  margin-top: -20px;
+}
+.map-search-save{
+  margin-top: 0px;
+  margin-right: -60%;
+}
+.up-a-smidge{
+  margin-top: -15px;
+}
+.break-off-text {
+    word-wrap: break-word;
+    overflow: hidden;
+    line-height: 14px;
 }

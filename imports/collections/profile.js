@@ -9,7 +9,7 @@ Meteor.methods({
 			password: pss1
 		});
 	},
-	'profile.insertData': function(name, usid){
+	'profile.insertData': function(name, usid, cell, zip){
 		const user = Meteor.users.findOne(this.userId)._id;
 		Meteor.call('tombook.initTomBook', usid, (error,data)=>{
 			if(error){
@@ -28,13 +28,22 @@ Meteor.methods({
 				tomBook: tb,
 				silverMember: [],
 				goldMember: [],
-				isSupAdmin: false
+				isSupAdmin: false,
+				cell: cell,
+				userZip: zip
 			});
 		})
 	},
 	'profile.addOwner': function(profile, pageId){
 		const user = Meteor.users.findOne(this.userId)._id.toString();
 		return Profile.update(profile._id, {$push:{myPages: pageId}});	
+	},
+	'profile.updateZip': function(zip){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+		return Profile.update(user, {zipCode: zip});	
 	}
 });
 
