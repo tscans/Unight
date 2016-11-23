@@ -3,6 +3,7 @@ import {Profile} from '../../../../imports/collections/profile';
 import {createContainer} from 'meteor/react-meteor-data';
 import {DandE} from '../../../../imports/collections/dande';
 import moment from 'moment';
+import {Link} from 'react-router';
 
 class MemTblist extends React.Component {
 	onRemove(t){
@@ -31,12 +32,32 @@ class MemTblist extends React.Component {
 			)
 		})
 	}
+	renderOther(){
+		console.log(this.props.tbMember)
+		var bit = "/user/memberships/";
+		var v;
+		return this.props.tbMember.map((t)=>{
+			console.log(t)
+			v = t._id;
+			return(
+				<div className="card-1 tombook-cards" key={t._id}>
+					<Link to={bit+v+"/"}>
+					<img src={t.proPict} className="surround map-cards-img" />
+					<h4>{t.orgName}</h4>
+					</Link>
+				</div>
+			)
+		})
+	}
 	
 	render(){
 		return(
 			<div>
 				<div className="col-md-offset-6">
+					<h2>Saved Deals</h2>
 					{this.renderList()}
+					<h2>My Memberships</h2>
+					{this.renderOther()}
 				</div>
 			</div>
 		)

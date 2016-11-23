@@ -5,6 +5,18 @@ import {DandE} from '../imports/collections/dande';
 import {TomBook} from '../imports/collections/tombook';
 
 Meteor.startup(() => {
+	var dwolla = require('dwolla-v2');
+	var DWOLLA_ID = "91b11610-2e5a-48d1-b72c-8f12c370f6d2";
+	var DWOLLA_SECRET = "4dO2YZhnxO5gnMlAEggs6zi9j6VaOWq7I1dGrMJTsuUPD03kt8";
+	var client = new dwolla.Client({
+	  id: DWOLLA_ID,
+	  secret: DWOLLA_SECRET,
+	  environment: 'sandbox',
+	});
+
+
+
+
 	Meteor.publish('profile', function(){
 		return Profile.find({ ownerId: this.userId });
 	});
@@ -28,6 +40,7 @@ Meteor.startup(() => {
 		return Pages.find({
 		})
 	});
+
 	Meteor.publish('memOrgPage', function(){
 		var user = this.userId.toString();
 		if(!user){
@@ -108,5 +121,15 @@ Meteor.startup(() => {
 		return DandE.find({_id: {$in:tbcb}})
 		//return [Events.find({_id: {$in:tbce}}),GoldDeals.find({_id: {$in:tbcg}}),SilverDeals.find({_id: {$in:tbcs}}),GeneralDeals.find({_id: {$in:tbcd}})]
 	});
+	Meteor.publish('tbMember', function(){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		const profile = Profile.findOne({
+			ownerId: user
+		})
 
+		return Pages.find({_id: {$in: profile.goldMember}})
+	});
 });

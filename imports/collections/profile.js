@@ -44,6 +44,11 @@ Meteor.methods({
 			return
 		}
 		return Profile.update(user, {zipCode: zip});	
+	},
+	'profile.deleteUser': function(password){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		Meteor.users.remove({_id:user});
+		return password;
 	}
 });
 

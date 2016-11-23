@@ -6,7 +6,7 @@ import Zipcodes from 'zipcodes';
 class MemMainList extends Component {
 	renderList(){
 		return this.props.allPages.map(page=>{
-			const url = `/user/membership/${page._id}/`;
+			const url = `/user/memberships/${page._id}/`;
 			return(
 				<Link to={url} key={page._id}>
 					<div className="panel panel-default card-1 max-100">

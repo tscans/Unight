@@ -1,4 +1,5 @@
 import {Mongo} from 'meteor/mongo';
+import {Profile} from './profile';
 
 Meteor.methods({
 	'pages.makePage': function(orgName, proPict, phyAddress, zipCode, aboutUs){
@@ -65,6 +66,50 @@ Meteor.methods({
 		}
 		return Pages.update(pageID, {$set: {
 			proPict: pic
+		}})
+	},
+	'pages.addGoldMember': function(pageID){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		const profileID = Profile.findOne({
+			ownerId: theUserId
+		})
+		if(profileID.goldMember.includes(pageID)){
+			return;
+		}
+		if(page.pageUsers.includes(user)){
+			return;
+		}
+		Pages.update(page._id, {$push: {
+			pageUsers: user
+		}})
+		return Profile.update(profileID._id, {$push: {
+			goldMember: pageID
+		}})
+	},
+	'pages.removeGoldMember': function(pageID){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		const profileID = Profile.findOne({
+			ownerId: theUserId
+		})
+		Pages.update(page._id, {$pull: {
+			pageUsers: user
+		}})
+		return Profile.update(profileID._id, {$pull: {
+			goldMember: pageID
 		}})
 	}
 });

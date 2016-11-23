@@ -82,8 +82,7 @@ const routes = (
 		<Route path="/user/" component={User}>
 			<IndexRoute component={UserMainBody} />
 			<Route path="memberships" component={MemMainBody} />
-			<Route path="memberships/:zipId/" component={MemMainBody} />
-			<Route path="membership/:pageId/" component={MemOrgBody} />
+			<Route path="memberships/:pageId/" component={MemOrgBody} />
 			<Route path="wgot" component={MemWgotBody} />
 			<Route path="wgot/e/:pageId/" component={MemWgoteBody} />
 			<Route path="wgot/d/:pageId/" component={MemWgotdBody} />

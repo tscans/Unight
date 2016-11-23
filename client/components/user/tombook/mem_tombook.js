@@ -3,6 +3,7 @@ import MemTblist from './mem_tblist';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Profile} from '../../../../imports/collections/profile';
 import {TomBook} from '../../../../imports/collections/tombook';
+import {Pages} from '../../../../imports/collections/pages';
 
 class MemTomBook extends React.Component {
 	render(){
@@ -14,7 +15,7 @@ class MemTomBook extends React.Component {
 		return (
 			<div>
 				<div className="container-fluid bg-3 text-center">
-					<MemTblist tombook={this.props.tombook}/>
+					<MemTblist tombook={this.props.tombook} tbMember={this.props.tbMember}/>
 				</div>
 			</div>
 		)
@@ -24,7 +25,9 @@ class MemTomBook extends React.Component {
 export default createContainer((props)=>{
     Meteor.subscribe('profile');
     Meteor.subscribe('tombook');
-    return {profile: Profile.findOne({}), tombook: TomBook.findOne({})}
+    Meteor.subscribe('tbMember');
+    return {profile: Profile.findOne({}), tombook: TomBook.findOne({}),
+    tbMember: Pages.find({}).fetch()};
 
     
 }, MemTomBook);  

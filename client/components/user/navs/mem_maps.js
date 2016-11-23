@@ -74,5 +74,5 @@ export default createContainer((props)=>{
     Meteor.subscribe('wgot', bar);
     Meteor.subscribe('profile');
 
-    return {wgot: DandE.find({}).fetch(), profile: Profile.findOne({})}
+    return {wgot: DandE.find({}), profile: Profile.findOne({})}
 }, MemMaps); 

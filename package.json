@@ -6,6 +6,8 @@
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
+    "dwolla-v2": "^1.2.3",
+    "google-maps-react": "^1.0.19",
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.15.2",
     "react": "^15.3.2",
