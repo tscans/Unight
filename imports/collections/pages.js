@@ -51,6 +51,25 @@ Meteor.methods({
 			hasDeals: hasDeals
 		}})
 	},
+	'pages.updateGeo': function(pageID, longlat){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		if(page.ownedBy[0] != user){
+			console.log('failed authentication')
+			return;
+		}
+		console.log(page._id)
+
+		return Pages.update(pageID, {$set: {
+			longlat: longlat
+		}})
+	},
 	'pages.updateImage': function(pageID, pic){
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;

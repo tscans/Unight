@@ -29,7 +29,26 @@ class AdminMainEdit extends Component {
 		    var res = str.substring(7, str.length - 1);
 		    console.log(res)
 		    var pageID = res;
-	        
+	        var geocoder = new google.maps.Geocoder();
+	        geocoder.geocode({address: address.toString() }, function(results, status) {
+
+	            if (status == google.maps.GeocoderStatus.OK) {
+	            	var loc = []
+	             	var longlat = results[0].geometry.location;
+	             	console.log(longlat)
+	             	loc[0]=results[0].geometry.location.lat();
+        			loc[1]=results[0].geometry.location.lng();
+	             	Meteor.call('pages.updateGeo', pageID, loc, (error, data) => {
+	             		if(error){
+	             			console.log('there was an error');
+	             			console.log(error)
+	             		}
+	             		else{
+	             			console.log('completed successfully.')
+	             		}
+	             	})
+	            }
+	        });
 			Meteor.call('pages.updatePage', pageID, name, address, zip, about, checkb, (error, data) => {
 				if(error){
 	        		console.log("There was an error");

@@ -4,5 +4,9 @@
 			"MONGO_URL": "mongodb://foxholehuskie:victorc39a@ds031962.mlab.com:31962/unight"
 			
 		}
-	}
+	},
+	"public":{
+		"StripePub": "pk_test_MERz5Ospcty9rFsrNQCZMVP1"
+	},
+	"StripePri": "sk_test_8TdNcffpGlkTzjbpbw6cUPVW"
 }

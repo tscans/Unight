@@ -5,17 +5,65 @@ import {DandE} from '../imports/collections/dande';
 import {TomBook} from '../imports/collections/tombook';
 
 Meteor.startup(() => {
-	var dwolla = require('dwolla-v2');
-	var DWOLLA_ID = "91b11610-2e5a-48d1-b72c-8f12c370f6d2";
-	var DWOLLA_SECRET = "4dO2YZhnxO5gnMlAEggs6zi9j6VaOWq7I1dGrMJTsuUPD03kt8";
-	var client = new dwolla.Client({
-	  id: DWOLLA_ID,
-	  secret: DWOLLA_SECRET,
-	  environment: 'sandbox',
+	var stripe = StripeAPI(Meteor.settings.StripePri);
+
+	Meteor.methods({
+		"chargeCard": function(cardToken){
+			stripe.charges.create({
+				amount: 500,
+				currency: "USD",
+				source: cardToken
+			}, function(error, result){
+				if(error){
+					throw new Meteor.error(500, "stripe", error.message);
+				}
+				else{
+					console.log(result)
+					return result;
+				}
+			})
+		},
+		"addCard":function(cardToken){
+			const theUserId = Meteor.users.findOne(this.userId)._id;
+			if(!theUserId){
+				return;
+			}
+			const userPro = Profile.findOne({
+				ownerId: theUserId
+			})
+			if(userPro.stripeCust == null){
+				var custCreate = Async.runSync(function(done){
+					stripe.customers.create({
+						source: cardToken
+					},function(error, response){
+						done(error, response);
+					})
+				})
+				if(custCreate.error){
+					throw new Meteor.error(500, "Stripe-error", custCreate.error.message);
+				}
+				else{
+					Profile.update(userPro._id, {$set: {stripeCust: custCreate.result.id}});
+					return;
+				}
+			}else{
+				var custUpdate = Async.runSync(function(done){
+					stripe.customers.update(userPro.stripeCust, {
+						source: cardToken
+					}, function(error, result){
+						console.log(error)
+						done(error, result);
+					})
+				})
+				if(custCreate.error){
+					throw new Meteor.error(500, "Stripe-error", custUpdate.error.message);
+				}
+				else{
+					return;
+				}
+			}
+		}
 	});
-
-
-
 
 	Meteor.publish('profile', function(){
 		return Profile.find({ ownerId: this.userId });

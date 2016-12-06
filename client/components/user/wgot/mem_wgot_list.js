@@ -73,7 +73,7 @@ class MemWgotList extends React.Component {
     	if(!this.props.wgot){
     		return<div>loading...</div>
     	}
-    	console.log(zipcodes.radius(60453,2))
+    	console.log(zipcodes.radius(60453,2));
         return (
 	        <div>
 	        	<div className="ScrollStyle">

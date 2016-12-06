@@ -35,7 +35,8 @@ Meteor.methods({
 			title: 'Title',
 			description: 'Description',
 			expiration: 'Expiration',
-			published: false
+			published: false,
+			longlat: page.longlat
 		});
 	},
 	'dande.updateDandE': function(pageID, dealID, dealinfo, desc, expi, checkb){

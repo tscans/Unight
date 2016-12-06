@@ -95,5 +95,6 @@ const routes = (
 );
 
 Meteor.startup(() => {
+	Stripe.setPublishableKey(Meteor.settings.public.StripePub);
 	ReactDOM.render(routes, document.querySelector('.render-target'));
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import {Profile} from '../../../../imports/collections/profile';
 import {createContainer} from 'meteor/react-meteor-data';
 import {DandE} from '../../../../imports/collections/dande';
+import {Pages} from '../../../../imports/collections/pages';
 import moment from 'moment';
 import {Link} from 'react-router';
 
@@ -69,9 +70,10 @@ export default createContainer((props)=>{
 	props.tombook.tbc.map((tbca)=>{
 		tbcb.push(tbca.theID)
 	})
-
+	var bart = props.profile;
     Meteor.subscribe('tblist', tbcb);
-    return {tblist: DandE.find({_id: {$in:tbcb}}).fetch()}
+    Meteor.subscribe('tbMember');
+    return {tblist: DandE.find({_id: {$in:tbcb}}).fetch(), tbMember: Pages.find({_id: {$in: bart.goldMember}}).fetch()}
 
     
 }, MemTblist);  

@@ -40,6 +40,7 @@ localstorage@1.0.11
 logging@1.1.15
 meteor@1.2.17
 meteor-base@1.0.4
+meteorhacks:async@1.0.0
 meteortoys:allthings@3.0.0
 meteortoys:authenticate@3.0.0
 meteortoys:autopub@3.0.0
@@ -64,6 +65,7 @@ modules@0.7.6
 modules-runtime@0.7.6
 mongo@1.1.12
 mongo-id@1.0.5
+mrgalaxy:stripe@2.2.2
 msavin:jetsetter@2.0.0
 msavin:mongol@2.0.1
 npm-bcrypt@0.9.1

@@ -1,29 +1,218 @@
 import React from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
-import {DandE} from '../../../../imports/collections/dande';
+import {Pages} from '../../../../imports/collections/pages';
 import {Profile} from '../../../../imports/collections/profile';
+import {browserHistory} from 'react-router';
 
 class MemMaps extends React.Component {
-	dealSort(){
-		
-    	var cube = this.props.wgot[0]
-    	var cube2 = this.props.wgot[1]
-        var cubea = this.props.wgot[2]
-        var cubeb = this.props.wgot[3]
-    	console.log(cubea)
-    	var cube3 = cube.concat(cube2,cubea,cubeb)
-    	console.log(cube3)
-    	return cube3;
-	}
 	componentWillReceiveProps(props){
         console.log('maps come up')
-    	var cube3 = props.wgot
+    	var cube3 = props.allPages
     	console.log(cube3)
     	var geocoder = new google.maps.Geocoder();
     	var uluru = {lat: 41.8781, lng: -87.6298};
+        var style = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#263c3f"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6b9a76"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#38414e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#212a37"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9ca5b3"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#9914a2"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#1f2835"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#f3d19c"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#2f3948"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#515c6d"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  }
+]
         var map = new google.maps.Map(document.getElementById('mapid'), {
           zoom: 4,
-          center: uluru
+          center: uluru,
+  streetViewControl: false,
+           disableDefaultUI: true,
+           styles: style
+
         });
         console.log('got here')
         geocoder.geocode({address: props.profile.userZip.toString() }, function(results, status) {
@@ -31,33 +220,41 @@ class MemMaps extends React.Component {
             if (status == google.maps.GeocoderStatus.OK) {
 
               map.setCenter(results[0].geometry.location);
-              map.setZoom(12);
+              map.setZoom(13);
             }
         });
 
         var tempPos;
-        function createMarker(latlng) {
+        function createMarker(latlng, placeUrl, cimg) {
            marker = new google.maps.Marker({
               map: map,
-              position: latlng
+              title: 'PEPSized Coffee',
+            icon: {
+                url: cimg,
+
+                scaledSize: new google.maps.Size(40,40)
+            },
+              position: latlng,
+              url: placeUrl,
            });
+           
 
         }
         console.log(cube3)
         cube3.map((c)=>{
-        	geocoder.geocode({address: c.phyAddress}, function(results, status) {
-
-                if (status == google.maps.GeocoderStatus.OK) {
-
-                  tempPos = results[0].geometry.location;
-                  console.log(tempPos)
-                  createMarker(tempPos);
-                }
-            });
-	      	console.log(c.phyAddress)
-        	
+            var v = "/user/memberships/"
+            console.log(c._id)
+        	createMarker(new google.maps.LatLng(c.longlat[0], c.longlat[1]), v + c._id + "/", c.proPict)
+        	google.maps.event.addListener(marker, 'click', (function (marker) {
+            return function () {
+                browserHistory.push(v + c._id + "/");
+            }
+        })(marker));
         });
 	}
+    shouldComponentUpdate(props) {
+        return false
+    }
     render() {
         return (
         	<div>
@@ -70,9 +267,8 @@ class MemMaps extends React.Component {
 }
 
 export default createContainer((props)=>{
-    var bar = props.limit_page;
-    Meteor.subscribe('wgot', bar);
+    Meteor.subscribe('allPages');
     Meteor.subscribe('profile');
 
-    return {wgot: DandE.find({}), profile: Profile.findOne({})}
+    return {allPages: Pages.find({}).fetch(), profile: Profile.findOne({})}
 }, MemMaps); 

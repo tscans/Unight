@@ -3,6 +3,7 @@ import {Link, browserHistory} from 'react-router';
 
 class MemOrgRight extends Component {
     constructor(props){
+      Stripe.setPublishableKey(Meteor.settings.public.StripePub);
       super(props);
       this.state = {
         header: 'About Us',
@@ -21,16 +22,39 @@ class MemOrgRight extends Component {
     }
     goldMember(){
       var d = this.props.pageID;
-      Meteor.call('pages.addGoldMember', d, (error,data)=>{
-        if(error){
-          console.log(error)
+      var cardDetails = {
+        "number": this.refs.cred.value.trim(),
+        "cvc": this.refs.cvc.value.trim(),
+        "exp_month": this.refs.mm.value.trim(),
+        "exp_year": this.refs.yy.value.trim()
+      }
+      Stripe.createToken(cardDetails, function(status, result){
+        if(result.error){
+          alert(result.error.message);
         }
         else{
-          console.log(data)
-          $('#myModal').modal('hide');
+          Meteor.call("chargeCard", result.id, function(error,response){
+            if(error){
+              alert(error.message);
+            }
+            else{
+              console.log(result)
+              console.log(response)
+              
+              Meteor.call('pages.addGoldMember', d, (error,data)=>{
+                if(error){
+                  console.log(error)
+                }
+                else{
+                  console.log(data)
+                  alert("You were successfully charged: $5.00");
+                  $('#myModal').modal('hide');
+                }
+              })
+            }
+          })
         }
       })
-      
     }
     offGoldMember(){
       var d = this.props.pageID;
@@ -64,8 +88,14 @@ class MemOrgRight extends Component {
                       </div>
                       <div className="modal-body">
                         <p>In order to become a Gold Member of {this.props.pages.orgName}, please fill out the following fields.</p>
-                        <label htmlFor="exampleInputEmail1">Enter Credit Card</label>
-                        <input type="password" className="form-control foc-card" ref="cred" placeholder="Credit Card Info"/>
+                        <label htmlFor="exampleInputEmail1">Card Number</label>
+                        <input type="text" className="form-control foc-card" ref="cred" placeholder="Card Number"/>
+                        <label htmlFor="exampleInputEmail1">CVC</label>
+                        <input type="text" className="form-control foc-card" ref="cvc" placeholder="CVC"/>
+                        <label htmlFor="exampleInputEmail1">Expiration MM</label>
+                        <input type="text" className="form-control foc-card" ref="mm" placeholder="MM"/>
+                        <label htmlFor="exampleInputEmail1">Expiration YY</label>
+                        <input type="text" className="form-control foc-card" ref="yy" placeholder="YY"/>
                       </div>
                       <div className="modal-footer">
                         <button type="button" onClick={this.goldMember.bind(this)} className="btn btn-success">Become Gold Member</button>
