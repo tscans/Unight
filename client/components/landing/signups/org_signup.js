@@ -2,8 +2,15 @@ import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
 
 class OrgSignup extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            gif: "invisible"
+        }
+    }
 	register(event){
         event.preventDefault();
+        this.setState({gif: ""});
         var ema = this.refs.email.value.trim();
         var pss1 = this.refs.password.value.trim();
         var pss2 = this.refs.password2.value.trim();
@@ -40,6 +47,7 @@ class OrgSignup extends Component {
 					        this.refs.name.value = "";
                             this.refs.cell.value = "";
                             this.refs.zip.value = "";
+                            this.setState({gif: "invisible"})
 					        browserHistory.push('/login')
             			}
             		})
@@ -84,6 +92,8 @@ class OrgSignup extends Component {
 					    <input type="password" className="form-control foc-card" ref="password2" id="exampleInputPassword2" placeholder="Confirm Password"/>
 					  </div>
 					  <button type="submit" className="btn btn-success card-1 top-bot-not">Sign Up</button>
+                      <br/>
+                      <img src="http://i.imgur.com/TwejQKK.gif" height="35px" className={this.state.gif} />
 					</form>
 				</div>
         	</div>

@@ -2,8 +2,15 @@ import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
 
 class UserSignup extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            gif: "invisible"
+        }
+    }
 	register(event){
         event.preventDefault();
+        this.setState({gif: ""});
         var ema = this.refs.email.value.trim();
         var pss1 = this.refs.password.value.trim();
         var pss2 = this.refs.password2.value.trim();
@@ -36,6 +43,7 @@ class UserSignup extends Component {
 					        this.refs.password.value = "";
 					        this.refs.password2.value = "";
 					        this.refs.fullname.value = "";
+                            this.setState({gif: "invisible"})
 					        browserHistory.push('/user/')
             			}
             		})

@@ -215,6 +215,7 @@ class MemMaps extends React.Component {
 
         });
         console.log('got here')
+        console.log(props.profile.userZip)
         geocoder.geocode({address: props.profile.userZip.toString() }, function(results, status) {
 
             if (status == google.maps.GeocoderStatus.OK) {
