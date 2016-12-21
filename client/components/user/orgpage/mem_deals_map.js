@@ -1,21 +1,15 @@
 import React from 'react';
+import {createContainer} from 'meteor/react-meteor-data';
+import {DandE} from '../../../../imports/collections/dande';
 import {Link} from 'react-router';
 import moment from 'moment';
-import zipcodes from 'zipcodes';
 
-class MemWgotList extends React.Component {
-	upVote(dandeID){
-		Meteor.call('dande.upvotes', dandeID, (error, data)=>{
-			if(error){
-				console.log(error);
-			}
-			else{
-				console.log('upvoted')
-			}
-		})
-	}
+class MemDealsMap extends React.Component {
 	renderList(){
+		console.log(this.props.wgot)
+		console.log('hahahahaha')
 		return this.props.wgot.map(wgot=>{
+			console.log(wgot)
 			if(wgot.typeDE != "E"){
 				var pathName = window.location.pathname;
 				var url;
@@ -31,7 +25,7 @@ class MemWgotList extends React.Component {
 				}
 				return(
 					<div className="card-1 card-specs-map" key={wgot._id}>
-						<a className="float-right btn btn-success" href="#" onClick={() => {this.upVote(wgot._id)}}><span className="glyphicon glyphicon-thumbs-up"><br/>{wgot.upvotes}</span></a>
+						<a className="float-right btn btn-success"><span className="glyphicon glyphicon-thumbs-up"><br/>{wgot.upvotes}</span></a>
 						<div className={beaconProp}>
 						</div>
 						<div>
@@ -50,7 +44,7 @@ class MemWgotList extends React.Component {
 				
 				return(
 					<div className="card-1 card-specs-map" key={wgot._id}>
-						<a className="float-right btn btn-success" href="#" onClick={() => {this.upVote(wgot._id)}}><span className="glyphicon glyphicon-thumbs-up"><br/>{wgot.upvotes}</span></a>
+						<a className="float-right btn btn-success"><span className="glyphicon glyphicon-thumbs-up"><br/>{wgot.upvotes}</span></a>
 						<div className="wgot-list-beacon-event">
 						</div>
 						<div>
@@ -65,19 +59,23 @@ class MemWgotList extends React.Component {
 			}
 		})
 	}
-    render() {
-    	if(!this.props.wgot){
-    		return<div>loading...</div>
-    	}
-    	console.log(zipcodes.radius(60453,2));
-        return (
-	        <div>
-	        	<div className="ScrollStyle">
-				  {this.renderList()}
-				</div>
-	        </div>
-        )
-    }
+	render(){
+		if(!this.props.wgot){
+			return<div></div>
+		}
+		return(
+			<div>
+				{this.renderList()}
+			</div>
+		)
+	}
 }
 
-export default MemWgotList;
+export default createContainer((props)=>{
+	console.log(props.pageID)
+    Meteor.subscribe('pageDeals', props.pageID);
+
+    return {wgot: DandE.find({}).fetch()}
+
+	
+}, MemDealsMap); 

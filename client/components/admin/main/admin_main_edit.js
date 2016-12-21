@@ -5,51 +5,105 @@ import {Link, browserHistory} from 'react-router';
 class AdminMainEdit extends Component {
 	constructor(props){
 		super(props);
+		var ad = "btn btn-danger card-1 top-bot-not";
+		var am = "btn btn-danger card-1 top-bot-not";
+		var ae = "btn btn-danger card-1 top-bot-not";
+		var ag = "btn btn-danger card-1 top-bot-not";
+		var d = "No Deals";
+		var m = "No Memberships";
+		var e = "No Events";
+		var g = "No Gift Cards"
+		if(this.props.pages.hasDeals){
+			ad = "btn btn-success card-1 top-bot-not";
+			d = "Allow Deals";
+		}
+		if(this.props.pages.hasMembers){
+			am = "btn btn-success card-1 top-bot-not"
+			m = "Allow Memberships";
+		}
+		if(this.props.pages.hasEvents){
+			ae = "btn btn-success card-1 top-bot-not";
+			e = "Allow Events";
+		}
+		if(this.props.pages.hasGiftCards){
+			ag = "btn btn-success card-1 top-bot-not";
+			g = "Allow Gift Cards";
+		}
+		console.log(ad)
 		this.state = {
-			checker: this.props.pages.hasDeals,
 			savedClass: "btn btn-primary card-1 top-bot-not",
 			savedWords: "Save Changes",
 			invis: "transparent",
 			done: "Changes Saved",
-			counter: 0
+			allowDeals: ad,
+			allowMemberships: am,
+			allowEvents: ae,
+			allowGiftCards: ag,
+			deals: d,
+			memberships: m,
+			events: e,
+			giftCards: g
 		}
-	}
-	check(){
-		this.setState({checker: !this.state.checker})
 	}
 	editPageData(event){
 		event.preventDefault();
-		if(this.state.counter == 0){
+
 			var name = this.refs.busname.value.trim();
 	        var address = this.refs.busaddress.value.trim();
 	        var zip = this.refs.buszip.value.trim();
 	        var about = this.refs.busabout.value.trim();
-	        var checkb = this.state.checker;
+	        var website = this.refs.website.value.trim();
 	        var str = window.location.pathname;
 		    var res = str.substring(7, str.length - 1);
 		    console.log(res)
 		    var pageID = res;
 	        var geocoder = new google.maps.Geocoder();
-	        geocoder.geocode({address: address.toString() }, function(results, status) {
-
+	        if(address.toString() == this.props.pages.phyAddress){
+	        	0
+	        }else{
+	        	geocoder.geocode({address: address.toString() }, function(results, status) {
+	        	console.log('geo commencing')
 	            if (status == google.maps.GeocoderStatus.OK) {
 	            	var loc = []
 	             	var longlat = results[0].geometry.location;
 	             	console.log(longlat)
 	             	loc[0]=results[0].geometry.location.lat();
         			loc[1]=results[0].geometry.location.lng();
+        			console.log('geo commencing')
 	             	Meteor.call('pages.updateGeo', pageID, loc, (error, data) => {
 	             		if(error){
 	             			console.log('there was an error');
 	             			console.log(error)
 	             		}
 	             		else{
-	             			console.log('completed successfully.')
+	             			console.log('New Geo Complete.')
 	             		}
 	             	})
 	            }
+	            else{
+	            	console.log(status)
+	            }
 	        });
-			Meteor.call('pages.updatePage', pageID, name, address, zip, about, checkb, (error, data) => {
+	        }
+	        
+	        var hasDeals = false;
+	        var hasMembers = false;
+	        var hasEvents = false;
+	        var hasGiftCards = false;
+	        if(this.state.deals.includes("Allow")){
+
+				hasDeals = true;
+			}
+			if(this.state.memberships.includes("Allow")){
+				hasMembers = true;
+			}
+	        if(this.state.events.includes("Allow")){
+				hasEvents = true;
+			}
+			if(this.state.giftCards.includes("Allow")){
+				hasGiftCards = true;
+			}
+			Meteor.call('pages.updatePage', pageID, name, address, zip, website, about, hasDeals, hasMembers, hasEvents, hasGiftCards, (error, data) => {
 				if(error){
 	        		console.log("There was an error");
 	        		console.log(error);
@@ -57,20 +111,58 @@ class AdminMainEdit extends Component {
 	            else{
 	            	console.log('completed without error')
 	            	this.setState({savedClass: "btn btn-success top-bot-not", savedWords: "Changes Saved", invis: "saved-green"})
-	            	this.setState({counter: 1})
+	            	setTimeout(()=>{this.setState({savedClass: "btn btn-primary card-1 top-bot-not", savedWords: "Save Changes", invis: "transparent"})},2500)
 	            }
 			});
-		}
-		else{
-			console.log('already saved')
-			
-		}
 		
 	}
 	back(){
 		console.log('hi')
 	}
+	onDeals(){
+		if(this.state.deals.includes("Allow")){
+			this.setState({allowDeals: "btn btn-danger card-1 top-bot-not"});
+			this.setState({deals: "No Deals"});
+		}
+		else{
+			this.setState({allowDeals: "btn btn-success card-1 top-bot-not"});
+			this.setState({deals: "Allow Deals"});
+		}
+	}
+	onMemberships(){
+		if(this.state.memberships.includes("Allow")){
+			this.setState({allowMemberships: "btn btn-danger card-1 top-bot-not"});
+			this.setState({memberships: "No Memberships"});
+		}
+		else{
+			this.setState({allowMemberships: "btn btn-success card-1 top-bot-not"});
+			this.setState({memberships: "Allow Memberships"});
+		}
+	}
+	onEvents(){
+		if(this.state.events.includes("Allow")){
+			this.setState({allowEvents: "btn btn-danger card-1 top-bot-not"});
+			this.setState({events: "No Events"});
+		}
+		else{
+			this.setState({allowEvents: "btn btn-success card-1 top-bot-not"});
+			this.setState({events: "Allow Events"});
+		}
+	}
+	onGiftCards(){
+		if(this.state.giftCards.includes("Allow")){
+			this.setState({allowGiftCards: "btn btn-danger card-1 top-bot-not"});
+			this.setState({giftCards: "No Gift Cards"});
+		}
+		else{
+			this.setState({allowGiftCards: "btn btn-success card-1 top-bot-not"});
+			this.setState({giftCards: "Allow Gift Cards"});
+		}
+	}
     render() {
+    	if(!this.props.pages){
+    		return<div></div>
+    	}
         return (
         	<div className="card-3 white-back">
         		<form onSubmit={this.editPageData.bind(this)}>
@@ -89,12 +181,12 @@ class AdminMainEdit extends Component {
 					    <input type="text" className="form-control foc-card" ref="buszip" defaultValue={this.props.pages.zipCode} placeholder="Zip Code"/>
 					  </div>
 					  <div className="form-group">
-					    <label htmlFor="exampleInputEmail1">About Us</label>
-					    <textarea rows="4" className="form-control foc-card" ref="busabout" defaultValue={this.props.pages.aboutUs} placeholder="About Us"/>
+					    <label htmlFor="exampleInputEmail1">Website</label>
+					    <input type="text" className="form-control foc-card" ref="website" defaultValue={this.props.pages.website} placeholder="Website"/>
 					  </div>
 					  <div className="form-group">
-					    <label htmlFor="exampleInputEmail1">Do you want to offer membership deals?</label>
-					    <input type="checkbox" className="form-control" checked={this.state.checker} onClick={this.check.bind(this)} />
+					    <label htmlFor="exampleInputEmail1">About Us</label>
+					    <textarea rows="4" className="form-control foc-card" ref="busabout" defaultValue={this.props.pages.aboutUs} placeholder="About Us"/>
 					  </div>
 				  </div>
 				  <div className="form-group">
@@ -102,6 +194,13 @@ class AdminMainEdit extends Component {
 				    <div className="center-div">
 				    	<ImageUpload />
 				    </div>
+				  </div>
+				  <div>
+					  <div className={this.state.allowDeals} onClick={this.onDeals.bind(this)}><span className="glyphicon glyphicon-user"></span> {this.state.deals}</div>
+					  <div className={this.state.allowMemberships} onClick={this.onMemberships.bind(this)}><span className="glyphicon glyphicon-globe"></span> {this.state.memberships}</div>
+					  <br />
+					  <div className={this.state.allowEvents} onClick={this.onEvents.bind(this)}><span className="glyphicon glyphicon-calendar"></span> {this.state.events}</div>
+					  <div className={this.state.allowGiftCards} onClick={this.onGiftCards.bind(this)}><span className="glyphicon glyphicon-usd"></span> {this.state.giftCards}</div>
 				  </div>
 				  <div className={this.state.invis}>
 				  	<p>{this.state.done}</p>

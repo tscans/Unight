@@ -3,67 +3,27 @@ import { Profile } from '../imports/collections/profile';
 import { Pages } from '../imports/collections/pages';
 import {DandE} from '../imports/collections/dande';
 import {TomBook} from '../imports/collections/tombook';
+import {GiftCards} from '../imports/collections/giftcards';
 
 Meteor.startup(() => {
 	var stripe = StripeAPI(Meteor.settings.StripePri);
-
-	Meteor.methods({
-		"chargeCard": function(cardToken){
-			stripe.charges.create({
-				amount: 500,
-				currency: "USD",
-				source: cardToken
-			}, function(error, result){
-				if(error){
-					throw new Meteor.error(500, "stripe", error.message);
-				}
-				else{
-					console.log(result)
-					return result;
-				}
-			})
-		},
-		"addCard":function(cardToken){
-			const theUserId = Meteor.users.findOne(this.userId)._id;
-			if(!theUserId){
-				return;
-			}
-			const userPro = Profile.findOne({
-				ownerId: theUserId
-			})
-			if(userPro.stripeCust == null){
-				var custCreate = Async.runSync(function(done){
-					stripe.customers.create({
-						source: cardToken
-					},function(error, response){
-						done(error, response);
-					})
-				})
-				if(custCreate.error){
-					throw new Meteor.error(500, "Stripe-error", custCreate.error.message);
-				}
-				else{
-					Profile.update(userPro._id, {$set: {stripeCust: custCreate.result.id}});
-					return;
-				}
-			}else{
-				var custUpdate = Async.runSync(function(done){
-					stripe.customers.update(userPro.stripeCust, {
-						source: cardToken
-					}, function(error, result){
-						console.log(error)
-						done(error, result);
-					})
-				})
-				if(custCreate.error){
-					throw new Meteor.error(500, "Stripe-error", custUpdate.error.message);
-				}
-				else{
-					return;
-				}
-			}
-		}
-	});
+	var buff = function(){
+		console.log('LOL BUFF ACTIVATED')
+	}
+	Meteor.setTimeout(buff, 5000)
+	console.log('lolwhatever')
+	Meteor.setInterval(function() {
+	    console.log("checking now");
+	    var d = new Date();
+		var n = d.getMinutes();
+		console.log(n)
+		if(n%2== 0){
+			console.log('lol its the first')
+			
+		} 
+	}, 30000);
+	console.log('hahaha')
+	//6 hours times 60 minutes times 60 seconds times 1000 = 21,600,000
 
 	Meteor.publish('profile', function(){
 		return Profile.find({ ownerId: this.userId });
@@ -179,5 +139,30 @@ Meteor.startup(() => {
 		})
 
 		return Pages.find({_id: {$in: profile.goldMember}})
+	});
+	Meteor.publish('pageDeals', function(pageID){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		return DandE.find({forPage: pageID, dealsOn: true})
+	});
+	Meteor.publish('userCards', function(){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		return GiftCards.find({ownerId: user})
+	});
+	Meteor.publish('adminCards', function(pageID){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		var page = Pages.findOne({_id: pageID});
+		if(page.ownedBy[0] != user){
+			return;
+		}
+		return GiftCards.find({pageID: pageID})
 	});
 });

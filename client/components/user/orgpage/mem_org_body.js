@@ -14,7 +14,7 @@ class MemOrgBody extends Component {
         return (
         	<div className="container-fluid bg-3 text-center bump-push-bar">
         		<div className="col-md-6 col-md-offset-6">
-        			<MemOrgRight pages={this.props.memOrgPage} pageID={this.props.params.pageId} pro={this.props.pro}/>
+        			<MemOrgRight pages={this.props.memOrgPage} pageID={this.props.params.pageId} pro={this.props.pro} pageID={this.props.params.pageId}/>
         		</div>
         	</div>
         );

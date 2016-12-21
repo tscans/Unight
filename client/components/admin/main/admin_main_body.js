@@ -8,17 +8,6 @@ import AdminMainLeft from './admin_main_left';
 import AdminMainEdit from './admin_main_edit';
 
 class AdminMainBody extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            editPage: false
-        }
-        this.editBtn = this.editBtn.bind(this)
-    }
-    editBtn(){
-        console.log('editpageswitch')
-        this.setState({editPage: !this.state.editPage})
-    }
     render() {
         console.log(this.props.profile);
         if(!this.props.profile){
@@ -26,48 +15,20 @@ class AdminMainBody extends Component {
                 <div>loading...</div>
             )
         }
-        if(this.state.editPage == false){
-            return (
-            <div>
-                <div className="container-fluid bg-3 text-center">
-                    <div className="col-md-3">
-                        <div>
-                            <AdminMainLeft />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <button onClick={this.editBtn.bind(this)} className="btn btn-success btn-extend"><h4><span className="glyphicon glyphicon-pencil"></span> Edit Profile</h4></button>
-                        <div className="dat-gap"></div>
-                        <AdminMainCenter profile={this.props.profile} pages={this.props.pages} />   
-                    </div>
-                    <div className="col-md-3">
-                        <AdminMainRight />
-                    </div>
+        return (
+        <div>
+            <div className="container-fluid bg-3 text-center">
+                <div className="col-md-6">
+                    <div className="dat-gap"></div>
+                    <AdminMainEdit profile={this.props.profile} back={this.editBtn} pages={this.props.pages} />
+                </div>
+                <div className="col-md-6">
+                    <div className="dat-gap"></div>
+                    <AdminMainCenter profile={this.props.profile} pages={this.props.pages} />   
                 </div>
             </div>
-        );
-        }
-        else{
-            return (
-            <div>
-                <div className="container-fluid bg-3 text-center">
-                    <div className="col-md-3">
-                        <div>
-                            <AdminMainLeft />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <button onClick={this.editBtn.bind(this)} className="btn btn-success btn-extend"><h4><span className="glyphicon glyphicon-ok"></span> View Profile</h4></button>
-                        <div className="dat-gap"></div>
-                        <AdminMainEdit profile={this.props.profile} back={this.editBtn} pages={this.props.pages} />
-                    </div>
-                    <div className="col-md-3">
-                        <AdminMainRight />
-                    </div>
-                </div>
-            </div>
-        );
-        }
+        </div>
+    );
         
     }
 }

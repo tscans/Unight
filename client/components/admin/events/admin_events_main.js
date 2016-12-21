@@ -10,7 +10,7 @@ class AdminEventsMain extends React.Component {
         return (
         	<div>
         		<div className="container-fluid bg-3 text-center">
-	                <AdminEventsBody events={this.props.events} />
+	                <AdminEventsBody events={this.props.events} pages={this.props.pages}/>
 	            </div> 
         	</div>
         );

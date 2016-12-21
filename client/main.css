@@ -3,8 +3,10 @@
   border-radius: 0 !important;
 }
 a:link {
-    text-decoration: none;
-    
+    text-decoration: none;  
+}
+.white-blue{
+  color: white;
 }
 #mapid { 
   height: 89vh;
@@ -12,6 +14,10 @@ a:link {
   margin-top:80px;
   margin-left: -15px;
   margin-bottom: -70px;
+}
+#smallmap { 
+  height: 34vh;
+  width: 100%;
 }
 .freeze{
   position: fixed;
@@ -395,10 +401,20 @@ a:link {
   margin-top: -15px;
 }
 .break-off-text {
-    word-wrap: break-word;
-    overflow: hidden;
-    line-height: 14px;
+  word-wrap: break-word;
+  overflow: hidden;
+  line-height: 14px;
 }
 .all-black{
   color: black;
+}
+.width-button-gift{
+  width: 80%;
+}
+.inline-btns{
+  display: inline-block;
+}
+.invisible {
+    display: none;
+    visibility: hidden;
 }

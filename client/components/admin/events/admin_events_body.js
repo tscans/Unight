@@ -71,8 +71,17 @@ class AdminEventsBody extends React.Component {
 			)
 		})
 	}
+	checkEvents(){
+      if(!this.props.pages.hasEvents){
+        var warn = "Warning! Your page does not currently allow events. In order to reverse this go to the Home page."
+        setTimeout(()=>{alert(warn)},1000)
+      }
+    }
     render() {
-    	console.log(this.props.events)
+    	if(!this.props.pages){
+    		return<div></div>
+    	}
+    	{this.checkEvents()}
         return (
         	<div>
         		<div className="col-md-3">

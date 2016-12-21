@@ -1,7 +1,6 @@
 import React from 'react';
 import MemWgotdPage from './mem_wgotd_page';
-import {Link} from 'react-router';
-import MemWgotdPageS from './mem_wgotd_page_s';
+import {browserHistory} from 'react-router';
 import MemWgotdPageG from './mem_wgotd_page_g';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Profile} from '../../../../imports/collections/profile';
@@ -20,11 +19,6 @@ class MemWgotdBody extends React.Component {
                 <MemWgotdPage pageId={this.state.iDPass} />
             )
         }
-        else if(window.location.pathname.includes('wgot/s/')){
-            return(
-                <MemWgotdPageS pageId={this.state.iDPass} />
-            )
-        }
         else
         {
             return(
@@ -37,9 +31,6 @@ class MemWgotdBody extends React.Component {
         var type;
         if(window.location.pathname.includes('wgot/d/')){
             type = "D";
-        }
-        else if(window.location.pathname.includes('wgot/s/')){
-            type = "S";
         }
         else
         {
@@ -96,7 +87,7 @@ class MemWgotdBody extends React.Component {
                 <div className="col-md-6" className="container-fluid bg-3 text-center bump-push-bar up-a-tad">
                     <div className="map-push">
                         <div className="card-2">
-                            <Link to="/user/wgot"><button className="btn btn-primary btn-extend"><h4><span className="glyphicon glyphicon-arrow-left"></span> Back</h4></button></Link>
+                            <a href="#" onClick={browserHistory.goBack}><button className="btn btn-primary btn-extend"><h4><span className="glyphicon glyphicon-arrow-left"></span> Back</h4></button></a>
                         </div>
                         <div className="col-md-12 card-2 top-bot-not">
                             {this.renderDealType()}
