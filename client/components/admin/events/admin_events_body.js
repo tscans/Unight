@@ -48,7 +48,7 @@ class AdminEventsBody extends React.Component {
 				console.log('hd')
 			}
 			var borderColor;
-			if(event.published){
+			if(event.dealsOn){
 				borderColor = "col-md-6 card-1 events-gap panel-border-green"
 			}
 			else{

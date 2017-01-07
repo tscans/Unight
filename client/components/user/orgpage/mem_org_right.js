@@ -226,18 +226,18 @@ class MemOrgRight extends Component {
             </div>
             <br/>
               <div className="panel panel-default card-3">
-                  <div className="panel-heading">
+                  <div className="panel-heading header-page">
                       <div className="bud-left">
                           <h2>
                           {this.props.pages.orgName}
                           </h2>
                       </div>
                       <br />
-                      <div className="bud-left">
-                        <div className="bud-left pull-inline push-img-down">
+                      <div>
+                        <div className="col-md-6 push-img-down">
                             <img src={this.props.pages.proPict} className="panel-body card-3 surround" height="200" width="200"/>
                         </div>
-                        <div className="pull-inline obj-buffer-sides">
+                        <div className="col-md-6 push-img-down">
                             <h5>Number of Members: {this.props.pages.pageUsers.length}</h5> 
                             <h5>{this.props.pages.phyAddress}</h5>
                             <h5><a className="white-blue" href={this.props.pages.website}>{this.props.pages.website}</a></h5>

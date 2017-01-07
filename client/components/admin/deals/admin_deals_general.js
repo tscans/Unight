@@ -97,29 +97,53 @@ class AdminDealsGeneral extends React.Component {
 			var borderColor;
 			if(deal.dealsOn){
 				borderColor = "panel card-1 panel-border-green"
-			}
-			else{
-				borderColor = "panel card-1 panel-border-red"
-			}
-			return(
-				<div className="deals-gap col-md-4" key={deal._id}>
-					<div>
-						<Link to={url}>
+				return(
+					<div className="deals-gap col-md-6" key={deal._id}>
+						<div>
 			        		<div className={borderColor}>
 			        			<div className="general-header">
 			        				General Deal
 			        			</div>
 			        			<img src={deal.image} className="panel-img-head surround" />
-			        			<p>{deal.title}</p>
-			        			<p>{deal.description}</p>
-			        			<p>{moment(deal.expiration).format("MMM Do YY")}</p>
-			        			
+			        			<div className="bud-left-buff">
+				        			<h3>{deal.title}</h3>
+				        			<p>{deal.description}</p>
+				        			<p>Expiration: {deal.expiration}</p>
+				        			<p># Available: {deal.timesUsed}/{deal.maxn}</p>
+				        			<p>Upvotes: {deal.upvotes}</p>
+			        			</div>
 			        		</div>
-						</Link>
+						</div>
+						{this.renderButton(deal)}
 					</div>
-					{this.renderButton(deal)}
-				</div>
-			)
+				)
+			}
+			else{
+				borderColor = "panel card-1 panel-border-red"
+				return(
+					<div className="deals-gap col-md-6" key={deal._id}>
+						<div>
+							<Link to={url}>
+				        		<div className={borderColor}>
+				        			<div className="general-header">
+				        				General Deal
+				        			</div>
+				        			<img src={deal.image} className="panel-img-head surround" />
+				        			<div className="bud-left-buff">
+					        			<h3>{deal.title}</h3>
+					        			<p>{deal.description}</p>
+					        			<p>Expiration: {deal.expiration}</p>
+					        			<p># Available: {deal.timesUsed}/{deal.maxn}</p>
+					        			<p>Upvotes: {deal.upvotes}</p>
+				        			</div>
+				        		</div>
+							</Link>
+						</div>
+						{this.renderButton(deal)}
+					</div>
+				)
+			}
+			
 		})
 	}
     render() {

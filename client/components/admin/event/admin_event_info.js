@@ -1,16 +1,19 @@
 import React from 'react';
 import ImageUpload from './image_upload';
 import {browserHistory} from 'react-router';
+import DatePicker from "react-bootstrap-date-picker";
 
 class AdminEventInfo extends React.Component {
 	constructor(props){
 		super(props);
+		var value = new Date().toISOString();
 		this.state = {
 			pubWords: "Private",
 			title: "",
 			date: "",
 			desc: "",
-			address: ""
+			address: "",
+			value: value
 		}
 	}
 	deleteEvent(){
@@ -41,7 +44,7 @@ class AdminEventInfo extends React.Component {
 	    var pageID = res;
 	    var eventID = pos;
 	    var title = this.refs.title.value.trim();
-	    var dateTime = this.refs.date.value.trim();
+	    var dateTime = this.state.value;
 	    var description = this.refs.desc.value.trim();
 	    var published;
 	    var phyAddress = this.refs.address.value.trim();
@@ -51,6 +54,7 @@ class AdminEventInfo extends React.Component {
 	    else{
 	    	published = true
 	    }
+	    console.log(dateTime)
 		Meteor.call('dande.updateEvents',pageID, eventID, title, dateTime, description, published, phyAddress, (error, data) => {
             if(error){
                 console.log(error)
@@ -59,6 +63,12 @@ class AdminEventInfo extends React.Component {
                 console.log('description updated')
             }
         })
+	}
+	handleChange(value){
+		this.setState({
+	      value: value
+	    });
+	    console.log(value)
 	}
 	flipPub(){
 		if(this.state.pubWords == "Public"){
@@ -96,19 +106,19 @@ class AdminEventInfo extends React.Component {
 				    			<div className="col-md-10 col-md-offset-1">
 								  <div className="form-group">
 								    <label htmlFor="exampleInputEmail1">Event Title</label>
-								    <input type="text" className="form-control foc-card" ref="title" defaultValue={this.state.title} placeholder="Event Title"/>
+								    <input type="text" className="form-control foc-card" ref="title" defaultValue={this.props.event.title} placeholder="Event Title"/>
 								  </div>
-								  <div className="form-group">
-								    <label htmlFor="exampleInputEmail1">Event Date</label>
-								    <input type="text" className="form-control foc-card" ref="date" defaultValue={this.state.date} placeholder="Event Date"/>
+								  <label htmlFor="exampleInputEmail1">Event Date</label>
+								  <div className="form-group foc-card">
+								  	<DatePicker ref="date" value={this.state.value} onChange={this.handleChange.bind(this)} />
 								  </div>
 								  <div className="form-group">
 								    <label htmlFor="exampleInputEmail1">Event Description</label>
-								    <input type="text" className="form-control foc-card" ref="desc" defaultValue={this.state.desc} placeholder="Event Description"/>
+								    <input type="text" className="form-control foc-card" ref="desc" defaultValue={this.props.event.description} placeholder="Event Description"/>
 								  </div>
 								  <div className="form-group">
 								    <label htmlFor="exampleInputEmail1">Event Address</label>
-								    <input type="text" className="form-control foc-card" ref="address" defaultValue={this.state.address} placeholder="Event Description"/>
+								    <input type="text" className="form-control foc-card" ref="address" defaultValue={this.props.event.phyAddress} placeholder="Event Description"/>
 								  </div>
 								  	<label>Make This Event Seen by Users (public)</label>
 								  	<br/>

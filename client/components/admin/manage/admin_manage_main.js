@@ -6,14 +6,14 @@ import AdminManageBody from './admin_manage_body';
 
 class AdminManageMain extends Component {
     render() {
-      if(!this.props.adminCards){
+      if(!this.props.adminCards || !this.props.thisPage){
         return<div></div>
       }
         return (
         	<div>
         		<div className="container-fluid bg-3 text-center">
               <h1 className="margin">Manage Page </h1>
-              <AdminManageBody adminCards={this.props.adminCards} />
+              <AdminManageBody adminCards={this.props.adminCards} thisPage={this.props.thisPage} />
             </div> 
         	</div>
         );
@@ -25,7 +25,8 @@ export default createContainer((props)=>{
     
   var pageID = props.params.pageId;
   Meteor.subscribe('adminCards', pageID);
+  Meteor.subscribe('pages');
 
-  return{adminCards: GiftCards.find({}).fetch()}
+  return{adminCards: GiftCards.find({}).fetch(), thisPage: Pages.findOne({_id: pageID})}
 
 }, AdminManageMain); 

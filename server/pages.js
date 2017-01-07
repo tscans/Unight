@@ -1,11 +1,13 @@
 import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
+import {Notification} from '../imports/collections/notification';
 
 Meteor.methods({
 	'pages.makePage': function(orgName, proPict, phyAddress, zipCode, aboutUs){
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		return Pages.insert({
 			ownedBy: [theUserId],
+			createdAt: new Date(),
 			orgName: orgName,
 			proPict: proPict,
 			phyAddress: phyAddress,
@@ -118,6 +120,18 @@ Meteor.methods({
 		Pages.update(page._id, {$push: {
 			pageUsers: user
 		}})
+		var individual = profileID.name;
+		var message = "User, "+individual+", has just become a member of your organization.";
+		var type = "GM";
+
+		Notification.insert({
+			ownerId: page.ownedBy[0],
+			pageOwner: page._id,
+			message: message,
+			type: type,
+			createdAt: new Date(),
+			
+		});
 		return Profile.update(profileID._id, {$push: {
 			goldMember: pageID
 		}})

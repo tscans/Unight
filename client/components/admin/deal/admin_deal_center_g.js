@@ -1,30 +1,15 @@
 import React from 'react';
 import ImageUploadG from './image_upload_g';
-import DatePicker from "react-bootstrap-date-picker";
+import {browserHistory} from 'react-router';
 
 class AdminDealCenterG extends React.Component {
-    constructor(props){
-		super(props);
-		var value = new Date().toISOString();
-		this.state = {
-			gold: {
-				title: '',
-				desc: '',
-				expi: ''
-			},
-			checker: false,
-			value: value
-		}
-	}
-	check(){
-		this.setState({checker: !this.state.checker})
-	}
-	
 	editPageData(event){
 		event.preventDefault();
 		var title = this.refs.title.value;
         var desc = this.refs.desc.value;
-        var expi = this.state.value;
+        var expi = this.refs.expi.value;
+        var maxn = this.refs.maxn.value;
+        console.log(expi);
 
         var str = window.location.pathname;
 	    var res = str.substring(7, str.lastIndexOf('/deal'));
@@ -34,31 +19,23 @@ class AdminDealCenterG extends React.Component {
 	    var res = str.substring(str.lastIndexOf('/deal')+12, str.length - 1);
 	    var dealID = res;
 	    
-	    var checkb = this.state.checker;
+	    expi = parseInt(expi);
+	    console.log(expi);
+	    maxn = parseInt(maxn);
         
-		Meteor.call('dande.updateDandE', pageID, dealID, title, desc, expi, checkb, (error, data) => {
+		Meteor.call('dande.updateDandE', pageID, dealID, title, desc, expi, maxn, (error, data) => {
 			if(error){
         		console.log("There was an error");
         		console.log(error);
             }
             else{
-            	console.log('completed without error')
+            	console.log('completed without error');
+            	var str = window.location.pathname;
+			    var res = str.substring(0, str.lastIndexOf('/deal')+12);
+			    var pageID = res;
+            	browserHistory.push(pageID);
             }
 		});
-	}
-	changeDefault(){
-		console.log('here')
-		this.refs.title.value = this.props.deals.title;
-		this.refs.desc.value = this.props.deals.description;
-		this.refs.expi.value = this.props.deals.expiration;
-		this.setState({checker: this.props.deals.dealsOn})
-		console.log('here', this.state.checker)
-	}
-	handleChange(value){
-		this.setState({
-	      value: value
-	    });
-	    console.log(value)
 	}
     render() {
     	if(!this.props.deals){
@@ -67,33 +44,33 @@ class AdminDealCenterG extends React.Component {
     	
         return (
         	<div>
-        		<button onClick={this.changeDefault.bind(this)} className="btn btn-success card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Show Current</button>
         		<form className="card-3 white-back" onSubmit={this.editPageData.bind(this)}>
     			<div className="lower"></div>
 	    			<div className="col-md-10 col-md-offset-1">
 					  <div className="form-group">
 					    <label htmlFor="exampleInputEmail1">Deal Title</label>
-					    <input type="text" className="form-control foc-card" ref="title" defaultValue={this.state.gold.title} placeholder="Deal Title"/>
+					    <input type="text" className="form-control foc-card" ref="title" defaultValue={this.props.deals.title} placeholder="Deal Title"/>
 					  </div>
 					  <div className="form-group">
 					    <label htmlFor="exampleInputEmail1">Description</label>
-					    <input type="text" className="form-control foc-card" ref="desc" defaultValue={this.state.gold.desc} placeholder="Deal Description"/>
+					    <input type="text" className="form-control foc-card" ref="desc" defaultValue={this.props.deals.description} placeholder="Deal Description"/>
 					  </div>
 					  <div className="form-group">
-					    <label htmlFor="exampleInputEmail1">Do you want to offer this deal now?</label>
-					    <input type="checkbox" className="form-control" ref="cb" onClick={this.check.bind(this)} checked={this.state.checker}/>
+					    <label htmlFor="exampleInputEmail1"># Days to Last (1-90)</label>
+					    <input type="number" className="form-control foc-card" ref="expi" placeholder="# of Days the Deal Will be Available"/>
 					  </div>
-					  <div className="form-group foc-card">
-					  	<DatePicker value={this.state.value} onChange={this.handleChange.bind(this)} />
+					  <div className="form-group">
+					    <label htmlFor="exampleInputEmail1">Max Number of Users</label>
+					    <input type="number" className="form-control foc-card" ref="maxn" defaultValue={this.props.deals.maxn} placeholder="Maximum Number of Users to Accept the Deal"/>
+					  </div>
+					  <div className="form-group">
+					    <label htmlFor="exampleInputEmail1">Deal Picture <i>(image upload/save occurs immediately)</i></label>
+					    <div className="center-div">
+					    	<ImageUploadG />
+					    </div>
 					  </div>
 				  </div>
-				  <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save Changes</button>
-				<div className="form-group">
-				    <label htmlFor="exampleInputEmail1">Deal Picture <i>(image upload/save occurs immediately)</i></label>
-				    <div className="center-div">
-				    	<ImageUploadG />
-				    </div>
-				  </div>
+				  <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save and Publish</button>
 				</form>
         	</div>
         );

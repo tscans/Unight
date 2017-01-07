@@ -19,6 +19,8 @@ class MemWgotePage extends React.Component {
                 <h6>{this.props.wgot.dateTime}</h6>
                 <h4>Description</h4>
                 <h6>{this.props.wgot.description}</h6>
+                <h4>Number of People Attending</h4>
+                <h6>{this.props.wgot.numAttending}</h6>
             </div>
         );
     }

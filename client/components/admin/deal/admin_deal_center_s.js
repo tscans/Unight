@@ -10,7 +10,6 @@ class AdminDealCenterS extends React.Component {
 			silver: {
 				title: '',
 				desc: '',
-				expi: ''
 			},
 			checker: false,
 			value: value
@@ -50,7 +49,6 @@ class AdminDealCenterS extends React.Component {
 		console.log('here')
 		this.refs.title.value = this.props.deals.title;
 		this.refs.desc.value = this.props.deals.description;
-		this.setState({value: this.props.deals.expiration});
 		this.setState({checker: this.props.deals.dealsOn});
 		console.log('here', this.state.checker)
 	}

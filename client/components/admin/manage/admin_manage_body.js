@@ -5,8 +5,8 @@ class AdminManageBody extends Component {
       var total = 0;
       this.props.adminCards.map((t)=>{
         total = total + t.amount
-      })
-      var numUsers = this.props.adminCards.length
+      });
+      var numUsers = this.props.thisPage.pageUsers.length
       var someStats = [];
       someStats[0] = total;
       someStats[1] = numUsers;
@@ -21,7 +21,7 @@ class AdminManageBody extends Component {
       return (
       	<div>
           <h3>The total amount of Gift Cards Purchased: {total}</h3>
-          <h3>Number of users: {numUsers}</h3>
+          <h3>Number of Members to Page: {numUsers}</h3>
       	</div>
       );
     }

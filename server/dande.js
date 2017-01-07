@@ -1,5 +1,6 @@
 import {Pages} from '../imports/collections/pages';
 import {DandE} from '../imports/collections/dande';
+import moment from 'moment';
 
 Meteor.methods({
 	'dande.makeDandE': function(pageID, typeDE){
@@ -18,6 +19,15 @@ Meteor.methods({
 		if(page.phyAddress == ""){
 			return;
 		}
+		var genDeals = DandE.find({forPage: pageID,typeDE:"DD"}).fetch();
+		var goldDeals = DandE.find({forPage: pageID,typeDE:"GD"}).fetch();
+		console.log(genDeals.length)
+		if(genDeals.length > 5){
+			return;
+		}
+		if(goldDeals.length > 5){
+			return;
+		}
 		console.log(page._id)
 		return DandE.insert({
 			topUser: user,
@@ -30,16 +40,18 @@ Meteor.methods({
 			image: 'http://i.imgur.com/urR5bHp.png',
 			numAttending: 0,
 			upvotes: 0,
+			timesUsed: 0,
 			upvotedBy: [],
-			dateTime: "Date",
-			title: 'Title',
-			description: 'Description',
-			expiration: 'Expiration',
-			published: false,
-			longlat: page.longlat
+			usedBy: [],
+			dateTime: "",
+			title: '',
+			description: '',
+			expiration: '',
+			longlat: page.longlat,
+			createdAt: new Date(),
 		});
 	},
-	'dande.updateDandE': function(pageID, dealID, dealinfo, desc, expi, checkb){
+	'dande.updateDandE': function(pageID, dealID, dealinfo, desc, expi, maxn){
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
@@ -56,15 +68,38 @@ Meteor.methods({
 		if(page._id != deal.forPage){
 			return;
 		}
+		if(deal.dealsOn){
+			return;
+		}
 		if(deal.topUser != user){
 			return;
 		}
-		console.log(checkb)
+		if(isNaN(expi)){
+			console.log('1')
+			expi = 1;
+		}
+		if(typeof(expi) != "number"){
+			console.log('not a num')
+			return;
+		}
+		expi = parseInt(expi);
+		if(expi < 1 && expi > 90){
+			console.log('out of bounds')
+			return;
+		}
+
+		var newExpi = moment(newExpi).add(expi,'days').format("ll"); 
+
 		return DandE.update(dealID, {$set: {
 			title: dealinfo,
 			description: desc,
-			expiration: expi,
-			dealsOn: checkb
+			expiration: newExpi,
+			maxn: maxn,
+			upvotes: 0,
+			timesUsed: 0,
+			upvotedBy: [],
+			usedBy: [],
+			dealsOn: true
 			
 		}})
 	},
@@ -116,11 +151,12 @@ Meteor.methods({
 		if(event.topUser != user){
 			return;
 		}
+		var newExpi = moment(dateTime).format("ll"); 
 		return DandE.update(eventID, {$set: {
 			title: title,
-			dateTime: dateTime,
+			dateTime: newExpi,
 			description: description,
-			published: published,
+			dealsOn: published,
 			phyAddress: phyAddress,
 			
 		}})

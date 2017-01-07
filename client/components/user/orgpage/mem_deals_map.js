@@ -6,9 +6,10 @@ import moment from 'moment';
 
 class MemDealsMap extends React.Component {
 	renderList(){
-		console.log(this.props.wgot)
+		console.log(this.props.pageDeals)
 		console.log('hahahahaha')
-		return this.props.wgot.map(wgot=>{
+
+		return this.props.pageDeals.map(wgot=>{
 			console.log(wgot)
 			if(wgot.typeDE != "E"){
 				var pathName = window.location.pathname;
@@ -60,7 +61,7 @@ class MemDealsMap extends React.Component {
 		})
 	}
 	render(){
-		if(!this.props.wgot){
+		if(!this.props.pageDeals){
 			return<div></div>
 		}
 		return(
@@ -75,7 +76,7 @@ export default createContainer((props)=>{
 	console.log(props.pageID)
     Meteor.subscribe('pageDeals', props.pageID);
 
-    return {wgot: DandE.find({}).fetch()}
+    return {pageDeals: DandE.find({forPage: props.pageID, dealsOn: true}).fetch()}
 
 	
 }, MemDealsMap); 

@@ -4,6 +4,8 @@ import { Pages } from '../imports/collections/pages';
 import {DandE} from '../imports/collections/dande';
 import {TomBook} from '../imports/collections/tombook';
 import {GiftCards} from '../imports/collections/giftcards';
+import {Notification} from '../imports/collections/notification';
+import moment from 'moment';
 
 Meteor.startup(() => {
 	var stripe = StripeAPI(Meteor.settings.StripePri);
@@ -11,18 +13,35 @@ Meteor.startup(() => {
 		console.log('LOL BUFF ACTIVATED')
 	}
 	Meteor.setTimeout(buff, 5000)
+	var runDailyExpiCheck = false;
 	console.log('lolwhatever')
+
 	Meteor.setInterval(function() {
-	    console.log("checking now");
-	    var d = new Date();
-		var n = d.getMinutes();
-		console.log(n)
-		if(n%2== 0){
-			console.log('lol its the first')
-			
-		} 
-	}, 30000);
-	console.log('hahaha')
+		if(!runDailyExpiCheck){
+			console.log("checking now");
+		    var d = new Date();
+			var n = d.getMinutes();
+			var newExpi = moment(d).add(5,'days').format("ll"); 
+			var allDandEs = DandE.find({expiration: newExpi}).fetch();
+			for(var i =0;i<allDandEs.length;i++){
+				console.log(allDandEs[i]._id)
+				DandE.update(allDandEs[i]._id, {$set:{dealsOn: false}})
+				var message = "Your deal - '"+allDandEs[i].title+"' - has reached its expiration date and expired.";
+				Notification.insert({
+					ownerId: allDandEs[i].topUser,
+					pageOwner: allDandEs[i].forPage,
+					message: message,
+					type: "DD",
+					createdAt: new Date(),
+				});
+			}
+			console.log(allDandEs.length)
+			runDailyExpiCheck = true
+		}
+	    
+
+	}, 10000);
+
 	//6 hours times 60 minutes times 60 seconds times 1000 = 21,600,000
 
 	Meteor.publish('profile', function(){
@@ -33,7 +52,6 @@ Meteor.startup(() => {
 		if(!user){
 			return;
 		}
-		
 		return Pages.find({
 			ownedBy: {$elemMatch: {$eq: user}}
 		})
@@ -107,8 +125,8 @@ Meteor.startup(() => {
 		if(!user){
 			return;
 		}
-		
-		return DandE.find({}, { limit: per_page, sort: {upvotes: -1}})
+
+		return DandE.find({dealsOn: true}, { limit: per_page, sort: {upvotes: -1}})
 	});
 	Meteor.publish('tombook', function(){
 		var user = this.userId.toString();
@@ -164,5 +182,13 @@ Meteor.startup(() => {
 			return;
 		}
 		return GiftCards.find({pageID: pageID})
+	});
+	Meteor.publish('notifications', function(){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+
+		return Notification.find({ownerId: user});
 	});
 });

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Pages} from '../../../../imports/collections/pages';
+import {Notification} from '../../../../imports/collections/notification';
+import AdminLivelookBody from './admin_livelook_body';
 
 class AdminLivelookMain extends Component {
     checkMembers(){
@@ -10,17 +12,14 @@ class AdminLivelookMain extends Component {
       }
     }
     render() {
-        if(!this.props.pages){
+        if(!this.props.pages || !this.props.notifications){
           return <div></div>
         }
         {this.checkMembers()}
         return (
         	<div>
         		<div className="container-fluid bg-3 text-center">
-                  <h1 className="margin">Live Look Page </h1>
-                  <h1 className="margin">Live Look Page </h1>
-                  <h1 className="margin">Live Look Page </h1>
-                  <h1 className="margin">Live Look Page </h1>
+                  <AdminLivelookBody notifications={this.props.notifications} />
             	</div> 
         	</div>
         );
@@ -31,10 +30,9 @@ export default createContainer((props)=>{
     const theId = Meteor.userId();
     
     var pageID = props.params.pageId
-    console.log(pageID)
     Meteor.subscribe('pages');
-
-    return {pages: Pages.findOne({_id: pageID})}
+    Meteor.subscribe('notifications');
+    return {pages: Pages.findOne({_id: pageID}), notifications: Notification.find({}).fetch()}
 
   
 }, AdminLivelookMain); 

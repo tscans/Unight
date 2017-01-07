@@ -10,7 +10,8 @@ class MemWgotdBody extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            iDPass: this.props.params.pageId
+            iDPass: this.props.params.pageId,
+            gulag: ""
         }
     }
     renderDealType(){
@@ -39,6 +40,15 @@ class MemWgotdBody extends React.Component {
         Meteor.call('tombook.updateBook', deid, type, (error, data) => {
             if(error){
                 console.log(error)
+                console.log(error.error)
+                if(error.error == 501){
+                    this.setState({gulag: "Sorry. You can not add this deal to your TomBook because you are not a member of this organization."})
+                    $('#myModal').modal('show'); 
+                }
+                if(error.error == 509){
+                    this.setState({gulag: "User already used this deal."})
+                    $('#myModal').modal('show'); 
+                }
             }
             else{
                 console.log('Success')
@@ -76,16 +86,39 @@ class MemWgotdBody extends React.Component {
             )
         }
     }
+    noAccessCheck(){
+        return (
+            <div>
+                <div className="modal fade all-black" id="myModal" role="dialog">
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <button type="button" className="close" data-dismiss="modal">&times;</button>
+                        <h4 className="modal-title">Deal Not Added</h4>
+                      </div>
+                      <div className="modal-body">
+                        <p>{this.state.gulag}</p>
+                      </div>
+                      <div className="modal-footer">
+                        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        )
+    }
     render() {
         console.log(this.state.iDPass)
         if(!this.props.tombook){
             return(<div></div>)
         }
-
+        console.log(this.props)
         return (
             <div>
                 <div className="col-md-6" className="container-fluid bg-3 text-center bump-push-bar up-a-tad">
                     <div className="map-push">
+                        {this.noAccessCheck()}
                         <div className="card-2">
                             <a href="#" onClick={browserHistory.goBack}><button className="btn btn-primary btn-extend"><h4><span className="glyphicon glyphicon-arrow-left"></span> Back</h4></button></a>
                         </div>
