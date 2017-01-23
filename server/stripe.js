@@ -2,12 +2,16 @@ import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
 
 Meteor.methods({
-  'stripe.makeAccount': function(){
+  'stripe.makeAccount': function(cardToken){
+    var user = Meteor.users.findOne(this.userId)._id;
     var stripe = StripeAPI(Meteor.settings.StripePri);
     var acct;
     var profile = Profile.findOne({ownerId: user});
+    console.log(profile)
+    console.log('check', profile.stripeBusiness == null)
     if(profile.stripeBusiness == null){
       var busCreate = Async.runSync(function(done){
+        console.log('running here')
       stripe.accounts.create({
           managed: true,
           country: 'US',
@@ -42,8 +46,9 @@ Meteor.methods({
             date: Math.floor(Date.now() / 1000),
             ip: "192.168.1.1"
           }
-        }, function(err, account) {
-          done(err, account);
+        }, function(error, account) {
+          console.log(error)
+          done(error, account);
 
         });
       })
@@ -53,6 +58,9 @@ Meteor.methods({
       }
       else{
         console.log(busCreate.result.id)
+        var user = this.userId.toString();
+        var profile = Profile.findOne({ownerId: user});
+        Profile.update(profile._id, {$set:{stripeBusiness: busCreate.result.id}});
       }
 
     }
@@ -60,13 +68,13 @@ Meteor.methods({
       var custCreate = Async.runSync(function(done){
         stripe.customers.create({
           source: cardToken
-        }, function(err, response){
-          done(err, response);
+        }, function(error, response){
+          done(error, response);
         })
       })
 
       if(custCreate.error){
-        throw new Meteor.error(500, "stripe-error", custCreate.error.message);
+        console.log(custCreate.error)
       }else{
         Profile.update(profile._id, {$set: {stripeBusCust: custCreate.result.id}});
         return
@@ -87,8 +95,8 @@ Meteor.methods({
       var custCreate = Async.runSync(function(done){
         stripe.customers.create({
           source: cardToken
-        }, function(err, response){
-          done(err, response);
+        }, function(error, response){
+          done(error, response);
         })
       })
 
@@ -102,8 +110,8 @@ Meteor.methods({
       var custUpdate = Async.runSync(function(done){
         stripe.customers.update(profile.stripeCust,{
           source: cardToken
-        }, function(err, result) {
-          done(err, result);
+        }, function(error, result) {
+          done(error, result);
         })
       })
 
@@ -124,8 +132,8 @@ Meteor.methods({
         }
       }else{
         var custDetails = Async.runSync(function(done){
-          stripe.customers.retrieve(profile.stripeCust, function(err, result){
-            done(err, result);
+          stripe.customers.retrieve(profile.stripeCust, function(error, result){
+            done(error, result);
           })
         })
 

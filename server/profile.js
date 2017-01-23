@@ -35,7 +35,8 @@ Meteor.methods({
 				giftCards: [],
 				businessVerified: false,
 				liveProfile: true,
-				friendUsers: []
+				friendUsers: [],
+				stripeBusiness: null
 			});
 		})
 	},

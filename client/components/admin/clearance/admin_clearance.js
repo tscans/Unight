@@ -5,6 +5,10 @@ import {Profile} from '../../../../imports/collections/profile';
 import SelectNav from '../select/select_nav';
 
 class AdminSelectMain extends Component {
+  constructor(props){
+    Stripe.setPublishableKey(Meteor.settings.public.StripePub);
+    super(props);
+  }
 	checkCleared(){
 		if(!this.props.profile.businessVerified){
 			setTimeout(()=>{
@@ -35,14 +39,26 @@ class AdminSelectMain extends Component {
         )
     }
     createAccount(){
-    	Meteor.call('stripe.makeAccount',(error,data)=>{
-    		if(error){
-    			console.log(error);
-    		}
-    		else{
-    			console.log(data);
-    		}
-    	})
+      var cardToken = {
+          "number": "4242424242424242",
+          "cvc": "112",
+          "exp_month": "08",
+          "exp_year": "18"
+      }
+      Stripe.createToken(cardToken, function(status, result){
+        if(result.error){
+          alert(result.error.message);
+        }else{
+          Meteor.call('stripe.makeAccount', result.id, (error, data)=>{
+              if(error){
+                alert(error.message);
+                return;
+              }else{
+                console.log('worked fine')
+              }
+            })
+        }
+      })
     }
 	render(){
 		if(!this.props.profile){
