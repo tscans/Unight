@@ -103,7 +103,7 @@ class MemOrgRight extends Component {
       if(this.state.header.includes('Gift')){//whatever gift cards they allow
         return(
           <div>
-            <MemGiftsMap pages={this.props.pages} pageID={this.props.pageID} />
+            <MemGiftsMap pages={this.props.pages} pageID={this.props.pageID} profile={this.props.pro}/>
           </div>
         )
       }

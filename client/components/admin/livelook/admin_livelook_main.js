@@ -32,7 +32,7 @@ export default createContainer((props)=>{
     var pageID = props.params.pageId
     Meteor.subscribe('pages');
     Meteor.subscribe('notifications');
-    return {pages: Pages.findOne({_id: pageID}), notifications: Notification.find({}).fetch()}
+    return {pages: Pages.findOne({_id: pageID}), notifications: Notification.find({pageOwner: pageID}).fetch()}
 
   
 }, AdminLivelookMain); 

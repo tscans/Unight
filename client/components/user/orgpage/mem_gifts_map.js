@@ -1,15 +1,51 @@
 import React from 'react';
+import {Link} from 'react-router';
 
 class MemGiftsMap extends React.Component {
 	constructor(props){
+		Stripe.setPublishableKey(Meteor.settings.public.StripePub);
 		super(props);
 		this.state = {
-			giftClicked: 0
+			giftClicked: 0,
+			custCard: null,
+			returnedOnce: false,
+			surveySet: true,
+			friendSelect: null,
+			showFriends: false
 		}
 	}
 	addCard(){
 		console.log('added');
-		Meteor.call('giftcards.addGiftCard', Meteor.userId(), this.props.pageID, this.state.giftClicked,(error,data)=>{
+
+		var cardToken = {
+	        "number": "4242424242424242",
+	        "cvc": "112",
+	        "exp_month": "08",
+	        "exp_year": "18"
+	    }
+	    console.log(!this.props.profile.stripeCust || !this.state.surveySet)
+
+	    if(!this.props.profile.stripeCust || !this.state.surveySet){
+	    	Stripe.createToken(cardToken, function(status, result){
+		        if(result.error){
+		          alert(result.error.message);
+		        }else{
+		          Meteor.call('stripe.userBuyCard', result.id, (error, data)=>{
+			            if(err){
+			              alert(err.message);
+			              return;
+			            }else{
+			              console.log('worked fine')
+		            	}
+		          	})
+	        	}
+	      	})
+	    }
+      	
+	    var friend = this.state.friendSelect;
+
+		console.log('should not run if error');
+		Meteor.call('giftcards.addGiftCard', Meteor.userId(), this.props.pageID, this.state.giftClicked, friend, (error,data)=>{
 	        if(error){
 	          console.log(error)
 	        }
@@ -18,6 +54,15 @@ class MemGiftsMap extends React.Component {
 	          $('#giftModal').modal('hide');
 	        }
 	    })
+	}
+	giveCardAway(){
+		if(this.state.friendSelect){
+			return(
+				<div>
+					You have chosen to give this card to {this.state.friendSelect.name}
+				</div>
+			)
+		}
 	}
 	renderButton(){
 		switch (this.state.giftClicked) {
@@ -34,6 +79,19 @@ class MemGiftsMap extends React.Component {
 		    	amountMoney = "$100";
 		    	break;
 		}
+		var custCard = null;
+		Meteor.call("stripe.obtainCardInfo", (error,data)=>{
+			if(error){
+				console.log(error);
+			}
+			else{
+				console.log(data);
+				if(!this.state.returnedOnce){
+					this.setState({custCard: data, returnedOnce: true})
+				}
+
+			}
+		})
         return(
           <div>
             <div className="modal fade all-black" id="giftModal" role="dialog">
@@ -44,6 +102,11 @@ class MemGiftsMap extends React.Component {
                         <h4 className="modal-title">Purchase a Gift Card {amountMoney}</h4>
                       </div>
                       <div className="modal-body">
+                      	{this.cardSurvey()}
+                      	{this.giveCardAway()}
+                      	<button className="card-2 btn btn-primary top-bot-not" onClick={()=>{this.setState({showFriends: !this.state.showFriends})}}>Give Card to a Friend</button>
+                        {this.listFriends()}
+
                         <p>Are you sure you want to purchase a gift card for {amountMoney}?</p>
                       </div>
                       <div className="modal-footer">
@@ -55,6 +118,52 @@ class MemGiftsMap extends React.Component {
               </div>
           </div>
         )
+    }
+    setFriend(f){
+		this.setState({friendSelect: f})
+	}
+	listFriends(){
+		if(this.state.showFriends){
+			if(this.props.profile.friendUsers.length == 0){
+				return<div>You have no friends saved. To add friends go to your Account page.</div>
+			}
+			else{
+				return this.props.profile.friendUsers.map(f=>{
+					return(
+						<div key={f.name}>
+							<a className="float-right btn btn-success" href="#" onClick={() => {this.setFriend(f)}}><span className="glyphicon glyphicon-user"></span></a>
+							<p>{f.name} -- {f.number}</p>
+						</div>
+					)
+				})
+			}
+		}
+		else{
+			return(
+				<div></div>
+			)
+		}
+	}
+    cardSurvey(){
+    	if(!this.state.custCard){
+    		return<div></div>
+    	}
+    	if(this.state.custCard.hasCard && this.state.surveySet){
+    		return(
+    			<div>
+    				<button className="card-1 btn btn-default" onClick={()=>{this.setState({surveySet: false})}}>Change/Update Payment</button>
+    				<p>Current Saved Payment Information</p>
+    				<p><b>{this.state.custCard.cardInfo.brand}</b> ending in <b>{this.state.custCard.cardInfo.last4}</b></p>
+    				<p>Expires: <b>{this.state.custCard.cardInfo.exp_month}/{this.state.custCard.cardInfo.exp_year}</b></p>
+    			</div>
+    		)
+    	}else{
+	    	return(
+	    		<div>
+	    			Enter Data
+	    		</div>
+	    	)
+	    }
     }
 	renderTen(){
 		if(this.props.pages.allowedGifts[0]){

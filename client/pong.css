@@ -1,3 +1,7 @@
+::selection {
+ 
+    background: #8D4993;
+}
 body {
       font: 20px;
       line-height: 1.8;
@@ -6,18 +10,82 @@ body {
   p {font-size: 16px;}
   .margin {margin-bottom: 45px;}
   .bg-1 {
-      background-color: #64CDF4; /* Blue */
+
+  background: #64CDF4; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(-60deg, rgba(100, 205, 244,1), rgba(183, 232, 250,1)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(-60deg, rgba(100, 205, 244,1), rgba(183, 232, 250,1)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(-60deg, rgba(100, 205, 244,1), rgba(183, 232, 250,1)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(-60deg, rgba(100, 205, 244,1), rgba(183, 232, 250,1)); /* Standard syntax */
+ /* Blue */
       color: #ffffff;
   }
+  .bg-1-alpha {
+
+  background: #64CDF4; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(-60deg, rgba(100, 205, 244,.5), rgba(183, 232, 250,.5)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(-60deg, rgba(100, 205, 244,.5), rgba(183, 232, 250,.5)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(-60deg, rgba(100, 205, 244,.5), rgba(183, 232, 250,.5)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(-60deg, rgba(100, 205, 244,.5), rgba(183, 232, 250,.5)); /* Standard syntax */
+ /* Blue */
+      color: #ffffff;
+  }/*http://www.publicdomainpictures.net/pictures/200000/velka/chicago-skyline-1476622708uk5.jpg*/
+.background-img {
+    background:url('http://i.imgur.com/wDoCUQq.png')no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: relative;
+    background-size: 100% 100%;
+}
+.background-other-img {
+    background:url('http://i.imgur.com/oYrYW43.jpg')no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: relative;
+    background-size: 100% 100%;
+}
+.background-other-img-3 {
+    background:url('http://i.imgur.com/2tDbRHE.jpg')no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: relative;
+    background-size: 100% 100%;
+}
+
   .bg-2 {
+      background-color: #522256;
+      background-image: -webkit-linear-gradient(30deg, #522256 65%, #682c6d 65%);
       background-color: #522256; /* Dark Blue */
       color: #ffffff;
   }
   .bg-3 {
-      background-color: #ffffff; /* White */
+      background-image: -webkit-linear-gradient(150deg, rgba(255, 255, 255,1) 45%, rgba(242, 242, 242,1) 45%);
       color: #555555;
   }
+  .bg-1-blue {
+      background-image: -webkit-linear-gradient(150deg, rgba(255, 255, 255,1) 45%,rgba(100, 205, 244,1) 45%);
+      color: #555555;
+  }
+  .bg-1-purple {
+      background-image: -webkit-linear-gradient(30deg, rgba(255, 255, 255,0) 55%,rgba(100, 205, 244,1) 55%);
+      color: #555555;
+  }
+  .bg-3-alpha {
+      background-image: -webkit-linear-gradient(150deg, rgba(255, 255, 255,.7) 45%, rgba(242, 242, 242,.7) 45%);
+      color: #555555;
+  }
+  .bg-3-full-alpha {
+      background-image: -webkit-linear-gradient(30deg, rgba(255, 255, 255,.4) 55%, rgba(255, 255, 255,.6) 55%);
+      color: #333;
+  }
   .bg-4 {
+      background-color: #522256;
+      background-image: -webkit-linear-gradient(150deg, #522256 45%, #682c6d 45%);
       background-color: #522256; /* Dark Purple */
       color: #fff;
   }

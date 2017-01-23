@@ -1,11 +1,28 @@
 import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
 import {Notification} from '../imports/collections/notification';
+import moment from 'moment';
 
 Meteor.methods({
-	'pages.makePage': function(orgName, proPict, phyAddress, zipCode, aboutUs){
+	'pages.makePage': function(){
+		var orgName = '';
+		var proPict = 'http://i.imgur.com/ahJEDUm.png';
+		var phyAddress = '';
+		var zipCode = '';
+		var aboutUs = 'Tell users about your business here!';
+
 		const theUserId = Meteor.users.findOne(this.userId)._id;
-		return Pages.insert({
+		var numPages = Pages.find({ownedBy: {$elemMatch: {$eq: theUserId}}}).count();
+		var profile = Profile.findOne({ownerId: theUserId});
+		if(!profile.businessVerified){
+			return;
+		}
+		console.log(numPages);
+		if((numPages+1)>3){
+			return;
+		}
+		var profile = Profile.findOne({ownerId: theUserId});
+		Pages.insert({
 			ownedBy: [theUserId],
 			createdAt: new Date(),
 			orgName: orgName,
@@ -20,7 +37,18 @@ Meteor.methods({
 			hasEvents: false,
 			hasGiftCards: false,
 			allowedGifts: [],
-			monthlyTransactions: 0
+			monthlyTransactions: 0,
+			requiredForGold: null,
+			whoDealsMonthly: []
+		},
+		function(error,data){
+		  	if(error){
+		  		console.log(error)
+		  	}
+		  	else{
+		  		return Profile.update(profile._id, {$push:{myPages: pageId}});
+		  	}
+
 		});
 	},
 	'pages.dealsBool': function(hasDeals){
@@ -61,6 +89,28 @@ Meteor.methods({
 			hasEvents: hasEvents,
 			hasGiftCards: hasGiftCards,
 			website: website
+		}})
+	},
+	'pages.updateGoldRequire': function(pageID,requiredForGold){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		if(page.ownedBy[0] != user){
+			console.log('failed authentication')
+			return;
+		}
+
+		requiredForGold = parseInt(requiredForGold);
+		if(requiredForGold > 10 || requiredForGold < 1){
+			return;
+		}
+		return Pages.update(pageID, {$set: {
+			requiredForGold: requiredForGold
 		}})
 	},
 	'pages.updateGeo': function(pageID, longlat){
@@ -111,12 +161,7 @@ Meteor.methods({
 		const profileID = Profile.findOne({
 			ownerId: theUserId
 		})
-		if(profileID.goldMember.includes(pageID)){
-			return;
-		}
-		if(page.pageUsers.includes(user)){
-			return;
-		}
+
 		Pages.update(page._id, {$push: {
 			pageUsers: user
 		}})
@@ -132,8 +177,15 @@ Meteor.methods({
 			createdAt: new Date(),
 			
 		});
+		var d = new Date();
+		var expiration = moment(d).add(1,'month').format("ll");
+		Profile.update(profileID._id, {$pull: {
+			goldMember: pageID,
+			goldMemberChecks: {pageID: pageID}
+		}})
 		return Profile.update(profileID._id, {$push: {
-			goldMember: pageID
+			goldMember: pageID,
+			goldMemberChecks: {pageID: pageID, expiration: expiration, paid: true, continuity: true, amount: 500}
 		}})
 	},
 	'pages.removeGoldMember': function(pageID){
@@ -148,11 +200,20 @@ Meteor.methods({
 		const profileID = Profile.findOne({
 			ownerId: theUserId
 		})
+		function isPage(element) {
+		  return element.pageID == pageID;
+		}
+		
+		var proPackage = profileID.goldMemberChecks.find(isPage);
+		proPackage.continuity = false;
 		Pages.update(page._id, {$pull: {
 			pageUsers: user
 		}})
-		return Profile.update(profileID._id, {$pull: {
-			goldMember: pageID
+		Profile.update(profileID._id, {$pull: {
+			goldMemberChecks: {pageID: pageID}
+		}})
+		return Profile.update(profileID._id, {$push: {
+			goldMemberChecks: proPackage
 		}})
 	},
 	'pages.changeGifts': function(pageID, cardArray){

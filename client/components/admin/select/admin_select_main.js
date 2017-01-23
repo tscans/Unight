@@ -5,7 +5,6 @@ import {Link, browserHistory} from 'react-router';
 
 class AdminSelectMain extends Component {
 	renderList(){
-
 		return this.props.pages.map(page=>{
 			const url = `/admin/${page._id}/`;
 			return(
@@ -32,39 +31,32 @@ class AdminSelectMain extends Component {
 	}
 	makePage(event){
 		event.preventDefault();
-		var orgName = ''
-		var proPict = 'http://i.imgur.com/ahJEDUm.png'
-		var phyAddress = ''
-		var zipCode = ''
-		var aboutUs = 'Tell users about your business here!'
-		Meteor.call('pages.makePage', orgName, proPict, phyAddress, zipCode, aboutUs, (error, data)=> {
-            	if(error){
-            		console.log("There was an error");
-            		console.log(error);
-            	}
-            	else{
-            		pageId = data.toString()
-            		page = this.props.profile
-            				
-
-            		Meteor.call('profile.addOwner', page, pageId, (error, data) => {
-            			if(error){
-            				console.log("There was an error making the addowner");
-            				console.log(error);
-
-            			}
-            			else{
-					        var marr = "/admin/" + pageId + "/";
-            				browserHistory.push(marr)
-            			}
-            		})
-            		
-            	}
-            	
-            })
-		this.forceUpdate()
+		Meteor.call('pages.makePage', (error, data)=> {
+        	if(error){
+        		console.log("There was an error");
+        		console.log(error);
+        	}
+        	else{
+        		pageId = data.toString()
+        		page = this.props.profile
+        		var marr = "/admin/" + pageId + "/";
+        		browserHistory.push(marr)
+        		
+        	}
+        	
+        })
+	}
+	wrote(){
+		if(!this.props.profile.businessVerified){
+			var marr = "/admin-select/clearance";
+        	browserHistory.push(marr)
+		}
 	}
     render() {
+    	if(!this.props.profile){
+    		return <div></div>
+    	}
+    	this.wrote();
         return (
         	<div>
         		<SelectNav />

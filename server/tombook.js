@@ -103,7 +103,7 @@ Meteor.methods({
 			throw new Meteor.Error(505, "Cant cash Events");
 			return;
 		}
-
+		
 		var page = Pages.findOne({_id: dande.forPage});
 		var erase = false;
 		if((dande.maxn -1) == dande.timesUsed){
@@ -117,7 +117,10 @@ Meteor.methods({
 		Pages.update(page._id, {$set:{
 			monthlyTransactions: page.monthlyTransactions + 1
 		}});
-
+		
+		Pages.update(page._id, {$push:{
+			whoDealsMonthly: theUserId
+		}});
 		var individual = user.name;
 		var message = "User, "+individual+", used the deal '"+dande.title+"'.";
 		var type = dande.typeDE;

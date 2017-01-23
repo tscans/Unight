@@ -14,11 +14,12 @@ class MemMaps extends React.Component {
 	componentWillReceiveProps(props){
       console.log('maps come up')
     	var cube3 = props.allPages
-    	console.log(cube3)
+    	console.log(this.state.mapLoaded)
       if(this.state.mapLoaded){
         console.log('returned')
         return true;
       }
+      this.setMaps();
     	var geocoder = new google.maps.Geocoder();
     	var uluru = {lat: 41.8781, lng: -87.6298};
       var style = [
@@ -236,34 +237,33 @@ class MemMaps extends React.Component {
         });
 
         var tempPos;
-        function createMarker(latlng, placeUrl, cimg) {
+        function createMarker(latlng, placeUrl, cimg, nameTitle) {
            marker = new google.maps.Marker({
               map: map,
-              title: 'PEPSized Coffee',
-            icon: {
-                url: cimg,
+              title: nameTitle,
+              icon: {
+                  url: cimg,
 
-                scaledSize: new google.maps.Size(40,40)
-            },
+                  scaledSize: new google.maps.Size(40,40)
+              },
               position: latlng,
               url: placeUrl,
            });
            
 
         }
+        
         console.log(cube3)
         cube3.map((c)=>{
             var v = "/user/memberships/"
             console.log(c._id)
-        	createMarker(new google.maps.LatLng(c.longlat[0], c.longlat[1]), v + c._id + "/", c.proPict)
+        	createMarker(new google.maps.LatLng(c.longlat[0], c.longlat[1]), v + c._id + "/", c.proPict, c.orgName)
         	google.maps.event.addListener(marker, 'click', (function (marker) {
             return function () {
                 browserHistory.push(v + c._id + "/");
             }
         })(marker));
         });
-        this.setMaps();
-        console.log(this.state.mapLoaded);
 	 }
    setMaps(){
     this.setState({mapLoaded: true})

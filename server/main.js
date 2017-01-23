@@ -9,23 +9,27 @@ import moment from 'moment';
 
 Meteor.startup(() => {
 	var stripe = StripeAPI(Meteor.settings.StripePri);
-	var buff = function(){
-		console.log('LOL BUFF ACTIVATED')
-	}
-	Meteor.setTimeout(buff, 5000)
-	var runDailyExpiCheck = false;
-	console.log('lolwhatever')
-
+	console.log('Server Online')
+	var d = new Date();
+	var n = d.getMinutes();
+	var lastExpi = moment(d).add(-1,'day').format("ll");
+	var lastExpi;
+	var endDate = moment(new Date()).endOf('month').format("ll");
+	console.log(endDate)
+	console.log(lastExpi);
 	Meteor.setInterval(function() {
-		if(!runDailyExpiCheck){
-			console.log("checking now");
-		    var d = new Date();
-			var n = d.getMinutes();
-			var newExpi = moment(d).add(5,'days').format("ll"); 
+		//START of daily deal expiration check.
+	    var d = new Date();
+		var n = d.getMinutes();
+		var newExpi = moment(d).format("ll");
+		endDate = moment(new Date()).endOf('month').format("ll");
+		console.log(newExpi, endDate)
+		if(newExpi!=lastExpi){
+			lastExpi = newExpi;
+			console.log("Conducting Daily Check");
 			var allDandEs = DandE.find({expiration: newExpi}).fetch();
 			for(var i =0;i<allDandEs.length;i++){
-				console.log(allDandEs[i]._id)
-				DandE.update(allDandEs[i]._id, {$set:{dealsOn: false}})
+				DandE.update(allDandEs[i]._id, {$set:{dealsOn: false}});
 				var message = "Your deal - '"+allDandEs[i].title+"' - has reached its expiration date and expired.";
 				Notification.insert({
 					ownerId: allDandEs[i].topUser,
@@ -35,14 +39,250 @@ Meteor.startup(() => {
 					createdAt: new Date(),
 				});
 			}
-			console.log(allDandEs.length)
-			runDailyExpiCheck = true
-		}
-	    
+			console.log(allDandEs.length, "deals went offline today.")
+			//END of daily deal expiration check.
+			//START of daily membership checks
+			console.log("Conducting daily membership checks");
+			var d = new Date();
+			var expiration = moment(d).add(1,'month').format("ll");
+			var allProfiles = Profile.find({goldMemberChecks: {$elemMatch: {expiration: expiration}}}).fetch();
+			console.log(allProfiles.length)
+			for(var f = 0; f<allProfiles.length; f++){
+				var u = allProfiles[f].goldMemberChecks;
+				for(var c = 0; c<u.length;c++){
+					if(u[c].expiration == expiration){
+						if(u[c].paid){
+							if(u[c].continuity){
+								//start
+								var stripe = StripeAPI(Meteor.settings.StripePri);
+								var page = Pages.findOne({_id:u[c].pageID});
+								var adminProfile = Profile.findOne({ownerId: page.ownedBy[0]});
+								pageStripeActData = adminProfile.stripeBusiness;
 
-	}, 10000);
+								stripe.charges.create({
+							        amount: u[c].amount,
+							        currency: "usd",
+							        customer: allProfiles[f].stripeCust,
+							        description: "monthly gold payment",
+							        application_fee: (u[c].amount*.05),
+							        destination: pageStripeActData
+							      	}, Meteor.bindEnvironment(function(error, result){
+							        if(error){
+							        	console.log(error);
+							        }
+							        else{
+
+							          console.log('successful charge and notification');
+							          
+							        }
+							    }))
+								//end
+								
+								var page = Pages.findOne({_id:u[c].pageID});
+
+						        var individual = allProfiles[f].name;
+								var message = "User, "+individual+", has just renewed membership at your organization.";
+								var type = "GM";
+
+								Notification.insert({
+									ownerId: page.ownedBy[0],
+									pageOwner: page._id,
+									message: message,
+									type: type,
+									createdAt: new Date(),
+									
+								});
+								var d = new Date();
+								var expiration = moment(d).add(1,'month').format("ll");
+								
+								Profile.update(allProfiles[f]._id, {$pull: {
+									goldMember: page._id,
+									goldMemberChecks: {pageID: page._id}
+								}})
+								Profile.update(allProfiles[f]._id, {$push: {
+									goldMember: page._id,
+									goldMemberChecks: {pageID: page._id, expiration: expiration, paid: true, continuity: true, amount: 500}
+								}})
+								
+							} 
+							else{
+								console.log('no longer member')
+								Pages.update(u[c].pageID, {$pull: {
+									pageUsers: allProfiles[f].ownerId
+								}})
+								Profile.update(allProfiles[f]._id, {$pull: {
+									goldMember: u[c].pageID,
+									goldMemberChecks: {pageID: u[c].pageID}
+								}})
+							}
+						}
+						else{
+							console.log('no longer member')
+							Pages.update(u[c].pageID, {$pull: {
+								pageUsers: allProfiles[f].ownerId
+							}})
+							Profile.update(allProfiles[f]._id, {$pull: {
+								goldMember: u[c].pageID,
+								goldMemberChecks: {pageID: u[c].pageID}
+							}})
+						}
+					}
+				}
+			}
+
+			//END of daily membership checks
+			//START of monthly transactions --newexpi == endDate-- 
+			if(newExpi == endDate){
+				console.log('running monthlyTransactions');
+				var allBusIDs = Profile.find({businessVerified: true}).fetch();
+				console.log(allBusIDs.length);
+				for(var i = 0; i<allBusIDs.length; i++){
+					console.log('looping')
+					var loopUser = allBusIDs[i].ownerId;
+					var allLoopUserPages = Pages.find({ownedBy: {$elemMatch: {$eq: loopUser}}}).fetch();
+					var totalNumTrans = 0;
+					var thisNumTrans = 0;
+					for(var j = 0; j<allLoopUserPages.length; j++){
+						thisNumTrans = allLoopUserPages[j].monthlyTransactions;
+						totalNumTrans = totalNumTrans + thisNumTrans;
+					}
+					console.log(totalNumTrans);
+					var samount;
+					if(totalNumTrans < 11){
+						samount = totalNumTrans * .5;
+					}
+					else if(totalNumTrans < 21){
+						samount = ((totalNumTrans-10)*.4)+(10*.5);
+					}
+					else if(totalNumTrans < 31){
+						samount = ((totalNumTrans - 20)* .3)+(10*.5)+(10*.4);
+					}
+					else{
+						samount = ((totalNumTrans-30)*.25)+(10*.5)+(10*.4)+(10*.3);
+					}
+					samount = samount * 100;
+					console.log(samount);
+					var stripe = StripeAPI(Meteor.settings.StripePri);
+					if(samount > 500){
+						stripe.charges.create({ 
+					        amount: samount,
+					        currency: "usd",
+					        customer: allBusIDs[i].stripeBusCust,
+					        description: "Charged business for monthly transactions."
+					      	}, Meteor.bindEnvironment(function(error, result){
+					        if(error){
+					        	console.log(error)
+					        }else{
+					        	console.log("Successful charge to business.")
+								
+					        	for(var j = 0; j<allLoopUserPages.length; j++){
+									console.log('setting 0')
+									var message = "You have been charged $"+(samount/100).toString()+" across all organization pages for your " +totalNumTrans.toString() + " accepted deals this month.";
+									var type = "GCD";
+
+									Notification.insert({
+										ownerId: allLoopUserPages[j].ownedBy[0],
+										pageOwner: allLoopUserPages[j]._id,
+										message: message,
+										type: type,
+										createdAt: new Date(),
+										
+									});
+									Pages.update(allLoopUserPages[j]._id, {$set:{monthlyTransactions: 0}});
+								}
+					        }
+					    }));
+					}
+				}
+				console.log('completed loops')
+				//Starting monthly gold potentials
+				console.log('starting gold potentials monthly')
+				//return of a,b,c
+				//a is list of originals
+				//b is list of counts by original
+				//c is list of originals that surpassed threshold
+				function checkGoldees(arr, topper) {
+				    var a = [], b = [],c=[], prev;
+				    
+				    for ( var i = 0; i < arr.length; i++ ) {
+				        if ( arr[i] !== prev ) {
+				            a.push(arr[i]);
+				            b.push(1);
+				        } else {
+				            b[b.length-1]++;
+				        }
+				        prev = arr[i];
+				    }
+				    for(var j = 0; j < b.length;j++){
+				    	if(b[j]>(topper-1)){
+				      		c.push(a[j])
+				      }
+				    }
+				    return [a, b, c];
+				}
+
+				var allDealPages = Pages.find({hasDeals: true}).fetch();
+				if(!allDealPages){
+
+				}
+				else{
+					for(var z = 0; z<allDealPages.length;z++){
+						var newGoldsTri = checkGoldees(allDealPages[z].whoDealsMonthly, allDealPages[z].requiredForGold);
+						var pageID = allDealPages[z]._id;
+						var newGold = newGoldsTri[2];
+						for(var a = 0; a<newGold.length;a++){
+							var profileID = Profile.findOne({
+								ownerId: newGold[a]
+							})
+							Pages.update(pageID, {$pull: {
+								pageUsers: newGold[a]
+							}})
+							Pages.update(pageID, {$push: {
+								pageUsers: newGold[a]
+							}})
+							var individual = profileID.name;
+							var message = "User, "+individual+", has just become a member of your organization after using "+newGoldsTri[1][a]+" deals this past month.";
+							var type = "GM";
+
+							Notification.insert({
+								ownerId: allDealPages[z].ownedBy[0],
+								pageOwner: pageID,
+								message: message,
+								type: type,
+								createdAt: new Date(),
+								
+							});
+							var d = new Date();
+							var expiration = moment(d).add(1,'month').format("ll");
+							Profile.update(profileID._id, {$pull: {
+								goldMember: pageID,
+								goldMemberChecks: {pageID: pageID}
+							}})
+							Profile.update(profileID._id, {$push: {
+								goldMember: pageID,
+								goldMemberChecks: {pageID: pageID, expiration: expiration, paid: false, continuity: false, amount: 500}
+							}})
+						}
+						Pages.update(pageID, {$set:{
+							whoDealsMonthly: []
+						}})
+					}
+				}
+				console.log('ending gold potentials monthly');
+				//Ending monthly gold potentials
+			}
+			console.log("completed monthlyTransactions");
+			
+			//END of Monthly transactions
+		}
+		
+	}, 300000);
+	//lets go every 5 mins ==== 5*60*1000 = 300,000
 
 	//6 hours times 60 minutes times 60 seconds times 1000 = 21,600,000
+
+
+
 
 	Meteor.publish('profile', function(){
 		return Profile.find({ ownerId: this.userId });
@@ -63,8 +303,7 @@ Meteor.startup(() => {
 			return;
 		}
 
-		return Pages.find({
-		})
+		return Pages.find({})
 	});
 
 	Meteor.publish('memOrgPage', function(){

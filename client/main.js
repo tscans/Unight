@@ -24,6 +24,7 @@ import AdminEventsMain from './components/admin/events/admin_events_main';
 import AdminEventMain from './components/admin/event/admin_event_main';
 import AdminAccount from './components/admin/account/admin_account';
 import AdminGiftMain from './components/admin/gift/admin_gift_main';
+import AdminClearance from './components/admin/clearance/admin_clearance';
 //user pages
 import User from './components/user/user';
 import MemMainBody from './components/user/memberships/mem_main_body';
@@ -63,6 +64,7 @@ const routes = (
 		<Route path="/admin-select/" component={AdminSelect}>
 			<IndexRoute component={AdminSelectPull} />
 			<Route path="account" component={AdminAccount} />
+			<Route path="clearance" component={AdminClearance} />
 		</Route>
 		<Route path="/admin/:pageId/" component={Admin}>
 			<IndexRoute component={AdminMainBody} />

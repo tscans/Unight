@@ -24,18 +24,24 @@ Meteor.methods({
 				createdAt: new Date(),
 				name: name,
 				ownerId: user,
+				email: Meteor.user().emails[0].address,
 				myPages: [],
 				tomBook: tb,
 				goldMember: [],
+				goldMemberChecks: [],
 				isSupAdmin: false,
 				cell: cell,
 				userZip: zip,
-				giftCards: []
+				giftCards: [],
+				businessVerified: false,
+				liveProfile: true,
+				friendUsers: []
 			});
 		})
 	},
 	'profile.addOwner': function(profile, pageId){
 		const user = Meteor.users.findOne(this.userId)._id.toString();
+		var profile = Profile.findOne({ownerId: user});
 		return Profile.update(profile._id, {$push:{myPages: pageId}});	
 	},
 	'profile.updateZip': function(zip){
@@ -43,11 +49,26 @@ Meteor.methods({
 		if(!user){
 			return
 		}
-		return Profile.update(user, {zipCode: zip});	
+		var profile = Profile.findOne({ownerId: user});
+		return Profile.update(profile._id, {zipCode: zip});	
 	},
-	'profile.deleteUser': function(password){
+	'profile.addFriend': function(number, name){
 		const user = Meteor.users.findOne(this.userId)._id.toString();
-		Meteor.users.remove({_id:user});
-		return password;
+		if(!user){
+			return
+		}
+		number = number.toString();
+		//inside friend users breaks down as name: and number:
+		var profile = Profile.findOne({ownerId: user});
+		return Profile.update(profile._id, {$push:{friendUsers: {number:number,name:name}}});	
+	},
+	'profile.removeFriend': function(number){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+		number = number.toString();
+		var profile = Profile.findOne({ownerId: user});
+		return Profile.update(profile._id, {$pull:{friendUsers: {number:number}}});	
 	}
 });
