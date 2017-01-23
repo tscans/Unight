@@ -6,8 +6,8 @@ class UserFooter extends Component {
         return (
         	<footer className="container-fluid bg-1 text-center">
 			  <p>Founder Tom Scanlan</p><br/>
-			  <p>Lead Design Jimmy Norris</p><br/>
-			  <p>Chief Information Officer Tyler Stanish</p><br/>
+			  <p>Lead Design Jimmy Norris</p>
+			  <p>Lead Mobile Engineer Tyler Stanish</p><br/>
 			  <Link to="/"><p>To Home</p></Link>
 			</footer>
         );
