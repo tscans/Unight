@@ -57,6 +57,7 @@ Meteor.methods({
         console.log(error)
       }
       else{
+        console.log('trying')
         console.log(busCreate.result.id)
         var user = this.userId.toString();
         var profile = Profile.findOne({ownerId: user});
@@ -76,6 +77,7 @@ Meteor.methods({
       if(custCreate.error){
         console.log(custCreate.error)
       }else{
+        console.log('cust')
         Profile.update(profile._id, {$set: {stripeBusCust: custCreate.result.id}});
         return
       }
@@ -83,7 +85,8 @@ Meteor.methods({
     var user = this.userId.toString();
     var profile = Profile.findOne({ownerId: user});
     if((profile.stripeBusCust != null) && (profile.stripeBusiness != null)){
-      Profile.update(profile._id, {$set:{stripeBusiness: busCreate.result.id, businessVerified: true}});
+      console.log('other')
+      Profile.update(profile._id, {$set:{businessVerified: true}});
     }
     
   },
