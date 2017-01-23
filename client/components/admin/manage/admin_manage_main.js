@@ -17,6 +17,14 @@ class AdminManageMain extends Component {
         }
       })
     }
+    renderNum(){
+      if(this.props.thisPage.requiredForGold){
+        return this.props.thisPage.requiredForGold.toString();
+      }
+      else{
+        return "Not Set"
+      }
+    }
     render() {
 
       if(!this.props.adminCards || !this.props.thisPage){
@@ -31,7 +39,7 @@ class AdminManageMain extends Component {
               </div>
               <div className="col-md-5">
                 <h3>Set Gold Membership Requirement</h3>
-                <p>Set the number of deals a user needs to use before being eligible for Gold Membership (1-10). Current: {this.props.thisPage.requiredForGold.toString()}</p>
+                <p>Set the number of deals a user needs to use before being eligible for Gold Membership (1-10). Current: {this.renderNum()}</p>
                 <div className="form-group col-md-6">
                   <input type="number" className="form-control foc-card" ref="goldreq" defaultValue={this.props.thisPage.requiredForGold} placeholder="Deals Needed"/>
                 </div>
