@@ -121,7 +121,12 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-
+		console.log(amountDebit)
+		console.log(isNaN(amountDebit))
+		if(isNaN(amountDebit)){
+	    	console.log(amountDebit)
+			return;
+		}
 		const profile = Profile.findOne({
 			ownerId: user
 		});
@@ -135,7 +140,8 @@ Meteor.methods({
 		}
 		amountDebit = parseFloat(amountDebit);
 	    amountDebit = amountDebit.toFixed(2);
-	    if(amountDebit == NaN){
+	    if(isNaN(amountDebit)){
+	    	console.log(amountDebit)
 			return;
 		}
 		amountDebit = parseFloat(amountDebit);
