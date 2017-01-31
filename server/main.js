@@ -44,13 +44,17 @@ Meteor.startup(() => {
 			//START of daily membership checks
 			console.log("Conducting daily membership checks");
 			var d = new Date();
+			//GOTTA CHANGE THIS HERE SO THE EXPIRATION IS TODAYS DATE OTHERWISE IT ALWAYS RUNS//DOWN A FEW LINES*****8
+			var iToday = moment(d).format("ll");
 			var expiration = moment(d).add(1,'month').format("ll");
 			var allProfiles = Profile.find({goldMemberChecks: {$elemMatch: {expiration: expiration}}}).fetch();
 			console.log(allProfiles.length)
 			for(var f = 0; f<allProfiles.length; f++){
 				var u = allProfiles[f].goldMemberChecks;
 				for(var c = 0; c<u.length;c++){
-					if(u[c].expiration == expiration){
+					console.log(u[c].expiration,iToday)
+					console.log(u[c].expiration == iToday)
+					if(u[c].expiration == iToday){
 						if(u[c].paid){
 							if(u[c].continuity){
 								//start
@@ -58,7 +62,6 @@ Meteor.startup(() => {
 								var page = Pages.findOne({_id:u[c].pageID});
 								var adminProfile = Profile.findOne({ownerId: page.ownedBy[0]});
 								pageStripeActData = adminProfile.stripeBusiness;
-
 								stripe.charges.create({
 							        amount: u[c].amount,
 							        currency: "usd",
@@ -77,7 +80,6 @@ Meteor.startup(() => {
 							        }
 							    }))
 								//end
-								
 								var page = Pages.findOne({_id:u[c].pageID});
 
 						        var individual = allProfiles[f].name;
@@ -101,7 +103,7 @@ Meteor.startup(() => {
 								}})
 								Profile.update(allProfiles[f]._id, {$push: {
 									goldMember: page._id,
-									goldMemberChecks: {pageID: page._id, expiration: expiration, paid: true, continuity: true, amount: 500}
+									goldMemberChecks: {pageID: page._id, expiration: expiration, paid: true, continuity: true, amount: 500, orgName: page.orgName, proPict: page.proPict}
 								}})
 								
 							} 
@@ -227,6 +229,9 @@ Meteor.startup(() => {
 				}
 				else{
 					for(var z = 0; z<allDealPages.length;z++){
+						if(!allDealPages[z].requiredForGold){
+							return;
+						}
 						var newGoldsTri = checkGoldees(allDealPages[z].whoDealsMonthly, allDealPages[z].requiredForGold);
 						var pageID = allDealPages[z]._id;
 						var newGold = newGoldsTri[2];
@@ -270,8 +275,9 @@ Meteor.startup(() => {
 				}
 				console.log('ending gold potentials monthly');
 				//Ending monthly gold potentials
+				console.log("completed monthlyTransactions");
 			}
-			console.log("completed monthlyTransactions");
+			
 			
 			//END of Monthly transactions
 		}
@@ -429,5 +435,20 @@ Meteor.startup(() => {
 		}
 
 		return Notification.find({ownerId: user});
+	});
+	Meteor.publish('altnotes', function(){
+		console.log('here')
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		var profile = Profile.findOne({ownerId: user});
+		var page = Pages.findOne({_id: profile.altnotes})
+		if(page.altnotes.indexOf(user) == -1){
+			console.log('not there')
+			return;
+		}
+
+		return Notification.find({pageOwner: page._id});
 	});
 });

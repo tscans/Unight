@@ -110,6 +110,7 @@ class AdminMainEdit extends Component {
 	            }
 	            else{
 	            	console.log('completed without error')
+	            	Bert.alert( 'Changes Saved!', 'success', 'fixed-top' );
 	            	this.setState({savedClass: "btn btn-success top-bot-not", savedWords: "Changes Saved", invis: "saved-green"})
 	            	setTimeout(()=>{this.setState({savedClass: "btn btn-primary card-1 top-bot-not", savedWords: "Save Changes", invis: "transparent"})},2500)
 	            }

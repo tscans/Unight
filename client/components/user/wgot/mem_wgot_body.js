@@ -1,6 +1,7 @@
 import React from 'react';
 import {createContainer} from 'meteor/react-meteor-data';
 import {DandE} from '../../../../imports/collections/dande';
+import {Profile} from '../../../../imports/collections/profile';
 import MemWgotList from './mem_wgot_list';
 import MemMaps from '../navs/mem_maps';
 
@@ -27,11 +28,17 @@ class MemWgotBody extends React.Component {
     shouldComponentUpdate(props) {
         return true
     }
+    checkVerified(){
+        if(!this.props.profile.liveProfile){
+            Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
+        }
+    }
     render() {
-    	if(!this.props.wgot){
-    		return <div></div>
+    	if(!this.props.wgot || !this.props.profile){
+    		return <div><img src="http://i.imgur.com/TwejQKK.gif" height="100px" /></div>
     	}
     	console.log(this.props.wgot)
+        this.checkVerified();
         return (
         	<div>
         		<div className="col-md-6" className="container-fluid bg-3 text-center bump-push-bar">
@@ -51,7 +58,8 @@ class MemWgotBody extends React.Component {
 export default createContainer((props)=>{
     var limit_page = 4;
     Meteor.subscribe('wgot', limit_page);
+    Meteor.subscribe('profile');
 
-	return {wgot: DandE.find({}).fetch(), limpage: limit_page}
+	return {wgot: DandE.find({}).fetch(), limpage: limit_page, profile: Profile.findOne({})}
 }, MemWgotBody); 
 

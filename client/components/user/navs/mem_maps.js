@@ -12,7 +12,9 @@ class MemMaps extends React.Component {
     }
   }
 	componentWillReceiveProps(props){
+    
       console.log('maps come up')
+
     	var cube3 = props.allPages
     	console.log(this.state.mapLoaded)
       if(this.state.mapLoaded){

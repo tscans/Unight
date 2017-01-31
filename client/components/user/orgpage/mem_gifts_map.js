@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 
 class MemGiftsMap extends React.Component {
 	constructor(props){
@@ -16,42 +16,19 @@ class MemGiftsMap extends React.Component {
 	}
 	addCard(){
 		console.log('added');
-
-		var cardToken = {
-	        "number": "4242424242424242",
-	        "cvc": "112",
-	        "exp_month": "08",
-	        "exp_year": "18"
-	    }
-	    console.log(!this.props.profile.stripeCust || !this.state.surveySet)
-
-	    if(!this.props.profile.stripeCust || !this.state.surveySet){
-	    	Stripe.createToken(cardToken, function(status, result){
-		        if(result.error){
-		          alert(result.error.message);
-		        }else{
-		          Meteor.call('stripe.userBuyCard', result.id, (error, data)=>{
-			            if(err){
-			              alert(err.message);
-			              return;
-			            }else{
-			              console.log('worked fine')
-		            	}
-		          	})
-	        	}
-	      	})
-	    }
       	
 	    var friend = this.state.friendSelect;
 
 		console.log('should not run if error');
 		Meteor.call('giftcards.addGiftCard', Meteor.userId(), this.props.pageID, this.state.giftClicked, friend, (error,data)=>{
 	        if(error){
+	        	Bert.alert(error.message, 'danger', 'fixed-top' );
 	          console.log(error)
 	        }
 	        else{
 	          console.log(data)
 	          $('#giftModal').modal('hide');
+	          Bert.alert('Purchase Successful! Thanks for using Unight!', 'success', 'fixed-top' );
 	        }
 	    })
 	}
@@ -82,6 +59,7 @@ class MemGiftsMap extends React.Component {
 		var custCard = null;
 		Meteor.call("stripe.obtainCardInfo", (error,data)=>{
 			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
 				console.log(error);
 			}
 			else{
@@ -104,7 +82,7 @@ class MemGiftsMap extends React.Component {
                       <div className="modal-body">
                       	{this.cardSurvey()}
                       	{this.giveCardAway()}
-                      	<button className="card-2 btn btn-primary top-bot-not" onClick={()=>{this.setState({showFriends: !this.state.showFriends})}}>Give Card to a Friend</button>
+                      	<button className="btn btn-primary top-bot-not" onClick={()=>{this.setState({showFriends: !this.state.showFriends})}}>Give Card to a Friend</button>
                         {this.listFriends()}
 
                         <p>Are you sure you want to purchase a gift card for {amountMoney}?</p>
@@ -144,23 +122,26 @@ class MemGiftsMap extends React.Component {
 			)
 		}
 	}
+	toFinance(){
+		$('#giftModal').modal('hide');
+		browserHistory.push('/user/finance');
+	}
     cardSurvey(){
     	if(!this.state.custCard){
     		return<div></div>
     	}
-    	if(this.state.custCard.hasCard && this.state.surveySet){
+    	if(this.state.custCard.hasCard){
     		return(
     			<div>
-    				<button className="card-1 btn btn-default" onClick={()=>{this.setState({surveySet: false})}}>Change/Update Payment</button>
     				<p>Current Saved Payment Information</p>
-    				<p><b>{this.state.custCard.cardInfo.brand}</b> ending in <b>{this.state.custCard.cardInfo.last4}</b></p>
-    				<p>Expires: <b>{this.state.custCard.cardInfo.exp_month}/{this.state.custCard.cardInfo.exp_year}</b></p>
+    				<p><b>{this.state.custCard.cardInfo.brand}</b> ending in <b>{this.state.custCard.cardInfo.last4}</b> -- 
+    				Expires: <b>{this.state.custCard.cardInfo.exp_month}/{this.state.custCard.cardInfo.exp_year}</b></p>
     			</div>
     		)
     	}else{
 	    	return(
 	    		<div>
-	    			Enter Data
+	    			No credit card on file. Please head to <a href="#" onClick={this.toFinance.bind(this)}>the finance page</a> to enter a credit card.
 	    		</div>
 	    	)
 	    }
@@ -207,7 +188,7 @@ class MemGiftsMap extends React.Component {
 	}
 	render(){
 		if(!this.props.pages){
-			return<div></div>
+			return<div><img src="http://i.imgur.com/TwejQKK.gif" height="100px" /></div>
 		}
 		console.log(this.props.pages)
 		return(

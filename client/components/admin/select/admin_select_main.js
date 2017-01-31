@@ -37,9 +37,10 @@ class AdminSelectMain extends Component {
         		console.log(error);
         	}
         	else{
-        		pageId = data.toString()
+        		var pageId = data.toString()
         		page = this.props.profile
         		var marr = "/admin/" + pageId + "/";
+        		Bert.alert( 'Congradulations on creating a Unight Page!', 'success', 'fixed-top' );
         		browserHistory.push(marr)
         		
         	}

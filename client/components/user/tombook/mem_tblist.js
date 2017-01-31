@@ -26,6 +26,7 @@ class MemTblist extends React.Component {
 			}
 			else{
 				console.log('success', data)
+				Bert.alert( 'Item removed from UBook.', 'default', 'growl-bottom-right' );
 				this.forceUpdate()
 			}
 		})
@@ -42,6 +43,7 @@ class MemTblist extends React.Component {
 			else{
 				console.log('success', data)
 				$('#acceptModal').modal('hide');
+				Bert.alert( 'Deal Accepted.', 'default', 'growl-bottom-right' );
 				this.forceUpdate()
 			}
 		})
@@ -79,22 +81,23 @@ class MemTblist extends React.Component {
 		})
 	}
 	renderOther(){
-		console.log(this.props.tbMember)
-		if(this.props.tbMember.length==0){
+		console.log(this.props.profile.goldMemberChecks)
+		if(this.props.profile.goldMemberChecks.length==0){
 			return(
 				<h3>You have no memberships at this time.</h3>
 			)
 		}
 		var bit = "/user/memberships/";
 		var v;
-		return this.props.tbMember.map((t)=>{
+		return this.props.profile.goldMemberChecks.map((t)=>{
 			console.log(t)
-			v = t._id;
+			v = t.pageID;
 			return(
-				<div className="card-1 tombook-cards" key={t._id}>
+				<div className="card-1 tombook-cards" key={t.pageID}>
 					<Link to={bit+v+"/"}>
 					<img src={t.proPict} className="surround map-cards-img" />
 					<h2>{t.orgName}</h2>
+					<h4>Expires: {t.expiration}</h4>
 					</Link>
 				</div>
 			)
@@ -151,11 +154,13 @@ class MemTblist extends React.Component {
     		Meteor.call('giftcards.subtractCredit', Meteor.userId(), this.state.currentP._id, this.state.payAmount, (error,data)=>{
 		        if(error){
 		          console.log(error)
+		          Bert.alert(error.message, 'danger', 'fixed-top' );
 		        }
 		        else{
 		          console.log(data);
 		          this.setState({payWrite: false});
 		          $('#payModal').modal('hide');
+		          Bert.alert('Payment of $'+this.state.payAmount.toString()+' Successful.', 'success', 'fixed-top' );
 		        }
 		    })
     	}
@@ -195,7 +200,16 @@ class MemTblist extends React.Component {
           </div>
         )
     }
+    checkVerified(){
+    	if(!this.props.profile.liveProfile){
+    		Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
+    	}
+    }
 	render(){
+		if (!this.props.profile){
+			return <div><img src="http://i.imgur.com/TwejQKK.gif" height="100px" /></div>
+		}
+		this.checkVerified();
 		return(
 			<div>
 				<div className="col-md-offset-6">
@@ -224,7 +238,7 @@ export default createContainer((props)=>{
     Meteor.subscribe('userCards');
     return {tblist: DandE.find({_id: {$in:tbcb}}).fetch(), 
     tbMember: Pages.find({_id: {$in: bart.goldMember}}).fetch(),
-	tbCards: GiftCards.find({}).fetch()}
+	tbCards: GiftCards.find({}).fetch(), profile: Profile.findOne({})}
 
     
 }, MemTblist);  

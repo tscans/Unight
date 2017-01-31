@@ -11,7 +11,14 @@ class UserNav extends Component {
       event.preventDefault();
       browserHistory.push('/user/account');
     }
-
+    altNotes(event){
+      event.preventDefault();
+      browserHistory.push('/admin-select/altnotes');
+    }
+    finance(event){
+      event.preventDefault();
+      browserHistory.push('/user/finance');
+    }
     render() {
         return (
             <nav className="navbar navbar-default navbar-fixed-top card-3">
@@ -26,13 +33,15 @@ class UserNav extends Component {
                 </div>
                 <div className="collapse navbar-collapse">
                   <ul className="nav navbar-nav navbar-right">
-                    <li><Link to="/user/"><span className="glyphicon glyphicon-usd"></span>TOMBOOK</Link></li>
+                    <li><Link to="/user/"><span className="glyphicon glyphicon-book"></span>UBOOK</Link></li>
                     <li><Link to="/user/wgot"><span className="glyphicon glyphicon-calendar"></span>TONIGHT</Link></li>
                     <li><Link to="/user/memberships"><span className="glyphicon glyphicon-globe"></span>MEMBERSHIPS</Link></li>
                     <li className="dropdown">
                       <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span className="glyphicon glyphicon-cog"></span> ACCOUNT<span className="glyphicon glyphicon-triangle-bottom"></span></a>
                       <ul className="dropdown-menu">
                         <li><a href="#"><span className="glyphicon glyphicon-asterisk"></span> Help</a></li>
+                        <li><a href="#" onClick={this.altNotes.bind(this)}><span className="glyphicon glyphicon-bell"></span> Alt Notes</a></li>
+                        <li><a href="#" onClick={this.finance.bind(this)}><span className="glyphicon glyphicon-usd"></span> Finance</a></li>
                         <li><a href="#" onClick={this.account.bind(this)}><span className="glyphicon glyphicon-user"></span> Account</a></li>
                         <li role="separator" className="divider"></li>
                         <li><a href="#" onClick={this.logout.bind(this)}><span className="glyphicon glyphicon-off"></span>Logout</a></li>

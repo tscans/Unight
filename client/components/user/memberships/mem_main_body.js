@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Pages} from '../../../../imports/collections/pages';
+import {Profile} from '../../../../imports/collections/profile';
 import MemMainList from './mem_main_list';
 
 class MemMainBody extends Component {
@@ -20,7 +21,16 @@ class MemMainBody extends Component {
             }
         });
     }
+    checkVerified(){
+        if(!this.props.profile.liveProfile){
+            Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
+        }
+    }
     render() {
+        if(!this.props.profile){
+            return<div></div>
+        }
+        this.checkVerified();
         return (
         	<div className="container-fluid bg-3 text-center">
         		<div>
@@ -44,7 +54,8 @@ class MemMainBody extends Component {
 export default createContainer((props)=>{
     
     Meteor.subscribe('allPages');
-    return {allPages: Pages.find({}).fetch()}
+    Meteor.subscribe('profile');
+    return {allPages: Pages.find({}).fetch(), profile: Profile.findOne({})}
 	
 }, MemMainBody);  
 

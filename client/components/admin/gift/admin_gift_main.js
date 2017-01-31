@@ -8,12 +8,12 @@ class AdminGiftMain extends React.Component {
 	checkEvents(){
       if(!this.props.pages.hasGiftCards){
         var warn = "Warning! Your page does not currently allow gift cards. In order to reverse this go to the Home page."
-        setTimeout(()=>{alert(warn)},1000)
+        setTimeout(()=>{Bert.alert( warn, 'warning', 'fixed-top' )},1000)
       }
     }
 	render(){
 		if(!this.props.pages){
-			return<div></div>
+			return<div><img src="http://i.imgur.com/TwejQKK.gif" height="100px" /></div>
 		}
     	{this.checkEvents()}
 		console.log(this.props.pages)

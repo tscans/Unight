@@ -8,7 +8,7 @@ class AdminLivelookMain extends Component {
     checkMembers(){
       if(!this.props.pages.hasMembers){
         var warn = "Warning! Your page does not currently allow memberships. In order to reverse this go to the Home page."
-        setTimeout(()=>{alert(warn)},1000)
+        setTimeout(()=>{Bert.alert( warn, 'warning', 'fixed-top' )},1000)
       }
     }
     render() {

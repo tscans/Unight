@@ -464,10 +464,21 @@ input::-webkit-inner-spin-button {
   text-align: right;
   height: 100px;
 }
+.large-input-verify{
+  font-size: 55px;
+  text-align: center;
+  height: 100px;
+}
 .half-block{
   width: 50%;
 }
 .header-page{
   height: 260px;
   margin-bottom:50px;
+}
+.input-small{
+  width:100px;
+}
+.text-left{
+  text-align: left;
 }

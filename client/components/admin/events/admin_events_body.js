@@ -74,7 +74,7 @@ class AdminEventsBody extends React.Component {
 	checkEvents(){
       if(!this.props.pages.hasEvents){
         var warn = "Warning! Your page does not currently allow events. In order to reverse this go to the Home page."
-        setTimeout(()=>{alert(warn)},1000)
+        setTimeout(()=>{Bert.alert( warn, 'warning', 'fixed-top' )},1000)
       }
     }
     render() {

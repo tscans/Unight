@@ -10,7 +10,9 @@ class MemOrgRight extends Component {
       super(props);
       this.state = {
         header: 'About Us',
-        body: this.props.pages.aboutUs
+        body: this.props.pages.aboutUs,
+        custCard: null,
+        returnedOnce: false
 
       }
     }
@@ -25,50 +27,16 @@ class MemOrgRight extends Component {
     }
     goldMember(){
       var d = this.props.pageID;
-      var cardDetails = {
-        "number": this.refs.cred.value.trim(),
-        "cvc": this.refs.cvc.value.trim(),
-        "exp_month": this.refs.mm.value.trim(),
-        "exp_year": this.refs.yy.value.trim()
-      }
-      //temporarily broken
-
+      
       Meteor.call('pages.addGoldMember', d, (error,data)=>{
         if(error){
           console.log(error)
+          Bert.alert(error.message, 'danger', 'fixed-top' );
         }
         else{
           console.log(data)
           $('#myModal').modal('hide');
-          alert("You were successfully charged: $5.00");
-        }
-      })
-      return;
-      Stripe.createToken(cardDetails, function(status, result){
-        if(result.error){
-          alert(result.error.message);
-        }
-        else{
-          Meteor.call("chargeCard", result.id, function(error,response){
-            if(error){
-              alert(error.message);
-            }
-            else{
-              console.log(result)
-              console.log(response)
-              
-              Meteor.call('pages.addGoldMember', d, (error,data)=>{
-                if(error){
-                  console.log(error)
-                }
-                else{
-                  console.log(data)
-                  alert("You were successfully charged: $5.00");
-                  $('#myModal').modal('hide');
-                }
-              })
-            }
-          })
+          Bert.alert('You have been charged $5.00.', 'success', 'fixed-top' );
         }
       })
     }
@@ -77,10 +45,12 @@ class MemOrgRight extends Component {
       Meteor.call('pages.removeGoldMember', d, (error,data)=>{
         if(error){
           console.log(error)
+          Bert.alert(error.message, 'danger', 'fixed-top' );
         }
         else{
           console.log(data)
           $('#myModal').modal('hide');
+          Bert.alert('You will no longer be charged for membership here.', 'info', 'fixed-top' );
         }
       })
       
@@ -136,12 +106,39 @@ class MemOrgRight extends Component {
         return<button className="btn btn-primary third-length card-1">-</button>
       }
     }
+    toFinance(){
+      $('#myModal').modal('hide');
+      browserHistory.push('/user/finance');
+    }
     renderButton(){
       if(!this.props.pages.hasMembers){
         return<div></div>
       }
       else{
         if(!this.props.pages.pageUsers.includes(Meteor.userId())){
+          Meteor.call("stripe.obtainCardInfo", (error,data)=>{
+            if(error){
+              Bert.alert(error.message, 'danger', 'fixed-top' );
+              console.log(error);
+            }
+            else{
+              console.log(data);
+              if(!this.state.returnedOnce){
+                this.setState({custCard: data, returnedOnce: true})
+              }
+
+            }
+          })
+          if(!this.state.custCard){
+            return<div>...Loading</div>
+          }
+          if(this.state.custCard.hasCard == false){
+            return(
+              <div>
+                No credit card on file. Please head to <a href="#" onClick={this.toFinance.bind(this)}>the finance page</a> to enter a credit card.
+              </div>
+            )
+          }
         return(
           <div>
             <div className="card-2">
@@ -157,15 +154,12 @@ class MemOrgRight extends Component {
                         <h4 className="modal-title">Become a Gold Member</h4>
                       </div>
                       <div className="modal-body">
-                        <p>In order to become a Gold Member of {this.props.pages.orgName}, please fill out the following fields.</p>
-                        <label htmlFor="exampleInputEmail1">Card Number</label>
-                        <input type="text" className="form-control foc-card" ref="cred" placeholder="Card Number"/>
-                        <label htmlFor="exampleInputEmail1">CVC</label>
-                        <input type="text" className="form-control foc-card" ref="cvc" placeholder="CVC"/>
-                        <label htmlFor="exampleInputEmail1">Expiration MM</label>
-                        <input type="text" className="form-control foc-card" ref="mm" placeholder="MM"/>
-                        <label htmlFor="exampleInputEmail1">Expiration YY</label>
-                        <input type="text" className="form-control foc-card" ref="yy" placeholder="YY"/>
+                        <div>
+                          <p>Current Saved Payment Information</p>
+                          <p><b>{this.state.custCard.cardInfo.brand}</b> ending in <b>{this.state.custCard.cardInfo.last4}</b> -- 
+                          Expires: <b>{this.state.custCard.cardInfo.exp_month}/{this.state.custCard.cardInfo.exp_year}</b></p>
+                        </div>
+                        <p>In order to become a Gold Member of {this.props.pages.orgName}, you must pay the fee.</p>
                       </div>
                       <div className="modal-footer">
                         <button type="button" onClick={this.goldMember.bind(this)} className="btn btn-success">Become Gold Member</button>

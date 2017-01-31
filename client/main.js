@@ -11,8 +11,10 @@ import AdminMainBody from './components/admin/main/admin_main_body';
 import Login from './components/landing/login/login';
 import LoginUser from './components/landing/login/login_user';
 import LoginOrg from './components/landing/login/login_org';
+import Verify from './components/landing/verify/verify';
 //admin pages
 import AdminSelect from './components/admin/admin_select';
+import AltNotes from './components/admin/altnotes/altnotes';
 import AdminManageMain from './components/admin/manage/admin_manage_main';
 import AdminLivelookMain from './components/admin/livelook/admin_livelook_main';
 import Deals from './components/admin/deals/admin_deals_main';
@@ -34,6 +36,7 @@ import MemWgoteBody from './components/user/wgote/mem_wgote_body';
 import MemWgotdBody from './components/user/wgotd/mem_wgotd_body';
 import MemTomBook from './components/user/tombook/mem_tombook';
 import UserAccount from './components/user/account/user_account';
+import MemFinance from './components/user/account/mem_finance';
 
 function requireAuth(nextState, replace) {
   if (!Meteor.userId()) {
@@ -60,11 +63,13 @@ const routes = (
 			<Route path="login" component={Login} />
 			<Route path="loginuser" component={LoginUser} />
 			<Route path="loginorg" component={LoginOrg} />
+			<Route path="verify/:call/:userID/:code/:pref" component={Verify} />
 		</Route>
 		<Route path="/admin-select/" component={AdminSelect}>
 			<IndexRoute component={AdminSelectPull} />
 			<Route path="account" component={AdminAccount} />
 			<Route path="clearance" component={AdminClearance} />
+			<Route path="altnotes" component={AltNotes} />
 		</Route>
 		<Route path="/admin/:pageId/" component={Admin}>
 			<IndexRoute component={AdminMainBody} />
@@ -87,6 +92,7 @@ const routes = (
 			<Route path="wgot/d/:pageId/" component={MemWgotdBody} />
 			<Route path="wgot/g/:pageId/" component={MemWgotdBody} />
 			<Route path="account" component={UserAccount} />
+			<Route path="finance" component={MemFinance} />
 		</Route>
 	</Router>
 );

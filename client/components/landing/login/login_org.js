@@ -15,7 +15,9 @@ class LoginOrg extends React.Component {
         var pss1 = this.refs.signpass.value.trim();
 		Meteor.loginWithPassword(ema, pss1, (error, data) => {
 			if(error){
+                Bert.alert( 'User/Password does not match.', 'danger', 'fixed-top' );
         		console.log("There was an error");
+                this.setState({gif: "invisible"})
         		console.log(error);
             }
             else{

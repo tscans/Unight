@@ -17,41 +17,48 @@ class OrgSignup extends Component {
         var name = this.refs.name.value.trim();
         var cell = this.refs.cell.value.trim();
         var zip = this.refs.zip.value.trim();
-
         if(ema == "" || pss1 == "" || pss2 == "" || name == "" || cell == "" || zip == ""){
+            Bert.alert( "Please complete all fields!", 'warning', 'fixed-top' );
             console.log("enter data");
+            this.setState({gif: "invisible"});
         }
         else if(pss1 != pss2){
+            Bert.alert( "Passwords don't match!", 'warning', 'fixed-top' );
         	console.log('mismatch passwords');
+            this.setState({gif: "invisible"});
         }
         else{
-            Meteor.call('profile.makeUser', ema, pss1, (error, data)=> {
+            Accounts.createUser({
+                email: ema,
+                password: pss1
+            },(error)=>{
+                if(error){
+                    Bert.alert( error.reason, 'danger', 'fixed-top' );
+                    console.log(error);
+                }
+            });
+
+            Meteor.loginWithPassword(ema, pss1);
+            Meteor.call('profile.makeUser', name,cell,zip, (error, data)=> {
             	if(error){
+                    Bert.alert( error.reason, 'danger', 'fixed-top' );
             		console.log("There was an error");
             		console.log(error);
+                    this.setState({gif: "invisible"});
+                    Meteor.logout();
             	}
             	else{
             		console.log(data)
-            		Meteor.loginWithPassword(ema, pss1);
-            		var usid = data.toString();
-					
-            		Meteor.call('profile.insertData', name, usid, cell, zip, (error, data) => {
-            			if(error){
-            				console.log("There was an error");
-            				console.log(error);
-            			}
-            			else{
-		            		this.refs.email.value = "";
-					        this.refs.password.value = "";
-					        this.refs.password2.value = "";
-					        this.refs.name.value = "";
-                            this.refs.cell.value = "";
-                            this.refs.zip.value = "";
-                            this.setState({gif: "invisible"})
-					        browserHistory.push('/login')
-            			}
-            		})
             		
+            		this.refs.email.value = "";
+                    this.refs.password.value = "";
+                    this.refs.password2.value = "";
+                    this.refs.name.value = "";
+                    this.refs.cell.value = "";
+                    this.refs.zip.value = "";
+                    this.setState({gif: "invisible"});
+                    Bert.alert( 'Way to sign up! Please check your email for confirmation!', 'info', 'fixed-top' );
+                    browserHistory.push('/login')
             	}
             	
             })

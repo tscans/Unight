@@ -86,6 +86,9 @@ class AdminLivelookBody extends React.Component{
 		})
 	}
 	sideBarData(){
+		if(this.props.notifications.length < 3){
+			return<div></div>
+		}
 		console.log('ran')
 		var numDeals = 0;
 		var numGiftCard = 0;

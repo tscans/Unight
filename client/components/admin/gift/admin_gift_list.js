@@ -9,12 +9,15 @@ class AdminGiftList extends React.Component {
 			return(
 				<div className="card-1 tombook-cards" key={t._id}>
 					<h4>Customer Name: {t.userName}</h4>
-					<h4>Gift Card Amount: {t.amount}</h4>
+					<h4>Gift Card Amount: ${t.amount.toFixed(2)}</h4>
 				</div>
 			)
 		})
 	}
 	render(){
+		if(!this.props.adminCards){
+			return<div></div>
+		}
 		return(
 			<div>
 				<h2>Customers With Gift Cards</h2>

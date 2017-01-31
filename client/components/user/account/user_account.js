@@ -15,7 +15,7 @@ class UserAccount extends React.Component {
 		var newp = this.refs.newp.value;
 		var conp = this.refs.conp.value;
 		if(newp != conp){
-			console.log("Unmatched Passwords")
+			Bert.alert("Unmatched Passwords", 'danger', 'fixed-top' );
 			return;
 		}
 		if(newp ==""){
@@ -23,10 +23,18 @@ class UserAccount extends React.Component {
 		}
 		Accounts.changePassword(oldp, newp, (error, data)=>{
 			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				this.refs.oldp.value = "";
+				this.refs.newp.value = "";
+				this.refs.conp.value = "";
 				console.log(error)
 			}
 			else{
 				console.log(data)
+				Bert.alert("Password Changed.", 'success', 'fixed-top' );
+				this.refs.oldp.value = "";
+				this.refs.newp.value = "";
+				this.refs.conp.value = "";
 				console.log('worked')
 			}
 		})
@@ -36,7 +44,7 @@ class UserAccount extends React.Component {
 	}
 	listFriends(){
 		if(this.state.showFriends){
-			if(this.props.profile.friendUsers.lenth == 0){
+			if(this.props.profile.friendUsers.length == 0){
 				return<div>You have no friends saved.</div>
 			}
 			else{
@@ -59,6 +67,7 @@ class UserAccount extends React.Component {
 	removeFriend(f){
 		Meteor.call('profile.removeFriend', f.number, (error,data)=>{
 			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
 				console.log(error);
 			}
 			else{
@@ -71,12 +80,71 @@ class UserAccount extends React.Component {
 		var name = this.refs.name.value.trim();
 		Meteor.call('profile.addFriend', number,name, (error,data)=>{
 			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				this.refs.phone.value = "";
+				this.refs.name.value = "";
 				console.log(error);
 			}
 			else{
+				Bert.alert("Friend Added", 'default', 'fixed-top' );
+				this.refs.phone.value = "";
+				this.refs.name.value = "";
 				console.log(data);
 			}
 		})
+	}
+	deAccount(e){
+		e.preventDefault();
+		var delp = this.refs.delpass.value.trim();
+		if(delp!="confirm"){
+			console.log(delp)
+			console.log('not confirmed')
+			return;
+		}
+		Meteor.call('profile.deactivateUser', delp, (error,data)=>{
+			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				console.log(error);
+			}
+			else{
+				console.log(data, "success");
+			}
+		})
+	}
+	aAccount(e){
+		e.preventDefault();
+		var delp = this.refs.delpass2.value.trim();
+		if(delp!="confirm"){
+			console.log('not confirmed')
+			return;
+		}
+		Meteor.call('profile.activateUser', delp, (error,data)=>{
+			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				console.log(error);
+			}
+			else{
+				console.log(data, "success");
+			}
+		})
+	}
+	activate(){
+		if(this.props.profile.deactivate){
+			return(
+				<div className=" col-md-10 col-md-offset-1 card-3 white-back">
+					<p>To reactivate purchase powers click the button below.</p>
+					<button type="button" className="btn btn-success btn-lg btn-extend card-1 top-bot-not" data-toggle="modal" data-target="#myModal2">Reactivate Account</button>
+				</div>
+			)
+		}
+		else{
+			return(
+				<div className=" col-md-10 col-md-offset-1 card-3 white-back">
+					<p>For security purposes, we save all user data. However, you do have the ability to prevent expenses from occuring on this account. Simply deactivating your account will stop any charges from happening on this account.</p>
+					<button type="button" className="btn btn-danger btn-lg btn-extend card-1 top-bot-not" data-toggle="modal" data-target="#myModal">Deactivate Account</button>
+				</div>
+			)
+		}
 	}
 	render(){
 		if(!this.props.profile){
@@ -120,7 +188,46 @@ class UserAccount extends React.Component {
 	                  </div>
 	                  <button type="submit" className="btn btn-success card-1 top-bot-not">Change Password</button>
 	                </form>
+	                {this.activate()}
                 </div>
+				<div className="modal fade all-black" id="myModal" role="dialog">
+				    <div className="modal-dialog">
+				      <div className="modal-content">
+				        <div className="modal-header">
+				          <button type="button" className="close" data-dismiss="modal">&times;</button>
+				          <h4 className="modal-title">Deactivate Account</h4>
+				        </div>
+				        <div className="modal-body">
+				          <p>If you are sure you want to deactivate your account, simply type in "confirm" below.</p>
+				          <label htmlFor="exampleInputEmail1">Confirm</label>
+	                      <input type="text" className="form-control foc-card" ref="delpass" placeholder="confirm"/>
+				        </div>
+				        <div className="modal-footer">
+				          <button type="button" onClick={this.deAccount.bind(this)} className="btn btn-danger" data-dismiss="modal">Deactivate</button>
+				          <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+				        </div>
+				      </div>
+				    </div>
+				</div>
+				<div className="modal fade all-black" id="myModal2" role="dialog">
+				    <div className="modal-dialog">
+				      <div className="modal-content">
+				        <div className="modal-header">
+				          <button type="button" className="close" data-dismiss="modal">&times;</button>
+				          <h4 className="modal-title">Activate Account</h4>
+				        </div>
+				        <div className="modal-body">
+				          <p>If you are sure you want to activate your account, simply type in "confirm" below.</p>
+				          <label htmlFor="exampleInputEmail1">Confirm</label>
+	                      <input type="text" className="form-control foc-card" ref="delpass2" placeholder="confirm"/>
+				        </div>
+				        <div className="modal-footer">
+				          <button type="button" onClick={this.aAccount.bind(this)} className="btn btn-success" data-dismiss="modal">Activate</button>
+				          <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+				        </div>
+				      </div>
+				    </div>
+				</div>
 			</div>
 		)
 	}
