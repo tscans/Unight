@@ -8,7 +8,7 @@ class LandingBody extends Component {
         		<div className="background-img">
 	        		<div className="container-fluid bg-1-alpha text-center">
 					  <h1 className="margin">WELCOME TO UNIGHT</h1>
-					  <img src="http://i.imgur.com/urR5bHp.jpg" className="img-responsive margin center-img card-sup obj-buffer" width="350" height="350" />
+					  <img src="http://i.imgur.com/vXs2ksV.png" className="img-responsive margin center-img card-sup obj-buffer" width="350" height="350" />
 					  <form className="form-inline obj-buffer">
 					    <Link to="/org_signup"><button type="button" className="btn btn-success obj-buffer-sides card-1"><h3>Unight Sign Up</h3></button></Link>
 					  </form>

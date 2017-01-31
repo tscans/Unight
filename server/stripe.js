@@ -8,8 +8,10 @@ Meteor.methods({
     var profile = Profile.findOne({ownerId: user});
     var CLIENT_ID = "ca_9hhNB3fcLdZm79wctX3HQ3MMN91h6v2p";
     var API_KEY = Meteor.settings.StripePri;
-
-    var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
+    if(profile.stripeBusiness || !auth_code){
+      return;
+    }else{
+      var TOKEN_URI = 'https://connect.stripe.com/oauth/token';
     var AUTHORIZE_URI = 'https://connect.stripe.com/oauth/authorize';
 
     var qs = require('querystring');
@@ -46,6 +48,8 @@ Meteor.methods({
       console.log('other')
       Profile.update(profile._id, {$set:{businessVerified: true}});
     }
+    }
+    
 
   },
   'stripe.makeAccount': function(cardToken){

@@ -16,7 +16,7 @@ class LandingHeader extends Component {
                     <span className="icon-bar"></span>
                     <span className="icon-bar"></span>
                   </button>
-                  <Link className="navbar-brand card-sup pos-up img-responsive hover-off" to='/'><img src="http://i.imgur.com/urR5bHp.jpg" width="100" height="100"/></Link>
+                  <Link className="navbar-brand card-sup pos-up img-responsive hover-off" to='/'><img src="http://i.imgur.com/vXs2ksV.png" width="100" height="100"/></Link>
                 </div>
                 <div className="collapse navbar-collapse">
                   <ul className="nav navbar-nav navbar-right">

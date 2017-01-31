@@ -27,7 +27,7 @@ function emailBody(usid,code){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/urR5bHp.png' height='200px' class="bump-top"/></a>
+<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h1>Welcome to Unight!</h1>
 <p>We hope you enjoy great deals! Click <a href="`+user+`">here</a> to verify your account and sign in as a user. </p>
 <p>Or if you are a business owner, feel free to <a href="`+bus+`">create a page</a> and try out our services.</p>

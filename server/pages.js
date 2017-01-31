@@ -24,7 +24,7 @@ function emailBody(usid, code, business, dollars, today, expiration){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px;'>
-<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/urR5bHp.png' height='200px' class="bump-top"/></a>
+<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h2>You are a member of `+business+`</h2>
 <p>This means you now have access to gold deals at `+business+`.</p>
 <p>You purchased membership for $`+dollars+` on `+today+`. This membership will expire on `+expiration+` and will automatically be renewed for the same amount unless you end the membership or reach the quota for deals in a month at `+business+` and become eligible for a free month of gold.</p>
@@ -41,7 +41,7 @@ function emailBody(usid, code, business, dollars, today, expiration){
 Meteor.methods({
 	'pages.makePage': function(){
 		var orgName = '';
-		var proPict = 'http://i.imgur.com/ahJEDUm.png';
+		var proPict = 'http://i.imgur.com/791es57.png';
 		var phyAddress = '';
 		var zipCode = '';
 		var aboutUs = 'Tell users about your business here!';

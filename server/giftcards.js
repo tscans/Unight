@@ -32,7 +32,7 @@ function emailBody(whose, usid, code, buyer, business, amountCredit){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/urR5bHp.png' height='200px' class="bump-top"/></a>
+<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h2>You are the owner of a Unight Gift Card</h2>
 `+direction+`
 <p>Be sure to visit `+business+` more often to use your gift card. Thanks for choosing Unight to be a loyal customer!</p>

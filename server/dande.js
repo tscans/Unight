@@ -37,7 +37,7 @@ Meteor.methods({
 			forPageName: page.orgName,
 			zipOfPage: page.zipCode,
 			phyAddress: page.phyAddress,
-			image: 'http://i.imgur.com/urR5bHp.png',
+			image: 'http://i.imgur.com/791es57.png',
 			numAttending: 0,
 			upvotes: 0,
 			timesUsed: 0,

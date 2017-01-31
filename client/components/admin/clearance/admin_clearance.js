@@ -11,7 +11,8 @@ class AdminSelectMain extends Component {
     this.state = {
       gif: "invisible",
       custCard: null,
-      returnedOnce: false
+      returnedOnce: false,
+      ranOnce: false
     }
   }
 	checkCleared(){
@@ -70,22 +71,26 @@ class AdminSelectMain extends Component {
       })
     }
   verifyStripeBus(){
-    var hole = window.location.href.split("code=");
-    console.log(hole[1]);
-    if(hole[1]){
-        this.setState({gif: ""})
-        Meteor.call('stripe.busAccount',hole[1],(error,data)=>{
-        if(error){
-          console.log(error)
-        }
-        else{
-          
-        }
-      })
+    if(!this.state.ranOnce){
+      var hole = window.location.href.split("code=");
+      this.setState({ranOnce: true})
+      console.log(hole[1]);
+      if(hole[1]){
+          this.setState({gif: ""})
+          Meteor.call('stripe.busAccount',hole[1],(error,data)=>{
+          if(error){
+            console.log(error)
+          }
+          else{
+            browserHistory.push('/admin-select/clearance')
+          }
+        })
+      }
+      else{
+        console.log('worked');
+      }
     }
-    else{
-      console.log('worked');
-    }
+    
     
   }
   renderTop(){
