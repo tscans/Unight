@@ -38,6 +38,8 @@ import MemTomBook from './components/user/tombook/mem_tombook';
 import UserAccount from './components/user/account/user_account';
 import MemFinance from './components/user/account/mem_finance';
 
+import NotFound from './components/404/not_found';
+
 function requireAuth(nextState, replace) {
   if (!Meteor.userId()) {
     replace({
@@ -94,6 +96,7 @@ const routes = (
 			<Route path="account" component={UserAccount} />
 			<Route path="finance" component={MemFinance} />
 		</Route>
+		<Route path="*" component={NotFound} />
 	</Router>
 );
 

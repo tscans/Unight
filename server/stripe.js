@@ -93,7 +93,7 @@ Meteor.methods({
       })
 
       if(custCreate.error){
-        throw new Meteor.error(500, "stripe-error", custCreate.error.message);
+        throw new Meteor.Error(500, "stripe-error", custCreate.error.message);
       }else{
         Profile.update(profile._id, {$set: {stripeCust: custCreate.result.id}});
         return
@@ -108,7 +108,7 @@ Meteor.methods({
       })
 
       if(custUpdate.error){
-        throw new Meteor.error(500, "stripe-error", custUpdate.error.message);
+        throw new Meteor.Error(500, "stripe-error", custUpdate.error.message);
       }else{
         return
       }

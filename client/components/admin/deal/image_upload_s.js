@@ -15,34 +15,19 @@ export default class ImageUploadS extends Component {
                     
                     console.log('seen')
                     var imageString = btoa(binaryString)
-                    
+                    var str = window.location.pathname;
+                    var res = str.substring(7, str.lastIndexOf('/deal'));
+                    var pageID = res;
 
-                    var options = {
-                        "apiKey": '3730cec457efb6d',
-                        image: imageString
-                     }
-                    
-                    Imgur.upload(options, (error, data) => {
+                    var str = window.location.pathname;
+                    var res = str.substring(str.lastIndexOf('/deal')+14, str.length - 1);
+                    var dealID = res;
+                    Meteor.call('dande.imageDandE',pageID, dealID, imageString, (error, data) => {
                         if(error){
                             console.log(error)
                         }
                         else{
-                            console.log('works', data.link)
-                            var str = window.location.pathname;
-                            var res = str.substring(7, str.lastIndexOf('/deal'));
-                            var pageID = res;
-
-                            var str = window.location.pathname;
-                            var res = str.substring(str.lastIndexOf('/deal')+14, str.length - 1);
-                            var dealID = res;
-                            Meteor.call('dande.imageDandE',pageID, dealID, data.link, (error, data) => {
-                                if(error){
-                                    console.log(error)
-                                }
-                                else{
-                                    console.log('image updated')
-                                }
-                            })
+                            console.log('image updated')
                         }
                     })
                 };

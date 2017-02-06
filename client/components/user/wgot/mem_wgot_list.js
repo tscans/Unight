@@ -21,6 +21,9 @@ class MemWgotList extends React.Component {
 				var url;
 				var beaconProp;
 				var twgot;
+				var user = Meteor.userId().toString();
+				var expiration = moment(wgot.expiration.toString()).format("MMMM Do YYYY");
+
 				if(wgot.typeDE == "GD"){
 					beaconProp = "wgot-list-beacon-gold"
 					url = `/user/wgot/g/${wgot._id}/`;
@@ -28,6 +31,10 @@ class MemWgotList extends React.Component {
 				else{
 					beaconProp = "wgot-list-beacon-deal"
 					url = `/user/wgot/d/${wgot._id}/`;
+				}
+				if(wgot.usedBy.includes(user)){
+					beaconProp = "wgot-list-beacon-used"
+					expiration = "You have already used this deal."
 				}
 				return(
 					<div className="card-1 card-specs-map" key={wgot._id}>
@@ -38,7 +45,7 @@ class MemWgotList extends React.Component {
 							<img src={wgot.image} className="surround map-cards-img" />
 						</div>
 					  	<Link to={url}><h4>{wgot.title}</h4></Link>
-					  	<p className="small-p">Expires: {moment(wgot.expiration.toString()).format("MMMM Do YYYY")}</p>
+					  	<p className="small-p">Expires: {expiration}</p>
 					  	<p className="small-p up-a-smidge break-off-text">Description: {wgot.description}</p>
 
 					</div>

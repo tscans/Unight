@@ -86,7 +86,9 @@ Meteor.methods({
 				stripeBusiness: null,
 				code: random.toString(),
 				subscribeEmail: true,
-				deactivate: false
+				deactivate: false,
+				longlat0: null,
+				longlat1: null
 			});
 		})
 	},
@@ -166,5 +168,14 @@ Meteor.methods({
 		}
 		var profile = Profile.findOne({ownerId: user});
 		return Profile.update(profile._id, {$set:{deactivate: false}});	
+	},
+	'profile.placeLL': function(longlat){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+
+		var profile = Profile.findOne({ownerId: user});
+		return Profile.update(profile._id, {$set:{longlat0: longlat[0], longlat1: longlat[1]}});	
 	}
 });

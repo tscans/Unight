@@ -1,6 +1,7 @@
 import {Pages} from '../imports/collections/pages';
 import {DandE} from '../imports/collections/dande';
 import moment from 'moment';
+var cloudinary = require('cloudinary');
 
 Meteor.methods({
 	'dande.makeDandE': function(pageID, typeDE){
@@ -47,7 +48,8 @@ Meteor.methods({
 			title: '',
 			description: '',
 			expiration: '',
-			longlat: page.longlat,
+			longlat0: page.longlat0,
+			longlat1: page.longlat1,
 			createdAt: new Date(),
 		});
 	},
@@ -103,7 +105,7 @@ Meteor.methods({
 			
 		}})
 	},
-	'dande.imageDandE': function(pageID, dealID, image){
+	'dande.imageDandE': function(pageID, dealID, pic){
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
@@ -123,10 +125,18 @@ Meteor.methods({
 		if(deal.topUser != user){
 			return;
 		}
-		return DandE.update(dealID, {$set: {
-			image: image
-			
-		}})
+		cloudinary.config({cloud_name: 'dee8fnpvt' , api_key: '723549153244873' , api_secret: 'rooq670hgNK0JnoOSpxnZ7vFtG8'});
+		cloudinary.v2.uploader.upload("data:image/png;base64,"+pic, function(error, result){
+			if(error){
+				console.log(error)
+				return;
+			}
+		},Meteor.bindEnvironment(function (error, result) {
+		  	DandE.update(dealID, {$set: {
+				image: result.url
+			}})
+		}));
+		
 	},
 	'dande.removeDandE': function(deal){
 		return DandE.remove(deal)

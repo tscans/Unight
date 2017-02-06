@@ -4,6 +4,7 @@ import {createContainer} from 'meteor/react-meteor-data';
 import Zipcodes from 'zipcodes';
 
 class MemMainList extends Component {
+
 	renderList(){
 		return this.props.allPages.map(page=>{
 			const url = `/user/memberships/${page._id}/`;
@@ -26,6 +27,7 @@ class MemMainList extends Component {
 		})
 	}
     render() {
+    	console.log(Zipcodes.lookup(60655))
         return (
         	<div>
         		{this.renderList()}	

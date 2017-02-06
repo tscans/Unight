@@ -53,6 +53,7 @@ Meteor.startup(() => {
 				var u = allProfiles[f].goldMemberChecks;
 				for(var c = 0; c<u.length;c++){
 					console.log(u[c].expiration,iToday)
+					//is the expiration on this membership == to today?
 					console.log(u[c].expiration == iToday)
 					if(u[c].expiration == iToday){
 						if(u[c].paid){
@@ -67,7 +68,6 @@ Meteor.startup(() => {
 							        currency: "usd",
 							        customer: allProfiles[f].stripeCust,
 							        description: "monthly gold payment",
-							        application_fee: (u[c].amount*.05),
 							        destination: pageStripeActData
 							      	}, Meteor.bindEnvironment(function(error, result){
 							        if(error){
@@ -134,6 +134,8 @@ Meteor.startup(() => {
 
 			//END of daily membership checks
 			//START of monthly transactions --newexpi == endDate-- 
+			//checking to see if today is the end of the month.
+			//if it is, charge the businesses the amount due
 			if(newExpi == endDate){
 				console.log('running monthlyTransactions');
 				var allBusIDs = Profile.find({businessVerified: true}).fetch();
@@ -199,6 +201,7 @@ Meteor.startup(() => {
 				console.log('completed loops')
 				//Starting monthly gold potentials
 				console.log('starting gold potentials monthly')
+				//end of the month, which users are eligible for gold?
 				//return of a,b,c
 				//a is list of originals
 				//b is list of counts by original
@@ -304,21 +307,23 @@ Meteor.startup(() => {
 	});
 	Meteor.publish('allPages', function(){
 		var user = this.userId.toString();
-		console.log(user)
 		if(!user){
 			return;
 		}
-
-		return Pages.find({})
+		var profile = Profile.findOne({ownerId: user});
+		var longlat = [profile.longlat0,profile.longlat1];
+		var range = .06;
+		//add published:true
+		return Pages.find({ longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}})
 	});
 
-	Meteor.publish('memOrgPage', function(){
+	Meteor.publish('memOrgPage', function(pageID){
 		var user = this.userId.toString();
 		if(!user){
 			return;
 		}
-		
-		return Pages.find({})
+
+		return Pages.findOne({_id: pageID})
 	});
 	Meteor.publish('orgGeneralDeals', function(){
 		var user = this.userId.toString();
@@ -370,8 +375,10 @@ Meteor.startup(() => {
 		if(!user){
 			return;
 		}
-
-		return DandE.find({dealsOn: true}, { limit: per_page, sort: {upvotes: -1}})
+		var profile = Profile.findOne({ownerId: user});
+		var longlat = [profile.longlat0,profile.longlat1];
+		var range = .06;
+		return DandE.find({dealsOn: true, longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}}, { sort: {upvotes: -1}})
 	});
 	Meteor.publish('tombook', function(){
 		var user = this.userId.toString();

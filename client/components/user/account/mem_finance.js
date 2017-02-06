@@ -43,6 +43,7 @@ class MemFinance extends React.Component {
 			}
 			else{
 				Bert.alert('Card Removed', 'default', 'fixed-top' );
+				this.setState({custCard: null})
 			}
 		})
 	}

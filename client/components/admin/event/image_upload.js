@@ -15,40 +15,25 @@ export default class ImageUpload extends Component {
                     
                     console.log('seen')
                     var imageString = btoa(binaryString)
-                    
-
-                    var options = {
-                        "apiKey": '3730cec457efb6d',
-                        image: imageString
-                     }
-                    
-                    Imgur.upload(options, (error, data) => {
+                    var str = window.location.pathname;
+                    var res = str.substring(7, str.lastIndexOf('/event'));
+                    console.log('yo')
+                    if(str.lastIndexOf('/') == str.length - 1){
+                        var pos = str.substring(str.lastIndexOf('/event') + 8, str.length - 1)
+                    }
+                    else{
+                        var pos = str.substring(str.lastIndexOf('/event') + 8, str.length)
+                    }
+                    console.log(pos)
+                    var pageID = res;
+                    var eventID = pos;
+                    console.log(pos, res)
+                    Meteor.call('dande.eventImage',pageID, eventID, imageString, (error, data) => {
                         if(error){
                             console.log(error)
                         }
                         else{
-                            console.log('works', data.link)
-                            var str = window.location.pathname;
-                            var res = str.substring(7, str.lastIndexOf('/event'));
-                            console.log('yo')
-                            if(str.lastIndexOf('/') == str.length - 1){
-                                var pos = str.substring(str.lastIndexOf('/event') + 8, str.length - 1)
-                            }
-                            else{
-                                var pos = str.substring(str.lastIndexOf('/event') + 8, str.length)
-                            }
-                            console.log(pos)
-                            var pageID = res;
-                            var eventID = pos;
-                            console.log(pos, res)
-                            Meteor.call('dande.eventImage',pageID, eventID, data.link, (error, data) => {
-                                if(error){
-                                    console.log(error)
-                                }
-                                else{
-                                    console.log('image updated')
-                                }
-                            })
+                            console.log('image updated')
                         }
                     })
                 };

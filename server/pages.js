@@ -2,6 +2,14 @@ import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
 import {Notification} from '../imports/collections/notification';
 import moment from 'moment';
+var cloudinary = require('cloudinary');
+
+function checker(value,typeOBJ){
+	var returnValue;
+	//number,boolean,string
+	returnValue = (typeof(value) == typeOBJ);
+	return returnValue;
+}
 
 function emailBody(usid, code, business, dollars, today, expiration){
 	var unsub = `http://unight.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
@@ -50,10 +58,20 @@ Meteor.methods({
 		var numPages = Pages.find({ownedBy: {$elemMatch: {$eq: theUserId}}}).count();
 		var profile = Profile.findOne({ownerId: theUserId});
 		if(!profile.businessVerified){
+			throw new Meteor.Error(590, "stripe-error");
+			return;
+		}
+		if(!profile.stripeBusCust){
+			throw new Meteor.Error(590, "stripe-error");
+			return
+		}
+		if(!profile.stripeBusiness){
+			throw new Meteor.Error(590, "stripe-error");
 			return;
 		}
 		console.log(numPages);
 		if((numPages+1)>3){
+			throw new Meteor.Error(590, "stripe-error");
 			return;
 		}
 		var profile = Profile.findOne({ownerId: theUserId});
@@ -74,6 +92,7 @@ Meteor.methods({
 			allowedGifts: [],
 			monthlyTransactions: 0,
 			requiredForGold: null,
+			moneyForGold: null,
 			whoDealsMonthly: [],
 			published: false,
 			altnotes: []
@@ -103,6 +122,11 @@ Meteor.methods({
 		}})
 	},
 	'pages.updatePage': function(pageID, name, address, zip, website, about, hasDeals, hasMembers, hasEvents, hasGiftCards){
+		if(!(checker(pageID, "string") && checker(name, "string") && checker(address, "string") && checker(zip, "string") && checker(website, "string") && checker(about, "string") && checker(hasDeals, "boolean") && checker(hasMembers, "boolean") && checker(hasEvents, "boolean") && checker(hasGiftCards, "boolean"))){
+			console.log('hack attempt');
+			return;
+		}
+
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
@@ -114,6 +138,12 @@ Meteor.methods({
 		if(page.ownedBy[0] != user){
 			console.log('failed authentication')
 			return;
+		}
+		if(pageID == "" || name == "" || address == "" || zip == "" || website == ""){
+			return;
+		}
+		if(!page.published){
+			Pages.update(page._id, {$set:{published: true}})
 		}
 		console.log(page._id)
 
@@ -129,8 +159,16 @@ Meteor.methods({
 			website: website
 		}})
 	},
-	'pages.updateGoldRequire': function(pageID,requiredForGold){
+	'pages.updateGoldRequire': function(pageID,requiredForGold, moneyForGold){
 		var user = this.userId.toString();
+		if(isNaN(requiredForGold) || isNaN(moneyForGold)){
+			console.log('hacker')
+	        return;
+	    }
+	    if(!(checker(pageID, "string") || checker(requiredForGold, "number") || checker(moneyForGold, "number"))){
+	    	console.log('hacker')
+	    	return;
+	    }
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
 			return;
@@ -143,12 +181,15 @@ Meteor.methods({
 			return;
 		}
 
-		requiredForGold = parseInt(requiredForGold);
 		if(requiredForGold > 10 || requiredForGold < 1){
 			return;
 		}
+		if(moneyForGold > 20 || moneyForGold < 4){
+			return;
+		}
 		return Pages.update(pageID, {$set: {
-			requiredForGold: requiredForGold
+			requiredForGold: requiredForGold,
+			moneyForGold: moneyForGold
 		}})
 	},
 	'pages.addAltNotes': function(pageID,email, name){
@@ -221,10 +262,10 @@ Meteor.methods({
 			console.log('failed authentication')
 			return;
 		}
-		console.log(page._id)
 
 		return Pages.update(pageID, {$set: {
-			longlat: longlat
+			longlat0: longlat[0],
+			longlat1: longlat[1]
 		}})
 	},
 	'pages.updateImage': function(pageID, pic){
@@ -240,9 +281,20 @@ Meteor.methods({
 			console.log('failed authentication')
 			return;
 		}
-		return Pages.update(pageID, {$set: {
-			proPict: pic
-		}})
+
+		cloudinary.config({cloud_name: 'dee8fnpvt' , api_key: '723549153244873' , api_secret: 'rooq670hgNK0JnoOSpxnZ7vFtG8'});
+		cloudinary.v2.uploader.upload("data:image/png;base64,"+pic, function(error, result){
+			if(error){
+				console.log(error)
+				return;
+			}
+		},Meteor.bindEnvironment(function (error, result) {
+			console.log(result)
+		  	Pages.update(pageID, {$set: {
+				proPict: result.url
+			}})
+		}));
+		
 	},
 	'pages.addGoldMember': function(pageID){
 		var user = this.userId.toString();

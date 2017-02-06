@@ -2,6 +2,10 @@
 * {
   border-radius: 0 !important;
 }
+
+body {
+  font-family: 'Droid Sans', sans-serif;
+}
 a:link {
     text-decoration: none;  
 }
@@ -98,6 +102,35 @@ input::-webkit-inner-spin-button {
   }
 }
 
+.tooltip {
+    position: relative;
+    display: inline-block;
+
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #64CDF4;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -75%;
+    
+    /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+    opacity: 0;
+    transition: opacity 3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
 
 .card {
   background: #fff;
@@ -364,6 +397,12 @@ input::-webkit-inner-spin-button {
   width: 15px;
   height: 100%;
   background-color: #64CDF4;
+  float: left;
+}
+.wgot-list-beacon-used{
+  width: 15px;
+  height: 100%;
+  background-color: #E57373;
   float: left;
 }
 .wgot-list-beacon-bar{

@@ -234,7 +234,7 @@ class AdminAboutMap extends React.Component {
            
 
         }
-        createMarker(new google.maps.LatLng(cube3.longlat[0], cube3.longlat[1]), cube3.proPict);
+        createMarker(new google.maps.LatLng(cube3.longlat0, cube3.longlat1), cube3.proPict);
 	}
 	render(){
 		if(!this.props.allPages){

@@ -118,7 +118,7 @@ Meteor.methods({
 		var stripe = StripeAPI(Meteor.settings.StripePri);
 		var samount = giftAmount * 100;
 		if(!profile.stripeCust){
-			throw new Meteor.error(540, "No Credit Card on Account");
+			throw new Meteor.Error(540, "No Credit Card on Account");
 			return;
 		}
 		var appfee = samount*ourCharge

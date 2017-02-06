@@ -16,30 +16,17 @@ export default class ImageUpload extends Component {
                     console.log('seen')
                     var imageString = btoa(binaryString)
                     console.log(imageString)
-
-                    var options = {
-                        "apiKey": '3730cec457efb6d',
-                        image: imageString
-                     }
                     
-                    Imgur.upload(options, (error, data) => {
+                    var str = window.location.pathname;
+                    var res = str.substring(7, str.length - 1);
+                    console.log(res)
+                    var pageID = res;
+                    Meteor.call('pages.updateImage',pageID, imageString, (error, data) => {
                         if(error){
                             console.log(error)
                         }
                         else{
-                            console.log('works', data.link)
-                            var str = window.location.pathname;
-                            var res = str.substring(7, str.length - 1);
-                            console.log(res)
-                            var pageID = res;
-                            Meteor.call('pages.updateImage',pageID, data.link, (error, data) => {
-                                if(error){
-                                    console.log(error)
-                                }
-                                else{
-                                    console.log('image updated')
-                                }
-                            })
+                            console.log('image updated')
                         }
                     })
                 };

@@ -33,7 +33,7 @@ class UserNav extends Component {
                 </div>
                 <div className="collapse navbar-collapse">
                   <ul className="nav navbar-nav navbar-right">
-                    <li><Link to="/user/"><span className="glyphicon glyphicon-book"></span>UBOOK</Link></li>
+                    <li><Link to="/user/"><span className="glyphicon glyphicon-bookmark"></span>UBOOK</Link></li>
                     <li><Link to="/user/wgot"><span className="glyphicon glyphicon-calendar"></span>TONIGHT</Link></li>
                     <li><Link to="/user/memberships"><span className="glyphicon glyphicon-globe"></span>MEMBERSHIPS</Link></li>
                     <li className="dropdown">

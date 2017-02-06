@@ -8,23 +8,10 @@ class MemMaps extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mapLoaded: false
-    }
-  }
-	componentWillReceiveProps(props){
-    
-      console.log('maps come up')
-
-    	var cube3 = props.allPages
-    	console.log(this.state.mapLoaded)
-      if(this.state.mapLoaded){
-        console.log('returned')
-        return true;
-      }
-      this.setMaps();
-    	var geocoder = new google.maps.Geocoder();
-    	var uluru = {lat: 41.8781, lng: -87.6298};
-      var style = [
+      mapLoaded: false,
+      changes: 0,
+      map: null,
+      style: [
           {
             "elementType": "geometry",
             "stylers": [
@@ -219,26 +206,47 @@ class MemMaps extends React.Component {
             ]
           }
         ]
+    }
+  }
+	componentWillReceiveProps(props){
+    
+      console.log('maps come up')
+
+    	var cube3 = props.allPages
+    	console.log(this.state.mapLoaded)
+      if(this.state.mapLoaded){
+        console.log('returned')
+        return true;
+      }
+      if(props.profile.userZip){
+        this.setMaps();
+      }
+      
+    	var geocoder = new google.maps.Geocoder();
+    	var uluru = {lat: 41.8781, lng: -87.6298};
         var map = new google.maps.Map(document.getElementById('mapid'), {
           zoom: 4,
           center: uluru,
   streetViewControl: false,
            disableDefaultUI: true,
-           styles: style
+           styles: this.state.style
 
         });
-        console.log('got here')
-        console.log(props.profile.userZip)
-        geocoder.geocode({address: props.profile.userZip.toString() }, function(results, status) {
+        this.setState({map: map});
+        geocoder.geocode({address: (props.profile.longlat0+","+props.profile.longlat1).toString() }, function(results, status) {
 
             if (status == google.maps.GeocoderStatus.OK) {
 
               map.setCenter(results[0].geometry.location);
-              map.setZoom(13);
+              map.setZoom(12);
             }
         });
-
+        var shape = {
+          coords: [1, 1, 1, 20, 18, 20, 18, 1],
+          type: 'poly'
+        };
         var tempPos;
+
         function createMarker(latlng, placeUrl, cimg, nameTitle) {
            marker = new google.maps.Marker({
               map: map,
@@ -246,7 +254,7 @@ class MemMaps extends React.Component {
               icon: {
                   url: cimg,
 
-                  scaledSize: new google.maps.Size(40,40)
+                  scaledSize: new google.maps.Size(35,35),
               },
               position: latlng,
               url: placeUrl,
@@ -254,12 +262,10 @@ class MemMaps extends React.Component {
            
 
         }
-        
-        console.log(cube3)
         cube3.map((c)=>{
             var v = "/user/memberships/"
             console.log(c._id)
-        	createMarker(new google.maps.LatLng(c.longlat[0], c.longlat[1]), v + c._id + "/", c.proPict, c.orgName)
+        	createMarker(new google.maps.LatLng(c.longlat0, c.longlat1), v + c._id + "/", c.proPict, c.orgName)
         	google.maps.event.addListener(marker, 'click', (function (marker) {
             return function () {
                 browserHistory.push(v + c._id + "/");
@@ -271,14 +277,53 @@ class MemMaps extends React.Component {
     this.setState({mapLoaded: true})
    }
    shouldComponentUpdate(nextProps, nextState) {
-     console.log('shoudl')
      return false;
    }
+   logit(){
+    var longlat = [this.state.map.getCenter().lat(),this.state.map.getCenter().lng()];
+    Meteor.call("profile.placeLL", longlat, (error,data)=>{
+      if(error){
+        console.log(error);
+      }
+      else{
+        Meteor.subscribe('allPages');
+        Meteor.subscribe('wgot');
+        Meteor.subscribe('profile');
+        var cube3 = this.props.allPages
+        function createMarker(latlng, placeUrl, cimg, nameTitle, map) {
+           marker = new google.maps.Marker({
+              map: map,
+              title: nameTitle,
+              icon: {
+                  url: cimg,
+
+                  scaledSize: new google.maps.Size(35,35),
+              },
+              position: latlng,
+              url: placeUrl,
+           });
+           
+
+        }
+        cube3.map((c)=>{
+            var v = "/user/memberships/"
+            console.log(c._id)
+          createMarker(new google.maps.LatLng(c.longlat0, c.longlat1), v + c._id + "/", c.proPict, c.orgName, this.state.map)
+          google.maps.event.addListener(marker, 'click', (function (marker) {
+            return function () {
+                browserHistory.push(v + c._id + "/");
+            }
+        })(marker));
+        });
+      }
+    })
+   }
+
     render() {
         return (
         	<div>
         		<div className="col-md-6 freeze">
-        			<div id="mapid"></div>
+        			<div id="mapid" onClick={this.logit.bind(this)}></div>
         		</div>
         	</div>
         );

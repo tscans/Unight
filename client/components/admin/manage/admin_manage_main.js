@@ -13,8 +13,14 @@ class AdminManageMain extends Component {
     }
     setGoldReq(){
       var requiredForGold = this.refs.goldreq.value.trim();
+      var moneyForGold = this.refs.goldmon.value.trim();
+      requiredForGold = parseInt(requiredForGold);
+      moneyForGold = parseInt(moneyForGold);
+      if(isNaN(requiredForGold) || isNaN(moneyForGold)){
+        return;
+      }
       var pageID = this.props.params.pageId;
-      Meteor.call('pages.updateGoldRequire', pageID, requiredForGold, (error,data)=>{
+      Meteor.call('pages.updateGoldRequire', pageID, requiredForGold, moneyForGold, (error,data)=>{
         if(error){
           console.log(error)
         }
@@ -26,6 +32,15 @@ class AdminManageMain extends Component {
     renderNum(){
       if(this.props.thisPage.requiredForGold){
         return this.props.thisPage.requiredForGold.toString();
+      }
+      else{
+        return "Not Set"
+      }
+    }
+    renderNum2(){
+      if(this.props.thisPage.moneyForGold){
+        
+        return ("$"+(this.props.thisPage.moneyForGold.toFixed(2)).toString());
       }
       else{
         return "Not Set"
@@ -83,7 +98,7 @@ class AdminManageMain extends Component {
     }
     render() {
 
-      if(!this.props.adminCards || !this.props.thisPage){
+      if(!this.props.adminCards || !this.props.thisPage || !this.props.allPages){
         return<div></div>
       }
         return (
@@ -91,16 +106,16 @@ class AdminManageMain extends Component {
         		<div className="container-fluid bg-3 text-center">
               <h1 className="margin">Manage Page </h1>
               <div className="col-md-7">
-                <AdminManageBody adminCards={this.props.adminCards} thisPage={this.props.thisPage} />
+                <AdminManageBody adminCards={this.props.adminCards} thisPage={this.props.thisPage} allPages={this.props.allPages}/>
               </div>
               <div className="col-md-5">
                 <h3>Set Gold Membership Requirement</h3>
-                <p>Set the number of deals a user needs to use before being eligible for Gold Membership (1-10). Current: {this.renderNum()}</p>
+                <p>Set the number of deals a user needs to use before being eligible for Gold Membership (1-10) and the cost ($4.00 - $20.00). Current: {this.renderNum()} deals, {this.renderNum2()}</p>
                 <div className="form-group col-md-6">
                   <input type="number" className="form-control foc-card" ref="goldreq" defaultValue={this.props.thisPage.requiredForGold} placeholder="Deals Needed"/>
                 </div>
                 <div className="form-group col-md-6">
-                  <input type="number" className="form-control foc-card" ref="goldmon" defaultValue={this.props.thisPage.requiredForGold} placeholder="Cost for Gold"/>
+                  <input type="number" className="form-control foc-card" ref="goldmon" defaultValue={this.props.thisPage.moneyForGold} placeholder="Cost for Gold"/>
                 </div>
                 <button className="btn btn-success card-1" onClick={this.setGoldReq.bind(this)}>Set Requirement</button>
                 <h3>Allow Other Users Notification Privileges</h3>
@@ -130,6 +145,6 @@ export default createContainer((props)=>{
   Meteor.subscribe('adminCards', pageID);
   Meteor.subscribe('pages');
 
-  return{adminCards: GiftCards.find({}).fetch(), thisPage: Pages.findOne({_id: pageID}), pageID: pageID}
+  return{adminCards: GiftCards.find({}).fetch(), thisPage: Pages.findOne({_id: pageID}), pageID: pageID, allPages: Pages.find({}).fetch()}
 
 }, AdminManageMain); 

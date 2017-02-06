@@ -15,7 +15,8 @@ class MemTblist extends React.Component {
 			currentP: {},
 			payAmount: 0,
 			payWrite: false,
-			failed: ""
+			failed: "",
+			display: "deals"
 		}
 	}
 	onRemove(t){
@@ -104,6 +105,11 @@ class MemTblist extends React.Component {
 		})
 	}
 	renderCards(){
+		if(this.props.tbCards.length==0){
+			return(
+				<h3>You have no gift cards at this time.</h3>
+			)
+		}
 		return this.props.tbCards.map((p)=>{
 			console.log(p)
 			return(
@@ -205,6 +211,32 @@ class MemTblist extends React.Component {
     		Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
     	}
     }
+    renderDisplay(){
+    	if(this.state.display == "deals"){
+    		return(
+	    		<div>
+	    			<h2>Saved Deals</h2>
+					{this.renderList()}
+				</div>
+    		)
+    	}
+    	if(this.state.display == "memberships"){
+    		return(
+    			<div>
+	    			<h2>My Memberships</h2>
+					{this.renderOther()}
+				</div>
+    		)
+    	}
+    	if(this.state.display == "cards"){
+    		return(
+    			<div>
+	    			<h2>My Gift Cards</h2>
+					{this.renderCards()}
+				</div>
+    		)
+    	}
+    }
 	render(){
 		if (!this.props.profile){
 			return <div><img src="http://i.imgur.com/TwejQKK.gif" height="100px" /></div>
@@ -215,12 +247,10 @@ class MemTblist extends React.Component {
 				<div className="col-md-offset-6">
 					{this.renderCardPay()}
 					{this.renderButton()}
-					<h2>Saved Deals</h2>
-					{this.renderList()}
-					<h2>My Memberships</h2>
-					{this.renderOther()}
-					<h2>Cards</h2>
-					{this.renderCards()}
+					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "deals"})}}><h3>Deals</h3></div>
+					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "memberships"})}}><h3>Memberships</h3></div>
+					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "cards"})}}><h3>Cards</h3></div>
+					{this.renderDisplay()}
 				</div>
 			</div>
 		)
