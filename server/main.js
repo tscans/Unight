@@ -305,14 +305,20 @@ Meteor.startup(() => {
 			ownedBy: {$elemMatch: {$eq: user}}
 		})
 	});
-	Meteor.publish('allPages', function(){
+	Meteor.publish('allPages', function(mobLL){
 		var user = this.userId.toString();
 		if(!user){
 			return;
 		}
-		var profile = Profile.findOne({ownerId: user});
-		var longlat = [profile.longlat0,profile.longlat1];
-		var range = .06;
+		if(Array.isArray(mobLL)){
+			var longlat = mobLL
+		}
+		else{
+			var profile = Profile.findOne({ownerId: user});
+			var longlat = [profile.longlat0,profile.longlat1];
+		}
+		
+		var range = .1;
 		//add published:true
 		return Pages.find({ longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}})
 	});
@@ -370,14 +376,20 @@ Meteor.startup(() => {
 
 		})
 	});
-	Meteor.publish('wgot', function(per_page){
+	Meteor.publish('wgot', function(mobLL){
 		var user = this.userId.toString();
 		if(!user){
 			return;
 		}
-		var profile = Profile.findOne({ownerId: user});
-		var longlat = [profile.longlat0,profile.longlat1];
-		var range = .06;
+		if(Array.isArray(mobLL)){
+			var longlat = mobLL;
+		}
+		else{
+			var profile = Profile.findOne({ownerId: user});
+			var longlat = [profile.longlat0,profile.longlat1];
+		}
+		
+		var range = .1;
 		return DandE.find({dealsOn: true, longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}}, { sort: {upvotes: -1}})
 	});
 	Meteor.publish('tombook', function(){
