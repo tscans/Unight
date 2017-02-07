@@ -26,6 +26,7 @@ class MemWgotdPage extends React.Component {
 }
 
 export default createContainer((props)=>{
-    Meteor.subscribe('wgot');
-    return {wgot: DandE.findOne({_id: props.pageId })}
+    console.log(props.pageId)
+    Meteor.subscribe('singleWgot', props.pageId);
+    return {wgot: DandE.findOne({_id: props.pageId})}
 }, MemWgotdPage); 
