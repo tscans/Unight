@@ -77,12 +77,12 @@ class MemWgotdBody extends React.Component {
         })
         if(cont){
             return(
-                <button className="btn btn-danger btn-extend" onClick={this.removeDeal.bind(this)}><h4><span className="glyphicon glyphicon-minus-sign"></span> Remove from TomBook</h4></button>
+                <button className="btn btn-danger btn-extend" onClick={this.removeDeal.bind(this)}><h4><span className="glyphicon glyphicon-minus-sign"></span> Remove from UBook</h4></button>
             )
         }
         else{
             return(
-                <button className="btn btn-success btn-extend" onClick={this.addDeal.bind(this)}><h4><span className="glyphicon glyphicon-plus-sign"></span> Add to TomBook</h4></button>
+                <button className="btn btn-success btn-extend" onClick={this.addDeal.bind(this)}><h4><span className="glyphicon glyphicon-plus-sign"></span> Add to UBook</h4></button>
             )
         }
     }

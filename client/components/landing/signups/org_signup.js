@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
+var zipcodes = require('zipcodes');
 
 class OrgSignup extends Component {
     constructor(props){
@@ -27,7 +28,13 @@ class OrgSignup extends Component {
         	console.log('mismatch passwords');
             this.setState({gif: "invisible"});
         }
+        
         else{
+            var zippy = zipcodes.lookup(zip);
+            if(!zippy){
+                Bert.alert( "Please use a real zip code.", 'warning', 'fixed-top' );
+            }
+        return
             Accounts.createUser({
                 email: ema,
                 password: pss1

@@ -1,5 +1,6 @@
 import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
+var zipcodes = require('zipcodes');
 
 
 
@@ -50,6 +51,8 @@ Meteor.methods({
 			throw new Meteor.Error(510, 'User with email already exists.');
 			return;
 		}
+		var zippy = zipcodes.lookup(zip);
+
 		Meteor.call('tombook.initTomBook', user, (error,data)=>{
 			if(error){
 				console.log(error)
@@ -87,8 +90,8 @@ Meteor.methods({
 				code: random.toString(),
 				subscribeEmail: true,
 				deactivate: false,
-				longlat0: null,
-				longlat1: null
+				longlat0: zippy.latitude,
+				longlat1: zippy.longitude
 			});
 		})
 	},
