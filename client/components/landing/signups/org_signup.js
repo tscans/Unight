@@ -34,7 +34,6 @@ class OrgSignup extends Component {
             if(!zippy){
                 Bert.alert( "Please use a real zip code.", 'warning', 'fixed-top' );
             }
-        return
             Accounts.createUser({
                 email: ema,
                 password: pss1
