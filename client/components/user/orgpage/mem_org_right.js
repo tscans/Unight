@@ -36,7 +36,7 @@ class MemOrgRight extends Component {
         else{
           console.log(data)
           $('#myModal').modal('hide');
-          Bert.alert('You have been charged $5.00.', 'success', 'fixed-top' );
+          Bert.alert('You are now a gold member at '+this.props.pages.orgName, 'success', 'fixed-top' );
         }
       })
     }
@@ -50,7 +50,7 @@ class MemOrgRight extends Component {
         else{
           console.log(data)
           $('#myModal').modal('hide');
-          Bert.alert('You will no longer be charged for membership here.', 'info', 'fixed-top' );
+          Bert.alert('You are no longer a member of '+this.props.pages.orgName , 'info', 'fixed-top' );
         }
       })
       
@@ -143,7 +143,7 @@ class MemOrgRight extends Component {
           <div>
             <div className="card-2">
               <button className="btn btn-success btn-extend" data-toggle="modal" data-target="#myModal">
-                <h4><span className="glyphicon glyphicon-credit-card"></span> Become a Gold Member</h4>
+                <h4><span className="glyphicon glyphicon-thumbs-up"></span> Become a Gold Member</h4>
               </button>
             </div>
             <div className="modal fade all-black" id="myModal" role="dialog">
@@ -154,12 +154,7 @@ class MemOrgRight extends Component {
                         <h4 className="modal-title">Become a Gold Member</h4>
                       </div>
                       <div className="modal-body">
-                        <div>
-                          <p>Current Saved Payment Information</p>
-                          <p><b>{this.state.custCard.cardInfo.brand}</b> ending in <b>{this.state.custCard.cardInfo.last4}</b> -- 
-                          Expires: <b>{this.state.custCard.cardInfo.exp_month}/{this.state.custCard.cardInfo.exp_year}</b></p>
-                        </div>
-                        <p>In order to become a Gold Member of {this.props.pages.orgName}, you must pay the fee.</p>
+                        <p>So you'd like to become a Gold Member of {this.props.pages.orgName}...</p>
                       </div>
                       <div className="modal-footer">
                         <button type="button" onClick={this.goldMember.bind(this)} className="btn btn-success">Become Gold Member</button>
@@ -176,7 +171,7 @@ class MemOrgRight extends Component {
           <div>
             <div className="card-2">
               <button className="btn btn-danger btn-extend" data-toggle="modal" data-target="#myModal">
-                <h4><span className="glyphicon glyphicon-credit-card"></span> End Membership</h4>
+                <h4><span className="glyphicon glyphicon-thumbs-down"></span> End Membership</h4>
               </button>
             </div>
             <div className="modal fade all-black" id="myModal" role="dialog">

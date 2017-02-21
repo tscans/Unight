@@ -69,19 +69,19 @@ Meteor.methods({
 
 		if(amountToken == 0){
 			giftAmount = 10.00
-			ourCharge = .08
+			ourCharge = .07
 		}
 		if(amountToken == 1){
 			giftAmount = 20.00
-			ourCharge = .07
+			ourCharge = .06
 		}
 		if(amountToken == 2){
 			giftAmount = 50.00
-			ourCharge = .06
+			ourCharge = .05
 		}
 		if(amountToken == 3){
 			giftAmount = 100.00
-			ourCharge = .06
+			ourCharge = .04
 		}
 		var inFriendsList = null;
 		function containsObject(obj, list) {

@@ -37,6 +37,7 @@ class MemTblist extends React.Component {
 		Meteor.call('tombook.cashItem', t._id, (error,data)=>{
 			if(error){
 				console.log(error)
+				Bert.alert( error.message, 'danger', 'growl-bottom-right' );
 				if(error.error=502){
 					this.setState({failed: "\nUser has already used this deal."})
 				}
@@ -82,23 +83,24 @@ class MemTblist extends React.Component {
 		})
 	}
 	renderOther(){
-		console.log(this.props.profile.goldMemberChecks)
-		if(this.props.profile.goldMemberChecks.length==0){
+		console.log(this.props.tbMember)
+		console.log(this.props)
+		if(this.props.profile.goldMember.length==0){
 			return(
 				<h3>You have no memberships at this time.</h3>
 			)
 		}
 		var bit = "/user/memberships/";
 		var v;
-		return this.props.profile.goldMemberChecks.map((t)=>{
+
+		return this.props.tbMember.map((t)=>{
 			console.log(t)
-			v = t.pageID;
+			v = t._id;
 			return(
-				<div className="card-1 tombook-cards" key={t.pageID}>
+				<div className="card-1 tombook-cards" key={t._id}>
 					<Link to={bit+v+"/"}>
 					<img src={t.proPict} className="surround map-cards-img" />
 					<h2>{t.orgName}</h2>
-					<h4>Expires: {t.expiration}</h4>
 					</Link>
 				</div>
 			)
@@ -241,6 +243,7 @@ class MemTblist extends React.Component {
 		if (!this.props.profile){
 			return <div><img src="http://i.imgur.com/TwejQKK.gif" height="100px" /></div>
 		}
+		console.log(this.props.pages)
 		this.checkVerified();
 		return(
 			<div>
@@ -262,10 +265,12 @@ export default createContainer((props)=>{
 	props.tombook.tbc.map((tbca)=>{
 		tbcb.push(tbca.theID)
 	})
+
 	var bart = props.profile;
     Meteor.subscribe('tblist', tbcb);
     Meteor.subscribe('tbMember');
     Meteor.subscribe('userCards');
+    Meteor.subscribe('arrayPage');
     return {tblist: DandE.find({_id: {$in:tbcb}}).fetch(), 
     tbMember: Pages.find({_id: {$in: bart.goldMember}}).fetch(),
 	tbCards: GiftCards.find({}).fetch(), profile: Profile.findOne({})}

@@ -33,6 +33,7 @@ class UserNav extends Component {
                 </div>
                 <div className="collapse navbar-collapse">
                   <ul className="nav navbar-nav navbar-right">
+                    <li><Link to="/user/mem_notes"><span className="glyphicon glyphicon-bell"></span>NOTES</Link></li>
                     <li><Link to="/user/"><span className="glyphicon glyphicon-bookmark"></span>UBOOK</Link></li>
                     <li><Link to="/user/wgot"><span className="glyphicon glyphicon-calendar"></span>TONIGHT</Link></li>
                     <li><Link to="/user/memberships"><span className="glyphicon glyphicon-globe"></span>MEMBERSHIPS</Link></li>
@@ -40,7 +41,7 @@ class UserNav extends Component {
                       <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span className="glyphicon glyphicon-cog"></span> ACCOUNT<span className="glyphicon glyphicon-triangle-bottom"></span></a>
                       <ul className="dropdown-menu">
                         <li><a href="#"><span className="glyphicon glyphicon-asterisk"></span> Help</a></li>
-                        <li><a href="#" onClick={this.altNotes.bind(this)}><span className="glyphicon glyphicon-bell"></span> Alt Notes</a></li>
+                        <li><a href="#" onClick={this.altNotes.bind(this)}><span className="glyphicon glyphicon-folder-close"></span> Work Notes</a></li>
                         <li><a href="#" onClick={this.finance.bind(this)}><span className="glyphicon glyphicon-usd"></span> Finance</a></li>
                         <li><a href="#" onClick={this.account.bind(this)}><span className="glyphicon glyphicon-user"></span> Account</a></li>
                         <li role="separator" className="divider"></li>

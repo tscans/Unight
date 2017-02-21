@@ -85,14 +85,14 @@ Meteor.methods({
 			zipCode: zipCode,
 			aboutUs: aboutUs,
 			website: "",
-			hasDeals: false,
-			hasMembers: false,
-			hasEvents: false,
-			hasGiftCards: false,
+			hasDeals: true,
+			hasMembers: true,
+			hasEvents: true,
+			hasGiftCards: true,
 			allowedGifts: [],
 			monthlyTransactions: 0,
-			requiredForGold: null,
-			moneyForGold: null,
+			requiredForGoal: 5,
+			moneyForGoal: 4,
 			whoDealsMonthly: [],
 			published: false,
 			altnotes: []
@@ -159,13 +159,13 @@ Meteor.methods({
 			website: website
 		}})
 	},
-	'pages.updateGoldRequire': function(pageID,requiredForGold, moneyForGold){
+	'pages.updateGoalRequire': function(pageID,requiredForGoal, moneyForGoal){
 		var user = this.userId.toString();
-		if(isNaN(requiredForGold) || isNaN(moneyForGold)){
+		if(isNaN(requiredForGoal) || isNaN(moneyForGoal)){
 			console.log('hacker')
 	        return;
 	    }
-	    if(!(checker(pageID, "string") || checker(requiredForGold, "number") || checker(moneyForGold, "number"))){
+	    if(!(checker(pageID, "string") || checker(requiredForGoal, "number") || checker(moneyForGoal, "number"))){
 	    	console.log('hacker')
 	    	return;
 	    }
@@ -181,15 +181,15 @@ Meteor.methods({
 			return;
 		}
 
-		if(requiredForGold > 10 || requiredForGold < 1){
+		if(requiredForGoal > 16 || requiredForGoal < 4){
 			return;
 		}
-		if(moneyForGold > 20 || moneyForGold < 4){
+		if(moneyForGoal > 12 || moneyForGoal < 2){
 			return;
 		}
 		return Pages.update(pageID, {$set: {
-			requiredForGold: requiredForGold,
-			moneyForGold: moneyForGold
+			requiredForGoal: requiredForGoal,
+			moneyForGoal: moneyForGoal
 		}})
 	},
 	'pages.addAltNotes': function(pageID,email, name){
@@ -312,6 +312,10 @@ Meteor.methods({
 			throw new Meteor.Error(530, 'Your purchase abilities are deactivated.');
 			return;
 		}
+		if(profileID.goldMember.length >= profileID.memberAllowance){
+			throw new Meteor.Error(531, 'You cannot have more than '+profileID.memberAllowance.toString()+' gold memberships.');
+			return;
+		}
 		Pages.update(page._id, {$push: {
 			pageUsers: user
 		}})
@@ -327,26 +331,12 @@ Meteor.methods({
 			createdAt: new Date(),
 			
 		});
-		var d = new Date();
-		var iToday = moment(d).format("ll");
-		var expiration = moment(d).add(1,'month').format("ll");
 		Profile.update(profileID._id, {$pull: {
-			goldMember: pageID,
-			goldMemberChecks: {pageID: pageID}
+			goldMember: pageID
 		}})
 		Profile.update(profileID._id, {$push: {
-			goldMember: pageID,
-			goldMemberChecks: {pageID: pageID, expiration: expiration, paid: true, continuity: true, amount: 500, orgName: page.orgName, proPict: page.proPict}
+			goldMember: pageID
 		}})
-		var subject = "You Are A Member Of "+page.orgName;
-		if(profileID.subscribeEmail){
-			Email.send({
-			  to: profileID.email,
-			  from: "UnightMail@mail.unight.io",
-			  subject: subject,
-			  html: emailBody(profileID.ownerId, profileID.code, page.orgName, "5.00", iToday, expiration),
-			});
-		}
 	},
 	'pages.removeGoldMember': function(pageID){
 		var user = this.userId.toString();
@@ -360,20 +350,13 @@ Meteor.methods({
 		const profileID = Profile.findOne({
 			ownerId: theUserId
 		})
-		function isPage(element) {
-		  return element.pageID == pageID;
-		}
-		
-		var proPackage = profileID.goldMemberChecks.find(isPage);
-		proPackage.continuity = false;
+
 		Pages.update(page._id, {$pull: {
 			pageUsers: user
 		}})
-		Profile.update(profileID._id, {$pull: {
-			goldMemberChecks: {pageID: pageID}
-		}})
-		return Profile.update(profileID._id, {$push: {
-			goldMemberChecks: proPackage
+		
+		return Profile.update(profileID._id, {$pull: {
+			goldMember: pageID
 		}})
 	},
 	'pages.changeGifts': function(pageID, cardArray){

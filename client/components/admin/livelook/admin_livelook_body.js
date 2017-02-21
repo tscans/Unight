@@ -38,14 +38,11 @@ class AdminLivelookBody extends React.Component{
 				<div key={n._id}>
 					<div className="card-1 note-cards">
 						<div className={color}></div>
-						<div className="col-md-1 float-right-alt">
-							<button className="float-right btn btn-danger" onClick={() => {this.removeNote(n._id)}}><span className="glyphicon glyphicon-remove"></span></button>
-							<button className="float-right btn btn-warning" onClick={() => {this.runTempModal(n._id, n.createdAt)}}><span className="glyphicon glyphicon-flag"></span></button>
-						</div>
+						{this.renderChoice(n)}
 						<div className="col-md-3">
 							<h4>{moment(n.createdAt.toString()).calendar()}</h4>
 						</div>
-						<div className="col-md-8 bud-left">
+						<div className="col-md-7 bud-left">
 							<h4>{n.message}</h4>
 						</div>
 					</div>
@@ -53,25 +50,41 @@ class AdminLivelookBody extends React.Component{
 			)
 		})
 	}
-	runTempModal(nid, time){
-		var txt;
-		time = moment(time.toString()).calendar();
-		var r = prompt("Are you sure you want to flag this deal accepted "+time+"? (type 'yes' to confirm.)");
-		r = r.toLowerCase()
-		if (r == "yes") {
-			Meteor.call('notification.deleteNotification',nid,(error,data)=>{
-				if(error){
-					console.log(error);
-				}
-				else{
-					console.log(data);
-					this.forceUpdate();
-					alert("The deal has been flagged. The user has not received credit for it and you have not been charged.");
-				}
-			});
-		} else {
-		    null;
+	renderChoice(n){
+		if(n.type=="DD" || n.type == "GD"){
+			return(
+				<div>
+					<div className="col-md-1 float-left-alt">
+						<button className="float-left btn btn-danger" onClick={() => {this.removeNote(n._id)}}><span className="glyphicon glyphicon-remove"></span></button>
+					</div>
+					<div className="col-md-1 float-right-alt">
+						<button className="float-right btn btn-success" onClick={() => {this.runTempModal(n._id, n.createdAt)}}><span className="glyphicon glyphicon-ok"></span></button>
+					</div>
+				</div>
+			)
 		}
+		else{
+			return(
+				<div>
+					<div className="col-md-1 float-left-alt">
+						<button className="float-left btn btn-danger" onClick={() => {this.removeNote(n._id)}}><span className="glyphicon glyphicon-remove"></span></button>
+					</div>
+				</div>
+			)
+		}
+	}
+	runTempModal(nid){
+		Meteor.call('notification.acceptNotification',nid,(error,data)=>{
+			if(error){
+				console.log(error);
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+			}
+			else{
+				console.log(data);
+				this.forceUpdate();
+				Bert.alert('Deal Accepted', 'success', 'fixed-top' );
+			}
+		});
 	}
 	removeNote(nid){
 		console.log(nid)

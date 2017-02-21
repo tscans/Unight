@@ -9,7 +9,7 @@ class MemTomBook extends React.Component {
 		console.log(Meteor.userId())
 		console.log(this.props.tombook)
 		if(!this.props.tombook || !this.props.profile){
-    		return <div></div>
+    		return <div className="col-md-6 col-md-offset-6 top-bot-not bump-bot"><img src="http://i.imgur.com/TwejQKK.gif" height="200px" /></div>
     	}
 		return (
 
@@ -26,6 +26,7 @@ export default createContainer((props)=>{
     Meteor.subscribe('profile');
     Meteor.subscribe('tombook');
     Meteor.subscribe('tbMember');
+    
     return {profile: Profile.findOne({}), tombook: TomBook.findOne({})};
 
     

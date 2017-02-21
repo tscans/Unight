@@ -97,6 +97,7 @@ Meteor.methods({
 		if(book.topUser != theUserId){
 			return;
 		}
+		const profile = Profile.findOne({ownerId: theUserId});
 		//good to go
 		var dande = DandE.findOne({_id: perid});
 		if(dande.typeDE =="E"){
@@ -105,55 +106,34 @@ Meteor.methods({
 		}
 		
 		var page = Pages.findOne({_id: dande.forPage});
-		var erase = false;
-		if((dande.maxn -1) == dande.timesUsed){
-			erase = true;
-		}
-		console.log()
+
 		if(dande.usedBy.indexOf(theUserId) != -1){
 			throw new Meteor.Error(502, "User already used this deal.");
 			return;
 		}
-		Pages.update(page._id, {$set:{
-			monthlyTransactions: page.monthlyTransactions + 1
-		}});
+		Profile.update(profile._id, {$set:{
+				todayDeals: (profile.todayDeals+1)
+			}
+		})
+		if(profile.todayDeals > 10){
+			throw new Meteor.Error(508, "You have used too many deals today. (10 MAX)");
+			return;
+		}
+		//flags over
 		
-		Pages.update(page._id, {$push:{
-			whoDealsMonthly: theUserId
-		}});
 		var individual = user.name;
 		var message = "User, "+individual+", used the deal '"+dande.title+"'.";
 		var type = dande.typeDE;
+
 
 		Notification.insert({
 			ownerId: page.ownedBy[0],
 			pageOwner: page._id,
 			message: message,
 			type: type,
+			perid: perid,
+			holdUser: theUserId,
 			createdAt: new Date(),
 		});
-		DandE.update(perid, {$set:{
-			timesUsed: dande.timesUsed + 1
-		}})
-		DandE.update(perid, {$push: {
-			usedBy: theUserId
-		}})
-		TomBook.update(book._id, {$pull: {
-			tbc: {theID: perid}
-		}})
-		if(erase){
-			message = "Your deal - '"+dande.title+"' - has reached "+dande.maxn+" uses and expired.";
-			Notification.insert({
-				ownerId: page.ownedBy[0],
-				pageOwner: page._id,
-				message: message,
-				type: type,
-				createdAt: new Date(),
-			});
-			return DandE.update(perid, {$set: {
-				dealsOn: false
-				
-			}})
-		}
 	}
 });

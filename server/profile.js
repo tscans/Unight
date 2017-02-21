@@ -1,6 +1,8 @@
 import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
+import {Notification} from '../imports/collections/notification';
 var zipcodes = require('zipcodes');
+import moment from 'moment';
 
 
 
@@ -78,11 +80,13 @@ Meteor.methods({
 				myPages: [],
 				tomBook: tb,
 				goldMember: [],
-				goldMemberChecks: [],
+				memberAllowance: 1,
+				moonDate: null,
 				isSupAdmin: false,
 				cell: cell,
 				userZip: zip,
 				giftCards: [],
+				todayDeals: 0,
 				businessVerified: false,
 				liveProfile: false,
 				friendUsers: [],
@@ -180,5 +184,80 @@ Meteor.methods({
 
 		var profile = Profile.findOne({ownerId: user});
 		return Profile.update(profile._id, {$set:{longlat0: longlat[0], longlat1: longlat[1]}});	
+	},
+	'profile.moonMember': function(){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+		var profile = Profile.findOne({ownerId: user});
+		if(!profile.stripeCust){
+			throw new Meteor.Error(588, 'You need a credit card on file to purchase Moon Membership.');
+			return;
+		}
+		//add email thank
+
+
+		var stripe = StripeAPI(Meteor.settings.StripePri);
+		stripe.charges.create({ 
+	        amount: 500,
+	        currency: "usd",
+	        customer: profile.stripeCust,
+	        description: "Moon Membership"
+	      	}, Meteor.bindEnvironment(function(error, result){
+	        if(error){
+	        	console.log(error)
+	        }else{
+				
+	        }
+	    }));
+		var message = "You have been charged $5.00 for Moon Membership. Thanks for supporting Unight!";
+		var type = "GCD";
+
+		Notification.insert({
+			ownerId: user,
+			pageOwner: user,
+			message: message,
+			type: type,
+			createdAt: new Date(),
+			
+		});
+		var d = new Date();
+		var expiration = moment(d).add(1,'month').format("ll");
+		return Profile.update(profile._id, {$set:{memberAllowance: 5, moonDate: expiration}});
+	},
+	'profile.noMoonMember': function(){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+		var profile = Profile.findOne({ownerId: user});
+		//remove 4 of their memberships, done
+		for(var i=0;i<profile.goldMember.length;i++){
+			Pages.update(profile.goldMember[i], {$pull: {
+				pageUsers: user
+			}})
+		}
+		
+		Profile.update(profile._id, {$set:{goldMember: []}});
+		if(profile.goldMember.length > 0){
+			Profile.update(profile._id, {$push: {
+				goldMember: profile.goldMember[0]
+			}})
+			Pages.update(profile.goldMember[0], {$push:{
+				pageUsers: user
+			}})
+		}
+		
+		
+		return Profile.update(profile._id, {$set:{memberAllowance: 1}});
 	}
 });
+
+
+
+
+
+
+
+

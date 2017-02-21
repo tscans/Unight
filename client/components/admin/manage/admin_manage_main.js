@@ -12,35 +12,35 @@ class AdminManageMain extends Component {
       }
     }
     setGoldReq(){
-      var requiredForGold = this.refs.goldreq.value.trim();
-      var moneyForGold = this.refs.goldmon.value.trim();
-      requiredForGold = parseInt(requiredForGold);
-      moneyForGold = parseInt(moneyForGold);
-      if(isNaN(requiredForGold) || isNaN(moneyForGold)){
+      var requiredForGoal = this.refs.goldreq.value.trim();
+      var moneyForGoal = this.refs.goldmon.value.trim();
+      requiredForGoal = parseInt(requiredForGoal);
+      moneyForGoal = parseInt(moneyForGoal);
+      if(isNaN(requiredForGoal) || isNaN(moneyForGoal)){
         return;
       }
       var pageID = this.props.params.pageId;
-      Meteor.call('pages.updateGoldRequire', pageID, requiredForGold, moneyForGold, (error,data)=>{
+      Meteor.call('pages.updateGoalRequire', pageID, requiredForGoal, moneyForGoal, (error,data)=>{
         if(error){
           console.log(error)
         }
         else{
-          console.log(requiredForGold);
+          console.log(requiredForGoal);
         }
       })
     }
     renderNum(){
-      if(this.props.thisPage.requiredForGold){
-        return this.props.thisPage.requiredForGold.toString();
+      if(this.props.thisPage.requiredForGoal){
+        return this.props.thisPage.requiredForGoal.toString();
       }
       else{
         return "Not Set"
       }
     }
     renderNum2(){
-      if(this.props.thisPage.moneyForGold){
+      if(this.props.thisPage.moneyForGoal){
         
-        return ("$"+(this.props.thisPage.moneyForGold.toFixed(2)).toString());
+        return ("$"+(this.props.thisPage.moneyForGoal.toFixed(2)).toString());
       }
       else{
         return "Not Set"
@@ -110,12 +110,12 @@ class AdminManageMain extends Component {
               </div>
               <div className="col-md-5">
                 <h3>Set Gold Membership Requirement</h3>
-                <p>Set the number of deals a user needs to use before being eligible for Gold Membership (1-10) and the cost ($4.00 - $20.00). Current: {this.renderNum()} deals, {this.renderNum2()}</p>
+                <p>Set the number of deals (4 - 16) a user needs to use before being eligible for gift card rewards and the reward potential ($2.00 - $12.00). Current Deals Needed: {this.renderNum()} Current Reward: {this.renderNum2()}</p>
                 <div className="form-group col-md-6">
-                  <input type="number" className="form-control foc-card" ref="goldreq" defaultValue={this.props.thisPage.requiredForGold} placeholder="Deals Needed"/>
+                  <input type="number" className="form-control foc-card" ref="goldreq" defaultValue={this.props.thisPage.requiredForGoal} placeholder="Deals Needed"/>
                 </div>
                 <div className="form-group col-md-6">
-                  <input type="number" className="form-control foc-card" ref="goldmon" defaultValue={this.props.thisPage.moneyForGold} placeholder="Cost for Gold"/>
+                  <input type="number" className="form-control foc-card" ref="goldmon" defaultValue={this.props.thisPage.moneyForGoal} placeholder="Reward"/>
                 </div>
                 <button className="btn btn-success card-1" onClick={this.setGoldReq.bind(this)}>Set Requirement</button>
                 <h3>Allow Other Users Notification Privileges</h3>

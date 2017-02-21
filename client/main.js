@@ -37,6 +37,7 @@ import MemWgotdBody from './components/user/wgotd/mem_wgotd_body';
 import MemTomBook from './components/user/tombook/mem_tombook';
 import UserAccount from './components/user/account/user_account';
 import MemFinance from './components/user/account/mem_finance';
+import MemNotes from './components/user/notes/mem_notes';
 
 import NotFound from './components/404/not_found';
 
@@ -95,6 +96,7 @@ const routes = (
 			<Route path="wgot/g/:pageId/" component={MemWgotdBody} />
 			<Route path="account" component={UserAccount} />
 			<Route path="finance" component={MemFinance} />
+			<Route path="mem_notes" component={MemNotes} />
 		</Route>
 		<Route path="*" component={NotFound} />
 	</Router>

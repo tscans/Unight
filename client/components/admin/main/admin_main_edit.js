@@ -174,6 +174,7 @@ class AdminMainEdit extends Component {
         		<form onSubmit={this.editPageData.bind(this)}>
     			<div className="lower"></div>
 	    			<div className="col-md-10 col-md-offset-1">
+	    			<br/>
 					  <div className="form-group">
 					    <label htmlFor="exampleInputEmail1">Name</label>
 					    <input type="text" className="form-control foc-card" ref="busname" defaultValue={this.props.pages.orgName} placeholder="Organization Name" maxLength="25"/>
@@ -200,13 +201,6 @@ class AdminMainEdit extends Component {
 				    <div className="center-div">
 				    	<ImageUpload />
 				    </div>
-				  </div>
-				  <div>
-					  <div className={this.state.allowDeals} onClick={this.onDeals.bind(this)}><span className="glyphicon glyphicon-user"></span> {this.state.deals}</div>
-					  <div className={this.state.allowMemberships} onClick={this.onMemberships.bind(this)}><span className="glyphicon glyphicon-globe"></span> {this.state.memberships}</div>
-					  <br />
-					  <div className={this.state.allowEvents} onClick={this.onEvents.bind(this)}><span className="glyphicon glyphicon-calendar"></span> {this.state.events}</div>
-					  <div className={this.state.allowGiftCards} onClick={this.onGiftCards.bind(this)}><span className="glyphicon glyphicon-usd"></span> {this.state.giftCards}</div>
 				  </div>
 				  <div className={this.state.invis}>
 				  	<p>{this.state.done}</p>

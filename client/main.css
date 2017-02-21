@@ -458,8 +458,15 @@ input::-webkit-inner-spin-button {
   float: right;
   height: 99%;
 }
+.float-left{
+  float: left;
+  height: 99%;
+}
 .float-right-alt{
   float: right;
+}
+.float-left-alt{
+  float: left;
 }
 .tombook-cards{
   height: 100px;

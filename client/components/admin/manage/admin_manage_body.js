@@ -50,7 +50,7 @@ class AdminManageBody extends Component {
       var cost = this.calculateCharge().toFixed(2).toString();
       return (
       	<div>
-          <h3>The total amount of Gift Cards Purchased: {total}</h3>
+          <h3>The total amount of gift cards outstanding: {total.toFixed(2)}</h3>
           <h3>Number of Members to Page: {numUsers}</h3>
           <h3>What you owe this month so far from {this.potCost().toString()} deals: ${cost}</h3>
       	</div>

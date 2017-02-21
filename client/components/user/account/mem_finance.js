@@ -115,6 +115,60 @@ class MemFinance extends React.Component {
 			}
 		})
 	}
+	moomMember(){
+		Meteor.call('profile.moonMember', (error, data)=>{
+			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				console.log(error);
+			}
+			else{
+				console.log(data);
+				Bert.alert("Thanks for supporting Unight by becomming a Moon Member!", 'success', 'fixed-top' );
+			}
+		})
+	}
+	noMoonMember(){
+		Meteor.call('profile.noMoonMember', (error, data)=>{
+			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				console.log(error);
+			}
+			else{
+				console.log(data);
+				Bert.alert("Sad to see you go!", 'default', 'fixed-top' );
+			}
+		})
+	}
+	moon(){
+		if(this.props.profile.memberAllowance == 1){
+			return(
+				<div>
+					<p>You only have 1 gold membership.</p>
+					<p>For just $5.00 per month you can get Moon Membership.</p>
+					<p>Moon Membership grants you 5 total gold memberships to use at any business you choose.</p>
+					<div className="col-md-6 col-md-offset-3">
+	                    <button className="btn btn-default btn-extend card-1" onClick={this.moomMember.bind(this)}>
+			                <h5><span className="glyphicon glyphicon-credit-card"></span> Purchase Moon Membership</h5>
+			            </button>
+		            </div>
+				</div>
+			)
+		}
+		else{
+			return(
+				<div>
+					<p>You have Moon Membership!</p>
+					<p>Thanks for using and supporting Unight!</p>
+					<p>Your Moon Membership will renew {this.props.profile.moonDate}.</p>
+					<div className="col-md-6 col-md-offset-3">
+	                    <button className="btn btn-default btn-extend card-1" onClick={this.noMoonMember.bind(this)}>
+			                <h5><span className="glyphicon glyphicon-remove-circle"></span> Cancel Moon Membership</h5>
+			            </button>
+		            </div>
+				</div>
+			)
+		}
+	}
 	render(){
 		if(!this.props.profile){
 			return<div></div>
@@ -125,6 +179,11 @@ class MemFinance extends React.Component {
 				<div className="col-md-6 col-md-offset-6">
 					<h2>User Finance</h2>
 					{this.ifCard()}
+					<br/>
+					<br/>
+					<hr/>
+					<h3>Moon Membership</h3>
+					{this.moon()}
 				</div>
 			</div>
 		)
