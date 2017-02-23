@@ -221,7 +221,10 @@ Meteor.methods({
 			throw new Meteor.Error(530, 'User already in list.');
 			return;
 		}
-		Profile.update(profile._id,{$set:{altnotes: pageID}})
+		console.log(pageID)
+		console.log('altnotes')
+		console.log(profile._id)
+		Profile.update(profile._id,{$set:{"altnotes": pageID}})
 		return Pages.update(pageID, {$push: {
 			altnotes: {email:email,name:name}
 		}})

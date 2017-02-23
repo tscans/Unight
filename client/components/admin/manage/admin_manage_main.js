@@ -20,6 +20,7 @@ class AdminManageMain extends Component {
         return;
       }
       var pageID = this.props.params.pageId;
+      console.log(requiredForGoal)
       Meteor.call('pages.updateGoalRequire', pageID, requiredForGoal, moneyForGoal, (error,data)=>{
         if(error){
           console.log(error)

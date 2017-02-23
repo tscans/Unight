@@ -128,7 +128,7 @@ Meteor.methods({
 			return
 		}
 		var profile = Profile.findOne({ownerId: user});
-		return Profile.update(profile._id, {zipCode: zip});	
+		return Profile.update(profile._id, {$set:{userZip: zip}});	
 	},
 	'profile.addFriend': function(number, name){
 		const user = Meteor.users.findOne(this.userId)._id.toString();

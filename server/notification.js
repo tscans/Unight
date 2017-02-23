@@ -30,8 +30,19 @@ Meteor.methods({
 			return;
 		}
 		var note = Notification.findOne({_id: noteID});
-		console.log('note')
-		if(note.ownerId != theUserId){
+		var theUserPro = Profile.findOne({ownerId: theUserId});
+		var note = Notification.findOne({_id: noteID});
+		var parpage = Pages.findOne({_id: note.pageOwner});
+		var anr = [];
+		var worker = false;
+		for(var x = 0; x< parpage.altnotes.length;x++){
+			anr.push(parpage.altnotes[x].email)
+		}
+		if(anr.includes(theUserPro.email)){
+			worker = true;
+		}
+		
+		if(note.ownerId != theUserId || !worker){
 			return;
 		}
 		return Notification.remove(noteID);
@@ -41,10 +52,22 @@ Meteor.methods({
 		if(!theUserId){
 			return;
 		}
-		console.log(noteID)
-		var note = Notification.findOne({_id: noteID});
 
-		if(note.ownerId != theUserId){
+		var theUserPro = Profile.findOne({ownerId: theUserId});
+		var note = Notification.findOne({_id: noteID});
+		var parpage = Pages.findOne({_id: note.pageOwner});
+		var anr = [];
+		var worker = false;
+
+		for(var x = 0; x< parpage.altnotes.length;x++){
+
+			anr.push(parpage.altnotes[x].email)
+		}
+		if(anr.includes(theUserPro.email)){
+			worker = true;
+		}
+		
+		if(note.ownerId != theUserId || !worker){
 			return;
 		}
 
@@ -94,23 +117,26 @@ Meteor.methods({
 		var custInArray = page.requiredForGoal;
 		var CIACount = countInArray(page.whoDealsMonthly, cust);
 		var giftAmount = page.moneyForGoal;
-		console.log(custInArray, CIACount)
-		if(custInArray <= CIACount){
+
+		console.log(custInArray, CIACount+1)
+		if(custInArray <= (CIACount+1)){
 			console.log('yay');
 			Pages.update(page._id, {$pull:{
 				whoDealsMonthly: cust
 			}});
-
+			var custProfile = Profile.findOne({ownerId: cust});
 			var existingCard = GiftCards.findOne({pageID: page._id, ownerId: cust});
 			if(existingCard){
+				console.log('previous')
 				var tempAmount = existingCard.amount + giftAmount
-				return GiftCards.update(existingCard._id, {$set: {
+				GiftCards.update(existingCard._id, {$set: {
 					amount: tempAmount
 				}});
 			}
 			else{
-				var custProfile = Profile.findOne({_id: cust});
-				return GiftCards.insert({
+				console.log('new')
+				
+				GiftCards.insert({
 					pageID: page._id,
 					ownerId: cust,
 					where: page.orgName,
@@ -119,6 +145,22 @@ Meteor.methods({
 					createdAt: new Date(),
 				});
 			}
+			var umes = "You reached "+page.requiredForGoal.toString()+" deals! "+ page.orgName+" has rewarded you with a $"+page.moneyForGoal.toFixed(2).toString()+" gift card!";
+			Notification.insert({
+				ownerId: note.holdUser,
+				pageOwner: note.holdUser,
+				message: umes,
+				type: dande.type,
+				createdAt: new Date(),
+			});
+			var busmo = "Your customer, "+custProfile.name+", has reached "+page.requiredForGoal.toString()+" deals and has been paid $"+page.moneyForGoal.toFixed(2).toString()+" as a reward.";
+			Notification.insert({
+				ownerId: page.ownedBy[0],
+				pageOwner: page._id,
+				message: busmo,
+				type: "GC",
+				createdAt: new Date(),
+			});
 		}
 
 		//Now to alert folks

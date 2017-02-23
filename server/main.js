@@ -459,11 +459,42 @@ Meteor.startup(() => {
 		}
 		var profile = Profile.findOne({ownerId: user});
 		var page = Pages.findOne({_id: profile.altnotes})
-		if(page.altnotes.indexOf(user) == -1){
-			console.log('not there')
+
+		var found = false;
+		for(var i = 0; i<page.altnotes.length;i++){
+
+			if(page.altnotes[i].email == profile.email){
+				found = true;
+			}
+		}
+		if(!found){
+
 			return;
 		}
 
 		return Notification.find({pageOwner: page._id});
+	});
+	
+	Meteor.publish("altnotesPage", function(){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		var profile = Profile.findOne({ownerId: user});
+		var page = Pages.findOne({_id: profile.altnotes})
+
+		var found = false;
+		for(var i = 0; i<page.altnotes.length;i++){
+
+			if(page.altnotes[i].email == profile.email){
+				found = true;
+			}
+		}
+		if(!found){
+
+			return;
+		}
+
+		return Pages.find({_id: profile.altnotes});
 	});
 });

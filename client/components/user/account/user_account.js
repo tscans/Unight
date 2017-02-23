@@ -146,6 +146,17 @@ class UserAccount extends React.Component {
 			)
 		}
 	}
+	chag(){
+		Meteor.call('profile.updateZip', "60643",(error,data)=>{
+			if(error){
+				Bert.alert(error.message, 'danger', 'fixed-top' );
+				console.log(error);
+			}
+			else{
+				console.log(data, "success");
+			}
+		})
+	}
 	render(){
 		if(!this.props.profile){
 			return<div></div>
@@ -159,6 +170,7 @@ class UserAccount extends React.Component {
 	                <div className="col-md-10 col-md-offset-1">
 	                  <div className="form-group">
 	                    <label>Friend's Email</label>
+	                    <button onClick={this.chag.bind(this)}>svs</button>
 	                    <input type="text" className="form-control foc-card" ref="phone" placeholder="Email Address"/>
 	                  </div>
 	                  <div className="form-group">
