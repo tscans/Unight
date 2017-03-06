@@ -3,6 +3,27 @@ import {DandE} from '../imports/collections/dande';
 import moment from 'moment';
 var cloudinary = require('cloudinary');
 
+function checker(value,typeOBJ){
+	var returnValue;
+	//number,boolean,string
+	returnValue = (typeof(value) == typeOBJ);
+	return returnValue;
+}
+
+var RANDICONS = [" fa-university"," fa-bell"," fa-bicycle"," fa-calculator"," fa-bullhorn"," fa-cube"," fa-diamond"," fa-coffee"," fa-bolt"," fa-gamepad"," fa-gift"," fa-hand-peace-o"," fa-fighter-jet"," fa-car"," fa-train"," fa-cog"," fa-money"," fa-wrench"," fa-tachometer"," fa-signal"," fa-music"," fa-heart"," fa-futbol-o"," fa-beer"," fa-cloud"," fa-bug"," fa-flag-checkered"," fa-gavel"," fa-newspaper-o"," fa-magnet"," fa-hand-rock-o","fa-anchor","fa-bullseye","fa-balance-scale","fa-binoculars","fa-cubes","fa-thumbs-up", "fa-spoon","fa-shield "];
+var RANDCOLORS = ["red","blue", "green", "yellow", "orange", "purple", "black", "pink", "turquoise"];
+
+function ulength(s, maxl){
+	var returnValue;
+	if(s.length > maxl){
+		returnValue = false;
+	}
+	else{
+		returnValue = true;
+	}
+	return returnValue;
+}
+
 Meteor.methods({
 	'dande.makeDandE': function(pageID, typeDE){
 		var user = this.userId.toString();
@@ -10,6 +31,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(typeDE, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20))){
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -22,14 +50,15 @@ Meteor.methods({
 		}
 		var genDeals = DandE.find({forPage: pageID,typeDE:"DD"}).fetch();
 		var goldDeals = DandE.find({forPage: pageID,typeDE:"GD"}).fetch();
-		console.log(genDeals.length)
+
 		if(genDeals.length > 5){
 			return;
 		}
 		if(goldDeals.length > 5){
 			return;
 		}
-		console.log(page._id)
+		var randI = RANDICONS[Math.floor(Math.random() * RANDICONS.length)];
+		var randC = RANDCOLORS[Math.floor(Math.random() * RANDCOLORS.length)];
 		return DandE.insert({
 			topUser: user,
 			forPage: page._id,
@@ -46,64 +75,165 @@ Meteor.methods({
 			usedBy: [],
 			dateTime: "",
 			title: '',
+			maxn: 0,
 			description: '',
 			expiration: '',
+			startDate: "",
+			cost: 0,
+			randomIcon: randI,
+			randomColor: randC,
 			longlat0: page.longlat0,
 			longlat1: page.longlat1,
 			createdAt: new Date(),
 		});
 	},
-	'dande.updateDandE': function(pageID, dealID, dealinfo, desc, expi, maxn){
+	'dande.randomIC': function(dealID){
+		var user = this.userId.toString();
+		if (!user){
+			return;
+		}
+		var deal = DandE.findOne({_id: dealID});
+		if(deal.topUser != user){
+			return;
+		}
+		var randI = RANDICONS[Math.floor(Math.random() * RANDICONS.length)];
+		var randC = RANDCOLORS[Math.floor(Math.random() * RANDCOLORS.length)];
+		return DandE.update(dealID, {$set: {randomIcon: randI, randomColor: randC}});
+	},
+	'dande.updateDandE': function(pageID, dealID, dealinfo, desc, expi, maxn, cost){
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
 			return;
 		}
-		console.log(pageID)
-		console.log(dealID)
+		const deal = DandE.findOne({
+			_id: dealID
+		})
+		if(deal.typeDE != "GD" && deal.typeDE != "DD"){
+			console.log(deal.typeDE)
+			console.log('ah')
+			return;
+		}
+		var majorType = "ready";
+		if(deal.typeDE == "DD"){
+			majorType = "daily";
+			if(!checker(expi, "string")){
+				console.log('ahh')
+				return;
+			}
+		}
+
+		else{
+			if(!checker(cost, "number")){
+				console.log(cost)
+				console.log('ahhh')
+				return;
+			}
+			if(cost < 5 || cost > 150){
+				console.log('ahhhh')
+				return;
+			}
+			if(!checker(expi, "number")){
+				console.log('ahhhhhh')
+				return;
+			}
+		}
+		if(!(checker(pageID, "string") && checker(dealID, "string") && checker(dealinfo, "string") && checker(desc, "string") && checker(maxn, "number"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20) && ulength(dealID, 20) && ulength(dealinfo, 25) && ulength(desc, 200))){
+	    	console.log('ahhhhhhh')
+	    	return;
+	    }
+		const page = Pages.findOne({
+			_id: pageID
+		})
+		
+		if(page._id != deal.forPage){
+			console.log('ahg')
+			return;
+		}
+		if(deal.dealsOn){
+			console.log('ahgg')
+			return;
+		}
+		if(deal.topUser != user){
+			console.log('ahggg')
+			return;
+		}
+		var timesUsed;
+		if(majorType == "daily"){
+			
+			timesUsed = "daily";
+			cost = 0;
+			var newExpi = moment(expi).add(1,'days').format("ll");
+			var startDate = moment(expi).format("ll");
+		}
+		else{
+			timesUsed = 0;
+			if(expi < 1 || expi > 90){
+				console.log('out of bounds')
+				return;
+			}
+			var newExpi = moment(newExpi).add(expi,'days').format("ll"); 
+			var startDate = moment(new Date()).format("ll");
+		}
+		if(majorType == "daily"){
+			return DandE.update(dealID, {$set: {
+				title: dealinfo,
+				description: desc,
+				expiration: newExpi,
+				upvotes: 0,
+				upvotedBy: [],
+				usedBy: [],
+				startDate: "",
+				startDate: startDate
+			}})
+		}
+		else{
+			return DandE.update(dealID, {$set: {
+				title: dealinfo,
+				description: desc,
+				expiration: newExpi,
+				maxn: maxn,
+				upvotes: 0,
+				timesUsed: timesUsed,
+				upvotedBy: [],
+				usedBy: [],
+				cost: cost,
+				startDate: startDate
+			}})
+		}
+		
+		
+		
+	},
+	'dande.publishDandE': function(pageID, dealID){
+		var user = this.userId.toString();
+		if(!user){
+			console.log('ff')
+			return;
+		}
+		if(!(checker(pageID, "string") && checker(dealID, "string"))){
+			console.log('ffd')
+			return;
+		}
+		if(!(ulength(pageID, 20) && ulength(dealID, 20))){
+			console.log(pageID, dealID)
+			console.log('ffs')
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
 		const deal = DandE.findOne({
 			_id: dealID
 		})
-		if(page._id != deal.forPage){
+		if((page.ownedBy[0] != user)){
 			return;
 		}
-		if(deal.dealsOn){
-			return;
-		}
-		if(deal.topUser != user){
-			return;
-		}
-		if(isNaN(expi)){
-			console.log('1')
-			expi = 1;
-		}
-		if(typeof(expi) != "number"){
-			console.log('not a num')
-			return;
-		}
-		expi = parseInt(expi);
-		if(expi < 1 && expi > 90){
-			console.log('out of bounds')
-			return;
-		}
-
-		var newExpi = moment(newExpi).add(expi,'days').format("ll"); 
-
-		return DandE.update(dealID, {$set: {
-			title: dealinfo,
-			description: desc,
-			expiration: newExpi,
-			maxn: maxn,
-			upvotes: 0,
-			timesUsed: 0,
-			upvotedBy: [],
-			usedBy: [],
-			dealsOn: true
-			
-		}})
+		return DandE.update(dealID, {$set: {dealsOn: true}});
 	},
 	'dande.imageDandE': function(pageID, dealID, pic){
 		var user = this.userId.toString();
@@ -111,8 +241,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-		console.log(pageID)
-		console.log(dealID)
+		if(!(checker(pageID, "string") && checker(dealID, "string") && checker(pic, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20) && ulength(dealID, 20))){
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -139,6 +274,20 @@ Meteor.methods({
 		
 	},
 	'dande.removeDandE': function(deal){
+		var user = this.userId.toString();
+		const theUserId = Meteor.users.findOne(this.userId)._id;
+		if (user != theUserId){
+			return;
+		}
+	    if(!(ulength(deal._id, 20))){
+	    	return;
+	    }
+
+		var die = DandE.findOne({_id: deal._id});
+
+		if(die.topUser != user){
+			return;
+		}
 		return DandE.remove(deal)
 	},
 	'dande.updateEvents': function(pageID, eventID, title, dateTime, description, published, phyAddress){
@@ -147,8 +296,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-		console.log(pageID)
-		console.log(eventID)
+		if(!(checker(pageID, "string") && checker(eventID, "string") && checker(title, "string") && checker(dateTime, "string") && checker(description, "string") && checker(published, "boolean") && checker(phyAddress, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20) && ulength(eventID, 20) && ulength(title, 25) && ulength(description, 200) && ulength(dateTime, 30) && ulength(phyAddress, 40))){
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -177,8 +331,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-		console.log(pageID)
-		console.log(eventID)
+		if(!(checker(pageID, "string") && checker(eventID, "string") && checker(image, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20) && ulength(eventID, 20))){
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -202,10 +361,16 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(dandeID, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(dandeID, 20))){
+	    	return;
+	    }
 		const deal = DandE.findOne({
 			_id: dandeID
 		})
-		console.log(theUserId)
 		if(deal.upvotedBy.includes(theUserId)){
 			DandE.update(dandeID, {$pull: {
 				upvotedBy: theUserId

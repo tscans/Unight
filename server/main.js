@@ -5,6 +5,7 @@ import {DandE} from '../imports/collections/dande';
 import {TomBook} from '../imports/collections/tombook';
 import {GiftCards} from '../imports/collections/giftcards';
 import {Notification} from '../imports/collections/notification';
+import {PageData} from '../imports/collections/page_data';
 import moment from 'moment';
 
 Meteor.startup(() => {
@@ -13,35 +14,26 @@ Meteor.startup(() => {
 	console.log('Server Online')
 	var d = new Date();
 	var n = d.getMinutes();
-	var lastExpi = moment(d).add(-1,'day').format("ll");
-	var lastExpi;
-	var endDate = moment(new Date()).endOf('month').format("ll");
-	console.log(endDate)
-	console.log(lastExpi);
+	var yesterday = moment(d).add(-1,'day').format("ll");
+	var monthEnd = moment(new Date()).endOf('month').format("ll");
+	console.log(monthEnd)
+	console.log(yesterday);
 
 	Meteor.setInterval(function() {
 		//START of daily deal expiration check.
 		
 	    var d = new Date();
 		var n = d.getMinutes();
-		var newExpi = moment(d).format("ll");
-		endDate = moment(new Date()).endOf('month').format("ll");
-		console.log(newExpi, endDate)
-		if(newExpi!=lastExpi){
-			lastExpi = newExpi;
+		var today = moment(d).format("ll");
+		monthEnd = moment(new Date()).endOf('month').format("ll");
+		console.log(today, monthEnd)
+		if(today!=yesterday){
+			yesterday = today;
 			//new day
 
 			console.log("Conducting Daily Check");
-			//reseting dailing deal allowance
-			Profile.update(
-			   {},
-			   {
-			     $set: {todayDeals: 0}
-			   }, 
-			   { multi: true }
-			)
 
-			var allDandEs = DandE.find({expiration: newExpi}).fetch();
+			var allDandEs = DandE.find({expiration: today}).fetch();
 			for(var i =0;i<allDandEs.length;i++){
 				DandE.update(allDandEs[i]._id, {$set:{dealsOn: false}});
 				var message = "Your deal - '"+allDandEs[i].title+"' - has reached its expiration date and expired.";
@@ -55,175 +47,48 @@ Meteor.startup(() => {
 			}
 			console.log(allDandEs.length, "deals went offline today.")
 			//END of daily deal expiration check.
-			//START of daily membership checks
-			console.log("Conducting daily membership checks");
-			var d = new Date();
-			//GOTTA CHANGE THIS HERE SO THE EXPIRATION IS TODAYS DATE OTHERWISE IT ALWAYS RUNS//DOWN A FEW LINES*****8
-			var iToday = moment(d).format("ll");
-			var expiration = moment(d).add(1,'month').format("ll");
-			//Start check if moon member expiring
-			var stripe = StripeAPI(Meteor.settings.StripePri);
-			var moonMembers = Profile.find({memberAllowance: 5, moonDate: iToday}).fetch();
-			console.log('moon lenght', moonMembers.length)
-			for(var x =0; x< moonMembers.length; x++){
-				var fupa = moonMembers[x];
-				if(moonMembers[x].stripeCust){
-					stripe.charges.create({ 
-				        amount: 500,
-				        currency: "usd",
-				        customer: moonMembers[x].stripeCust,
-				        description: "Moon Membership Monthly"
-				      	}, Meteor.bindEnvironment(function(error, result){
-				        if(error){
-				        	console.log(error)
-				        	Profile.update(fupa._id, {$set:{memberAllowance: 1}});
-				        }else{
-							
-							var message = "You have been charged $5.00 for renewing Moon Membership. Thanks for supporting Unight!";
-							var type = "GCD";
-
-							Notification.insert({
-								ownerId: fupa.ownerId,
-								pageOwner: fupa.ownerId,
-								message: message,
-								type: type,
-								createdAt: new Date(),
-								
-							});
-							Profile.update(fupa._id,{$set: {moonDate: expiration}});
-				        }
-				    }));
-				}
-				else{
-					var message = "You have not been charged for $5.00 this month. Moon Membership has been cancelled.";
-					var type = "GCD";
-
-					Notification.insert({
-						ownerId: fupa.ownerId,
-						pageOwner: fupa.ownerId,
-						message: message,
-						type: type,
-						createdAt: new Date(),
-						
-					});
-				}
-				
+			//START daily rewards code recycle check.
+			var allCodes = PageData.find({expiration: today}).fetch();
+			for(var i =0;i<allCodes.length;i++){
+				PageData.remove(allCodes[i]._id);
 			}
-
-			//END moon checks
-			//START of monthly transactions --newexpi == endDate-- 
-			//checking to see if today is the end of the month.
-			//if it is, charge the businesses the amount due
-			//endDate
-			if(newExpi == endDate){
-				console.log('running monthlyTransactions');
-				var allBusIDs = Profile.find({businessVerified: true}).fetch();
-				console.log(allBusIDs.length);
-				for(var i = 0; i<allBusIDs.length; i++){
-					console.log('looping')
-					var loopUser = allBusIDs[i].ownerId;
-					var allLoopUserPages = Pages.find({ownedBy: {$elemMatch: {$eq: loopUser}}}).fetch();
-					var totalNumTrans = 0;
-					var thisNumTrans = 0;
-					for(var j = 0; j<allLoopUserPages.length; j++){
-						thisNumTrans = allLoopUserPages[j].monthlyTransactions;
-						totalNumTrans = totalNumTrans + thisNumTrans;
-					}
-					console.log(totalNumTrans);
-					var samount;
-					if(totalNumTrans < 11){
-						samount = totalNumTrans * .5;
-					}
-					else if(totalNumTrans < 21){
-						samount = ((totalNumTrans-10)*.4)+(10*.5);
-					}
-					else if(totalNumTrans < 31){
-						samount = ((totalNumTrans - 20)* .3)+(10*.5)+(10*.4);
-					}
-					else{
-						samount = ((totalNumTrans-30)*.25)+(10*.5)+(10*.4)+(10*.3);
-					}
-					samount = samount * 100;
-					console.log(samount);
-					var stripe = StripeAPI(Meteor.settings.StripePri);
-					if(samount > 500){
-						stripe.charges.create({ 
-					        amount: samount,
-					        currency: "usd",
-					        customer: allBusIDs[i].stripeBusCust,
-					        description: "Charged business for monthly transactions."
-					      	}, Meteor.bindEnvironment(function(error, result){
-					        if(error){
-					        	console.log(error)
-					        }else{
-					        	console.log('charged')
-					        	
-					        }
-					    }));
-					}
-					for(var j = 0; j<allLoopUserPages.length; j++){
-						console.log('setting 0')
-						var message = "You have been charged $"+(samount/100).toString()+" across all organization pages for your " +totalNumTrans.toString() + " accepted deals this month.";
-						var type = "GCD";
+			console.log(allCodes.length, "codes were deleted.")
+			
+			console.log('Check if page has sufficed a year.')
+			var pageMonth = Pages.find({createdAt: today}).fetch();
+			for(var i = 0; i < pageMonth.length; i++){
+				Pages.update(pageMonth[i]._id, {$set: {monthlyCount: pageMonth[i].monthlyCount + 1}})
+			}
+			var pagePay = Pages.find({createdAt: today, renewPage: true, monthlyCount: {$gt: 2}}).fetch();
+			var stripe = StripeAPI(Meteor.settings.StripePri);
+			for(var i = 0; i<pagePay.length;i++){
+				var profile = Profile.findOne({ownerId: pagePay.ownedBy[0]})
+				stripe.charges.create({
+			        amount: 1500,
+			        currency: "usd",
+			        customer: profile.stripeBusCust,
+			        description: "Monthly Udeal Charge.",
+			      	}, Meteor.bindEnvironment(function(error, result){
+			        if(error){
+			        	console.log(error)
+			          	throw "error";
+			          return;
+			        }else{
+				        var individual = profile.name;
+						var message = "User, "+individual+", has just purchased a $"+giftAmount.toString()+ " gift card at your organization for the user "+inFriendsList.name+".";
+						var type = "GC";
 
 						Notification.insert({
-							ownerId: allLoopUserPages[j].ownedBy[0],
-							pageOwner: allLoopUserPages[j]._id,
+							ownerId: pages.ownedBy[0],
+							pageOwner: pages._id,
 							message: message,
 							type: type,
 							createdAt: new Date(),
 							
 						});
-						
 					}
-					
-				}//
-				Pages.update(
-				   {published: true},
-				   {
-				     $set: {monthlyTransactions: 0}
-				   }, 
-				   { multi: true }
-				)
-				console.log('completed loops')
-				//Starting monthly gold potentials
-				console.log('starting gold potentials monthly')
-
-				//end of the month, which users are eligible for gold?
-				//return of a,b,c
-				//a is list of originals
-				//b is list of counts by original
-				//c is list of originals that surpassed threshold
-
-				function checkGoldees(arr, topper) {
-				    var a = [], b = [],c=[], prev;
-				    
-				    for ( var i = 0; i < arr.length; i++ ) {
-				        if ( arr[i] !== prev ) {
-				            a.push(arr[i]);
-				            b.push(1);
-				        } else {
-				            b[b.length-1]++;
-				        }
-				        prev = arr[i];
-				    }
-				    for(var j = 0; j < b.length;j++){
-				    	if(b[j]>(topper-1)){
-				      		c.push(a[j])
-				      }
-				    }
-				    return [a, b, c];
-				}
-
-				
-				
-				console.log('ending gold potentials monthly');
-				//Ending monthly gold potentials
-				console.log("completed monthlyTransactions");
+				}))
 			}
-			
-			
-			//END of Monthly transactions
 		}
 		
 	}, 300000);
@@ -459,7 +324,9 @@ Meteor.startup(() => {
 		}
 		var profile = Profile.findOne({ownerId: user});
 		var page = Pages.findOne({_id: profile.altnotes})
-
+		if(!profile.altnotes){
+			return;
+		}
 		var found = false;
 		for(var i = 0; i<page.altnotes.length;i++){
 
@@ -484,6 +351,9 @@ Meteor.startup(() => {
 		var page = Pages.findOne({_id: profile.altnotes})
 
 		var found = false;
+		if(!profile.altnotes){
+			return;
+		}
 		for(var i = 0; i<page.altnotes.length;i++){
 
 			if(page.altnotes[i].email == profile.email){

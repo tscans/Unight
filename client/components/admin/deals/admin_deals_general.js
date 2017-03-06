@@ -105,12 +105,14 @@ class AdminDealsGeneral extends React.Component {
 			        				General Deal
 			        			</div>
 			        			<img src={deal.image} className="panel-img-head surround" />
-			        			<div className="bud-left-buff">
+			        			<div>
 				        			<h3>{deal.title}</h3>
 				        			<p>{deal.description}</p>
-				        			<p>Expiration: {deal.expiration}</p>
-				        			<p># Available: {deal.timesUsed}/{deal.maxn}</p>
+				        			<p>Good For: {deal.startDate}</p>
 				        			<p>Upvotes: {deal.upvotes}</p>
+				        			<div className="top-bot-not">
+										<i className={"fa "+deal.randomIcon+" icon-large "+ " ic-"+deal.randomColor}></i>
+									</div>
 			        			</div>
 			        		</div>
 						</div>
@@ -132,9 +134,11 @@ class AdminDealsGeneral extends React.Component {
 				        			<div className="bud-left-buff">
 					        			<h3>{deal.title}</h3>
 					        			<p>{deal.description}</p>
-					        			<p>Expiration: {deal.expiration}</p>
-					        			<p># Available: {deal.timesUsed}/{deal.maxn}</p>
+					        			<p>Good For: {deal.startDate}</p>
 					        			<p>Upvotes: {deal.upvotes}</p>
+					        			<div className="top-bot-not">
+											<i className={"fa "+deal.randomIcon+" icon-large "+ " ic-"+deal.randomColor}></i>
+										</div>
 				        			</div>
 				        		</div>
 							</Link>

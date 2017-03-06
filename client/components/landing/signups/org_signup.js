@@ -77,7 +77,7 @@ class OrgSignup extends Component {
         return (
         	<div>
         		<div className="container-fluid bg-1 text-center">
-				  <h2 className="margin">Unight Sign Up</h2>
+				  <h2 className="margin">Udeal Sign Up</h2>
 				  <form className="col-xs-6 col-xs-offset-3 card-3 white-back" onSubmit={this.register.bind(this)}>
         			<div className="lower"></div>
 					  <div className="form-group">

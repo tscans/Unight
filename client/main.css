@@ -307,6 +307,10 @@ input::-webkit-inner-spin-button {
   width: 100%;
   height: 125px;
 }
+.prime-img-head{
+  width: 100%;
+  height: 175px;
+}
 .gold-header{
   background-color: #FFEA00;
   text-shadow: center;
@@ -473,8 +477,9 @@ input::-webkit-inner-spin-button {
   margin-bottom: 15px;
 }
 .note-cards{
-  height: 100px;
+  height: 125px;
   margin-bottom: 15px;
+  overflow:scroll;
 }
 .map-search{
   margin-left: 75px;
@@ -510,6 +515,19 @@ input::-webkit-inner-spin-button {
   text-align: right;
   height: 100px;
 }
+.code-input{
+  font-size: 45px;
+  height: 60px;
+}
+.vert-text-align-center{
+  vertical-align: text-top;
+}
+.modal-height{
+  height: 100px;
+}
+.show-modal{
+  height: 350px;
+}
 .large-input-verify{
   font-size: 55px;
   text-align: center;
@@ -528,3 +546,47 @@ input::-webkit-inner-spin-button {
 .text-left{
   text-align: left;
 }
+.icon-large{
+  font-size: 75px;
+}
+.icon-super-large{
+  font-size: 200px;
+}
+.ic-red{
+  color: red;
+}
+.ic-blue{
+  color: blue;
+}
+.ic-green{
+  color: green;
+}
+.ic-yellow{
+  color: yellow;
+}
+.ic-orange{
+  color: orange;
+}
+.ic-purple{
+  color: purple;
+}
+.ic-black{
+  color: black;
+}
+.ic-pink{
+  color: pink;
+}
+.ic-turquoise{
+  color: turquoise;
+}
+.expire-back{
+  background: repeating-linear-gradient(
+  45deg,
+  #d9534f,
+  #d9534f 20px,
+  white 20px,
+  white 50px
+);
+  font-style: italic;
+}
+

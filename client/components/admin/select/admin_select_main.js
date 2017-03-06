@@ -40,7 +40,7 @@ class AdminSelectMain extends Component {
         		var pageId = data.toString()
         		page = this.props.profile
         		var marr = "/admin/" + pageId + "/";
-        		Bert.alert( 'Congradulations on creating a Unight Page!', 'success', 'fixed-top' );
+        		Bert.alert( 'Congradulations on creating a Udeal Page!', 'success', 'fixed-top' );
         		browserHistory.push(marr)
         		
         	}

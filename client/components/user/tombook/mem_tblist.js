@@ -16,7 +16,8 @@ class MemTblist extends React.Component {
 			payAmount: 0,
 			payWrite: false,
 			failed: "",
-			display: "deals"
+			display: "deals",
+			currentShow: null
 		}
 	}
 	onRemove(t){
@@ -69,38 +70,60 @@ class MemTblist extends React.Component {
 				modal = "";
 				expiration = t.dateTime;
 			}
-
+			var expireClass = "";
+			if(moment().diff(t.expiration, 'days') >1){
+				expireClass = "expire-back";
+			}
 			console.log(t)
-			return(
-				<div className="card-1 tombook-cards" key={t._id}>
-					<a className="float-right btn btn-danger" href="#" onClick={() => {this.onRemove(t)}}><span className="glyphicon glyphicon-remove"></span></a>
-					<a className={"float-right btn btn-success"+par} href={height} onClick={() => {this.setState({currentT: t})}} data-toggle="modal" data-target={modal}><span className={"glyphicon glyphicon-ok"+par}></span></a>
-					<img src={t.image} className="surround map-cards-img" />
-					<h2>{t.title}</h2>
-					<h4>Expires: {moment(expiration).endOf('day').fromNow()}</h4>
-				</div>
-			)
+			if(t.typeDE == "GD"){
+				return(
+					<div className={"card-1 tombook-cards "+expireClass} key={t._id}>
+						<a className="float-right btn btn-danger" href="#" onClick={() => {this.onRemove(t)}}><span className="glyphicon glyphicon-remove"></span></a>
+						<a className={"float-right btn btn-success"+par} href={height} onClick={() => {this.setState({currentT: t})}} data-toggle="modal" data-target={modal}><span className={"glyphicon glyphicon-ok"+par}></span></a>
+						<img src={t.image} className="surround map-cards-img" />
+						<h2>{t.title}</h2>
+						<h4>Expires: {moment(expiration).endOf('day').fromNow()}</h4>
+					</div>
+				)
+			}
+			else{
+				return(
+					<div key={t._id}>
+						<div className={"card-1 tombook-cards "+expireClass}>
+							<a className="float-right btn btn-danger" href="#" onClick={() => {this.onRemove(t)}}><span className="glyphicon glyphicon-remove"></span></a>
+							<img src={t.image} className="surround map-cards-img" />
+							<a href="#" onClick={()=>{this.toggleShowModal(t)}}>
+								<h2>{t.title}</h2>
+								<h4>Expires: {moment(expiration).endOf('day').fromNow()}</h4>
+							</a>
+						</div>
+					</div>
+				)
+			}
+			
 		})
 	}
+	toggleShowModal(s){
+		this.setState({currentShow: s});
+		$('#showModal').modal('toggle');
+	}
 	renderOther(){
-		console.log(this.props.tbMember)
-		console.log(this.props)
-		if(this.props.profile.goldMember.length==0){
+		if(this.props.profile.rewards.length==0){
 			return(
-				<h3>You have no memberships at this time.</h3>
+				<h3>You have no rewards at this time.</h3>
 			)
 		}
-		var bit = "/user/memberships/";
+		var bit = "/user/businesses/";
 		var v;
 
-		return this.props.tbMember.map((t)=>{
+		return this.props.profile.rewards.map((t)=>{
 			console.log(t)
-			v = t._id;
+			v = t.pageID;
 			return(
-				<div className="card-1 tombook-cards" key={t._id}>
+				<div className="card-1 tombook-cards white-back" key={v}>
 					<Link to={bit+v+"/"}>
-					<img src={t.proPict} className="surround map-cards-img" />
-					<h2>{t.orgName}</h2>
+					<h2>{t.pageName}</h2>
+					<p>You have <b>{t.count.toString()}</b> rewards point(s) redeemed out of <b>{t.pageGoal.toString()}</b> required.</p>
 					</Link>
 				</div>
 			)
@@ -116,7 +139,7 @@ class MemTblist extends React.Component {
 			console.log(p)
 			return(
 				<a href="#" className="all-black" onClick={() => {this.setState({currentP: p})}} key={p._id} data-toggle="modal" data-target="#payModal">
-					<div className="card-1 tombook-cards" key={p._id}>
+					<div className="card-1 tombook-cards white-back" key={p._id}>
 						<div className="wgot-list-beacon-bar"></div>
 						<h3><b>{p.where}</b></h3>
 						<h4><i>Amount on Card: ${p.amount.toFixed(2)}</i></h4>
@@ -155,7 +178,7 @@ class MemTblist extends React.Component {
     	if(!this.state.payWrite){
     		var pay = this.refs.payAmount.value.trim();
 	    	pay = parseFloat(pay);
-	    	pay = pay.toFixed(2);
+	    	pay = parseFloat(pay.toFixed(2));
 	    	this.setState({payWrite: true, payAmount: pay});
     	}
     	else{
@@ -222,10 +245,10 @@ class MemTblist extends React.Component {
 				</div>
     		)
     	}
-    	if(this.state.display == "memberships"){
+    	if(this.state.display == "rewards"){
     		return(
     			<div>
-	    			<h2>My Memberships</h2>
+	    			<h2>My Rewards</h2>
 					{this.renderOther()}
 				</div>
     		)
@@ -237,6 +260,47 @@ class MemTblist extends React.Component {
 					{this.renderCards()}
 				</div>
     		)
+    	}
+    }
+    renderShowModal(){
+    	return(
+    		<div>
+    			<div className="modal fade all-black" id="showModal" role="dialog">
+	                <div className="modal-dialog">
+	                  {this.interiorShowModal()}
+	                </div>
+	            </div>
+    		</div>
+    	)
+
+    }
+    interiorShowModal(){
+    	if(this.state.currentShow){
+    		var x = this.state.currentShow;
+    		return(
+	    		<div>
+	    			<div className="modal-content">
+	                <div className="modal-header">
+	                  <button type="button" className="close" data-dismiss="modal">&times;</button>
+	                  <h3 className="modal-title">{x.title}</h3>
+	                </div>
+	                <div className="modal-body show-modal">
+	                  <h4>Good For: {x.startDate}</h4>
+	                  <h4>Description: {x.description}</h4>
+	                  <h3><b>Deal Icon</b></h3>
+	                  <div className="top-bot-not">
+						<i className={"fa "+x.randomIcon+" icon-super-large "+ " ic-"+x.randomColor}></i>
+					  </div>
+	                </div>
+	                <div className="modal-footer">
+	                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+	                </div>
+	              </div>
+	    		</div>
+	    	)
+    	}
+    	else{
+    		return(<div></div>)
     	}
     }
 	render(){
@@ -251,9 +315,10 @@ class MemTblist extends React.Component {
 					{this.renderCardPay()}
 					{this.renderButton()}
 					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "deals"})}}><h3>Deals</h3></div>
-					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "memberships"})}}><h3>Memberships</h3></div>
+					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "rewards"})}}><h3>Rewards</h3></div>
 					<div className="third-length btn btn-default card-1" onClick={()=>{this.setState({display: "cards"})}}><h3>Cards</h3></div>
 					{this.renderDisplay()}
+					{this.renderShowModal()}
 				</div>
 			</div>
 		)

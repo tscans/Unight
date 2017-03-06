@@ -1,6 +1,4 @@
 import React from 'react';
-import {createContainer} from 'meteor/react-meteor-data';
-import {DandE} from '../../../../imports/collections/dande';
 import moment from 'moment';
 
 class MemWgotdPageG extends React.Component {
@@ -25,7 +23,4 @@ class MemWgotdPageG extends React.Component {
     }
 }
 
-export default createContainer((props)=>{
-    Meteor.subscribe('wgot');
-    return {wgot: DandE.findOne({_id: props.pageId })}
-}, MemWgotdPageG); 
+export default MemWgotdPageG;

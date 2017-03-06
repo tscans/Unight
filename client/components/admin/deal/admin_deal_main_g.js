@@ -6,7 +6,7 @@ class AdminDealMainG extends React.Component {
         return (
         	<div>
         		<div className="container-fluid bg-3 text-center">
-                    <AdminDealBodyG />
+                    <AdminDealBodyG params={this.props.params}/>
                 </div> 
         	</div>
         );

@@ -5,6 +5,7 @@ import MemWgotdPageG from './mem_wgotd_page_g';
 import {createContainer} from 'meteor/react-meteor-data';
 import {Profile} from '../../../../imports/collections/profile';
 import {TomBook} from '../../../../imports/collections/tombook';
+import {DandE} from '../../../../imports/collections/dande';
 
 class MemWgotdBody extends React.Component {
     constructor(props){
@@ -23,7 +24,7 @@ class MemWgotdBody extends React.Component {
         else
         {
             return(
-                <MemWgotdPageG pageId={this.state.iDPass} />
+                <MemWgotdPageG pageId={this.state.iDPass} wgot={this.props.wgot}/>
             )
         }
     }
@@ -41,13 +42,11 @@ class MemWgotdBody extends React.Component {
             if(error){
                 console.log(error)
                 console.log(error.error)
-                if(error.error == 501){
-                    this.setState({gulag: "Sorry. You can not add this deal to your TomBook because you are not a member of this organization."})
-                    $('#myModal').modal('show'); 
-                }
                 if(error.error == 509){
-                    this.setState({gulag: "User already used this deal."})
-                    $('#myModal').modal('show'); 
+                    Bert.alert( "User already used this deal.", 'danger', 'growl-bottom-right' );
+                }
+                else{
+                    Bert.alert( error.message, 'danger', 'growl-bottom-right' );
                 }
             }
             else{
@@ -66,6 +65,16 @@ class MemWgotdBody extends React.Component {
             }
         })
     }
+    checkGD(props){
+        var deid = this.props.params.pageId;
+        if(window.location.pathname.includes('wgot/d/')){
+            this.addDeal(props);
+        }
+        else
+        {
+            $('#buyModal').modal('toggle');
+        }
+    }
     renderButton(){
         var deid = this.props.params.pageId;
         var cont = false;
@@ -82,7 +91,7 @@ class MemWgotdBody extends React.Component {
         }
         else{
             return(
-                <button className="btn btn-success btn-extend" onClick={this.addDeal.bind(this)}><h4><span className="glyphicon glyphicon-plus-sign"></span> Add to UBook</h4></button>
+                <button className="btn btn-success btn-extend" onClick={this.checkGD.bind(this)}><h4><span className="glyphicon glyphicon-plus-sign"></span> Add to UBook</h4></button>
             )
         }
     }
@@ -108,17 +117,41 @@ class MemWgotdBody extends React.Component {
             </div>
         )
     }
+    buyDeal(){
+        return (
+            <div>
+                <div className="modal fade all-black" id="buyModal" role="dialog">
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <button type="button" className="close" data-dismiss="modal">&times;</button>
+                        <h4 className="modal-title">Buy Ready Deal</h4>
+                      </div>
+                      <div className="modal-body">
+                        <h2>Cost: ${this.props.wgot.cost.toFixed(2).toString()}</h2>
+                      </div>
+                      <div className="modal-footer">
+                        <button type="button" className="btn btn-success" onClick={this.addDeal.bind(this)}>Purchase</button>
+                        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        )
+    }
     render() {
         console.log(this.state.iDPass)
-        if(!this.props.tombook){
+        console.log(this.props.wgot)
+        if(!this.props.tombook || !this.props.wgot){
             return(<div></div>)
         }
-        console.log(this.props)
         return (
             <div>
                 <div className="col-md-6" className="container-fluid bg-3 text-center bump-push-bar up-a-tad">
                     <div className="map-push">
                         {this.noAccessCheck()}
+                        {this.buyDeal()}
                         <div className="card-2">
                             <a href="#" onClick={browserHistory.goBack}><button className="btn btn-primary btn-extend"><h4><span className="glyphicon glyphicon-arrow-left"></span> Back</h4></button></a>
                         </div>
@@ -138,8 +171,9 @@ class MemWgotdBody extends React.Component {
 export default createContainer((props)=>{
     Meteor.subscribe('profile');
     Meteor.subscribe('tombook');
+    Meteor.subscribe('wgot');
 
-    return {profile: Profile.find({}), tombook: TomBook.findOne({})}
+    return {profile: Profile.find({}), tombook: TomBook.findOne({}), wgot: DandE.findOne({_id: props.params.pageId })}
 
     
 }, MemWgotdBody);  

@@ -25,36 +25,6 @@ class MemOrgRight extends Component {
     gifts(){
       this.setState({header: 'Gift Cards'})
     }
-    goldMember(){
-      var d = this.props.pageID;
-      
-      Meteor.call('pages.addGoldMember', d, (error,data)=>{
-        if(error){
-          console.log(error)
-          Bert.alert(error.message, 'danger', 'fixed-top' );
-        }
-        else{
-          console.log(data)
-          $('#myModal').modal('hide');
-          Bert.alert('You are now a gold member at '+this.props.pages.orgName, 'success', 'fixed-top' );
-        }
-      })
-    }
-    offGoldMember(){
-      var d = this.props.pageID;
-      Meteor.call('pages.removeGoldMember', d, (error,data)=>{
-        if(error){
-          console.log(error)
-          Bert.alert(error.message, 'danger', 'fixed-top' );
-        }
-        else{
-          console.log(data)
-          $('#myModal').modal('hide');
-          Bert.alert('You are no longer a member of '+this.props.pages.orgName , 'info', 'fixed-top' );
-        }
-      })
-      
-    }
     renderBody(){//no linking with the panels, backend issues need resolving. public private deals. allow or disallow these panels to exist
       if(this.state.header.includes('About')){//about info and maps below it
         return(
@@ -110,92 +80,6 @@ class MemOrgRight extends Component {
       $('#myModal').modal('hide');
       browserHistory.push('/user/finance');
     }
-    renderButton(){
-      if(!this.props.pages.hasMembers){
-        return<div></div>
-      }
-      else{
-        if(!this.props.pages.pageUsers.includes(Meteor.userId())){
-          Meteor.call("stripe.obtainCardInfo", (error,data)=>{
-            if(error){
-              Bert.alert(error.message, 'danger', 'fixed-top' );
-              console.log(error);
-            }
-            else{
-              console.log(data);
-              if(!this.state.returnedOnce){
-                this.setState({custCard: data, returnedOnce: true})
-              }
-
-            }
-          })
-          if(!this.state.custCard){
-            return<div>...Loading</div>
-          }
-          if(this.state.custCard.hasCard == false){
-            return(
-              <div>
-                No credit card on file. Please head to <a href="#" onClick={this.toFinance.bind(this)}>the finance page</a> to enter a credit card.
-              </div>
-            )
-          }
-        return(
-          <div>
-            <div className="card-2">
-              <button className="btn btn-success btn-extend" data-toggle="modal" data-target="#myModal">
-                <h4><span className="glyphicon glyphicon-thumbs-up"></span> Become a Gold Member</h4>
-              </button>
-            </div>
-            <div className="modal fade all-black" id="myModal" role="dialog">
-                  <div className="modal-dialog">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <button type="button" className="close" data-dismiss="modal">&times;</button>
-                        <h4 className="modal-title">Become a Gold Member</h4>
-                      </div>
-                      <div className="modal-body">
-                        <p>So you'd like to become a Gold Member of {this.props.pages.orgName}...</p>
-                      </div>
-                      <div className="modal-footer">
-                        <button type="button" onClick={this.goldMember.bind(this)} className="btn btn-success">Become Gold Member</button>
-                        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-          </div>
-        )
-      }
-      else{
-        return(
-          <div>
-            <div className="card-2">
-              <button className="btn btn-danger btn-extend" data-toggle="modal" data-target="#myModal">
-                <h4><span className="glyphicon glyphicon-thumbs-down"></span> End Membership</h4>
-              </button>
-            </div>
-            <div className="modal fade all-black" id="myModal" role="dialog">
-                  <div className="modal-dialog">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <button type="button" className="close" data-dismiss="modal">&times;</button>
-                        <h4 className="modal-title">End Membership</h4>
-                      </div>
-                      <div className="modal-body">
-                        <p>Are you sure you want to end your membership with {this.props.pages.orgName}?</p>
-                      </div>
-                      <div className="modal-footer">
-                        <button type="button" onClick={this.offGoldMember.bind(this)} className="btn btn-danger">End Membership</button>
-                        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-          </div>
-        )
-      }
-      }
-    }
     renderIfMembers(){
       if(this.props.pages.hasMembers){
         return(<h5>This organization offers memberships.</h5>)
@@ -203,6 +87,54 @@ class MemOrgRight extends Component {
       else{
         return(<h5>This organization does not offer memberships.</h5>)
       }
+    }
+    renderCashReward(){
+      console.log('here')
+      return(
+        <div>
+          <div className="modal fade all-black" id="theM" role="dialog">
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <button type="button" className="close" data-dismiss="modal">&times;</button>
+                      <h4 className="modal-title">Enter Code</h4>
+                    </div>
+                    <div className="modal-body modal-height">
+                      <div className="col-md-12">
+                        <div className="input-group card-1">
+                        <input type="number" ref="code" className="form-control code-input" placeholder="Enter Rewards Code" />
+                      </div>
+                      </div>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-success" onClick={this.handleCode.bind(this)}>Enter Code</button>
+                      <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+      )
+    }
+    openModal(){
+      $('#theM').modal('toggle');
+    }
+    handleCode(){
+      var code = this.refs.code.value.trim();
+      code = parseInt(code);
+      var pageID = this.props.pageID;
+      Meteor.call('pagedata.redeemCode', code, pageID, (error,data)=>{
+        if(error){
+          console.log(error);
+          Bert.alert( error.message, 'danger', 'growl-bottom-right' );
+        }
+        else{
+          console.log(data);
+          this.openModal();
+          Bert.alert( 'Code Redeemed.', 'success', 'growl-bottom-right' );
+          this.refs.code.value = "";
+        }
+      })
     }
     render() {
       if(!this.props.pages){
@@ -245,12 +177,14 @@ class MemOrgRight extends Component {
                           {this.renderBody()}
                         </div>
                       </div>
-                        
-                       
                       </div>
                   </div>
+
               </div>
-              {this.renderButton()}
+              {this.renderCashReward()}
+              <div className="card-2">
+                <a href="#" onClick={this.openModal.bind(this)}><button className="btn btn-default btn-extend"><h4><span className="glyphicon glyphicon-transfer"></span> Redeem Rewards Code</h4></button></a>
+            </div>
         	</div>
         );
     }

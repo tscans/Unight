@@ -29,7 +29,7 @@ import AdminGiftMain from './components/admin/gift/admin_gift_main';
 import AdminClearance from './components/admin/clearance/admin_clearance';
 //user pages
 import User from './components/user/user';
-import MemMainBody from './components/user/memberships/mem_main_body';
+import MemMainBody from './components/user/businesses/mem_main_body';
 import MemOrgBody from './components/user/orgpage/mem_org_body';
 import MemWgotBody from './components/user/wgot/mem_wgot_body';
 import MemWgoteBody from './components/user/wgote/mem_wgote_body';
@@ -88,8 +88,8 @@ const routes = (
 		</Route>
 		<Route path="/user/" component={User}>
 			<IndexRoute component={MemTomBook} />
-			<Route path="memberships" component={MemMainBody} />
-			<Route path="memberships/:pageId/" component={MemOrgBody} />
+			<Route path="businesses" component={MemMainBody} />
+			<Route path="businesses/:pageId/" component={MemOrgBody} />
 			<Route path="wgot" component={MemWgotBody} />
 			<Route path="wgot/e/:pageId/" component={MemWgoteBody} />
 			<Route path="wgot/d/:pageId/" component={MemWgotdBody} />

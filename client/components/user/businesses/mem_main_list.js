@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {createContainer} from 'meteor/react-meteor-data';
-import Zipcodes from 'zipcodes';
 
 class MemMainList extends Component {
 
 	renderList(){
 		return this.props.allPages.map(page=>{
-			const url = `/user/memberships/${page._id}/`;
+			const url = `/user/businesses/${page._id}/`;
 			return(
 				<Link to={url} key={page._id}>
 					<div className="panel panel-default card-1 max-100">
@@ -18,7 +17,7 @@ class MemMainList extends Component {
 							{page.orgName}
 						  <div className="panel-body">
 						    Address: {page.phyAddress}<br/>
-						    Number of Members: {page.pageUsers.length}
+						    Rewards Plan: {page.requiredForGoal.toString()} purchases for ${page.moneyForGoal.toFixed(2).toString()}
 						  </div>
 						</div>
 					</div>
@@ -27,7 +26,6 @@ class MemMainList extends Component {
 		})
 	}
     render() {
-    	console.log(Zipcodes.lookup(60655))
         return (
         	<div>
         		{this.renderList()}	

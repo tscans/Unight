@@ -3,8 +3,26 @@ import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
 import {Notification} from '../imports/collections/notification';
 
+function checker(value,typeOBJ){
+	var returnValue;
+	//number,boolean,string
+	returnValue = (typeof(value) == typeOBJ);
+	return returnValue;
+}
+
+function ulength(s, maxl){
+	var returnValue;
+	if(s.length > maxl){
+		returnValue = false;
+	}
+	else{
+		returnValue = true;
+	}
+	return returnValue;
+}
+
 function emailBody(whose, usid, code, buyer, business, amountCredit){
-	var unsub = `http://unight.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
+	var unsub = `http://Udeal.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
 	var direction;
 	if(whose == "self"){
 		direction = `<p>You purchased a Gift Card for `+business+` worth $`+amountCredit+`.</p>`
@@ -32,14 +50,14 @@ function emailBody(whose, usid, code, buyer, business, amountCredit){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
-<h2>You are the owner of a Unight Gift Card</h2>
+<a href="http://Udeal.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<h2>You are the owner of a Udeal Gift Card</h2>
 `+direction+`
-<p>Be sure to visit `+business+` more often to use your gift card. Thanks for choosing Unight to be a loyal customer!</p>
+<p>Be sure to visit `+business+` more often to use your gift card. Thanks for choosing Udeal to be a loyal customer!</p>
 <div class="bump-top bump-bot">
-<p>Unight.io</p>
+<p>Udeal.io</p>
 </div>
-<p>If you wish to unsubscribe from future Unight emails click this <a href="`+unsub+`">link.</a></p>
+<p>If you wish to unsubscribe from future Udeal emails click this <a href="`+unsub+`">link.</a></p>
 </div>
 </body>
 </html>`;
@@ -51,6 +69,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(amountToken, "number") && checker(friend, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20) && ulength(friend, 50))){
+	    	return;
+	    }
 		const profile = Profile.findOne({
 			ownerId: user
 		});
@@ -159,7 +184,7 @@ Meteor.methods({
 				if(inFriendsList !=profile){
 					Email.send({
 					  to: inFriendsList.email,
-					  from: "UnightMail@mail.unight.io",
+					  from: "UdealMail@mail.Udeal.io",
 					  subject: "You've Got Gift Card!",
 					  html: emailBody('other',profile.ownerId,profile.code, profile.name, pages.orgName, stringAmount),
 					});
@@ -167,7 +192,7 @@ Meteor.methods({
 				else{
 					Email.send({
 					  to: profile.email,
-					  from: "UnightMail@mail.unight.io",
+					  from: "UdealMail@mail.Udeal.io",
 					  subject: "You've Got Gift Card!",
 					  html: emailBody('self',profile.ownerId,profile.code, profile.name, pages.orgName, stringAmount),
 					});
@@ -202,8 +227,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-		console.log(amountDebit)
-		console.log(isNaN(amountDebit))
+		if(!(checker(cardID, "string") && checker(amountDebit, "number"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(cardID, 20))){
+	    	return;
+	    }
 		if(isNaN(amountDebit)){
 			throw new Meteor.Error(520, 'User did not enter a valid number.');
 	    	console.log(amountDebit)

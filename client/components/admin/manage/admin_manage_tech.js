@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
-import {createContainer} from 'meteor/react-meteor-data';
 import {GiftCards} from '../../../../imports/collections/giftcards';
 import {Pages} from '../../../../imports/collections/pages';
+import {PageData} from '../../../../imports/collections/page_data';
 import AdminManageBody from './admin_manage_body';
-import AdminManageTech from './admin_manage_tech';
 
-class AdminManageMain extends Component {
+class AdminManageTech extends Component {
     constructor(props) {
       super(props);
       this.state={
         showUsers: false,
-        showEdit: true
+        code: null
       }
     }
     setGoldReq(){
@@ -99,31 +98,34 @@ class AdminManageMain extends Component {
     showUsers(){
       this.setState({showUsers: !this.state.showUsers});
     }
-    renderComponents(){
-      if(this.state.showEdit){
+    recentCode(){
+      if(this.state.code){
         return(
           <div>
-            <div className="col-md-8 col-md-offset-2">
-              <AdminManageTech adminCards={this.props.adminCards} thisPage={this.props.thisPage} allPages={this.props.allPages} pageID={this.props.pageID} />
-            </div>
+            <h4>Code: {this.state.code.toString()}</h4>
           </div>
         )
       }
       else{
         return(
           <div>
-            <div className="col-md-8 col-md-offset-2">
-              <AdminManageBody adminCards={this.props.adminCards} thisPage={this.props.thisPage} allPages={this.props.allPages}/>
-            </div>
+            <h4>Code: _ _ _ _</h4>
           </div>
         )
       }
     }
-    data(){
-      this.setState({showEdit: false});
-    }
-    mods(){
-      this.setState({showEdit: true});
+    genCode(){
+      Meteor.call('pagedata.createCode', (error,data)=>{
+        if(error){
+          console.log(error);
+        }
+        else{
+          console.log(data);
+          this.setState({code: data.code});
+
+          setTimeout(()=>{this.setState({code: null})}, 15000);
+        }
+      })
     }
     render() {
 
@@ -132,25 +134,44 @@ class AdminManageMain extends Component {
       }
         return (
         	<div>
-        		<div className="container-fluid bg-3 text-center">
-              <div className="col-md-10 col-md-offset-1">
-                <button className="btn btn-primary third-length card-1" onClick={this.mods.bind(this)}><h4>Manage Modifications</h4></button>
-                <button className="btn btn-primary third-length card-1" onClick={this.data.bind(this)}><h4>Manage Data</h4></button>
+        		<div className="white-back card-3">
+              
+              <div>
+                <h3>Rewards Code</h3>
+                <p>Generate a rewards code for a customer.</p>
+                <button className="btn btn-primary card-1" onClick={this.genCode.bind(this)}>Generate</button>
+                {this.recentCode()}
+                <br/>
+
+                <h3>Set Rewards Requirement</h3>
+                <p>Set the number of deals (4 - 16) a user needs to use before being eligible for gift card rewards and the reward potential ($2.00 - $12.00). Current Deals Needed: {this.renderNum()} Current Reward: {this.renderNum2()}</p>
+                <div className="form-group col-md-6">
+                  <input type="number" className="form-control foc-card" ref="goldreq" defaultValue={this.props.thisPage.requiredForGoal} placeholder="Deals Needed"/>
+                </div>
+                <div className="form-group col-md-6">
+                  <input type="number" className="form-control foc-card" ref="goldmon" defaultValue={this.props.thisPage.moneyForGoal} placeholder="Reward"/>
+                </div>
+                <button className="btn btn-success card-1" onClick={this.setGoldReq.bind(this)}>Set Requirement</button>
+
+                
+                <h3>Allow Other Users Notification Privileges</h3>
+                <p>Give other users on this app (like employees) the ability to see livelook notifications. Then more devices would be able to see notifications and check if deals are accepted. Only those with Udeal accounts can be added.</p>
+                <div className="form-group col-md-6">
+                  <input type="text" className="form-control foc-card" ref="name" placeholder="User Name"/>
+                </div>
+                <div className="form-group col-md-6">
+                  <input type="email" className="form-control foc-card" ref="email" placeholder="User Email"/>
+                </div>
+                <button className="btn btn-success card-1" onClick={this.addAltNotes.bind(this)}>Add User</button>
+                <br/>
+                <br/>
+                <button className="btn btn-default card-1" onClick={this.showUsers.bind(this)}>Show Users</button>
+                {this.showNoters()}
               </div>
-              {this.renderComponents()}
             </div> 
         	</div>
         );
     }
 }
 
-export default createContainer((props)=>{
-  const theId = Meteor.userId();
-    
-  var pageID = props.params.pageId;
-  Meteor.subscribe('adminCards', pageID);
-  Meteor.subscribe('pages');
-
-  return{adminCards: GiftCards.find({}).fetch(), thisPage: Pages.findOne({_id: pageID}), pageID: pageID, allPages: Pages.find({}).fetch()}
-
-}, AdminManageMain); 
+export default AdminManageTech;

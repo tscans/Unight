@@ -10,7 +10,6 @@ class NotesList extends Component{
 			}
 			else{
 				console.log(data);
-				this.forceUpdate();
 			}
 		})
 	}

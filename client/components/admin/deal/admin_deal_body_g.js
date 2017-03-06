@@ -20,7 +20,7 @@ class AdminDealBodyG extends React.Component {
 	                </div>	
         		</div>
         		<div className="col-md-8">
-        			<AdminDealCenterG deals={this.props.orgGoldDeals} />
+        			<AdminDealCenterG deals={this.props.orgGoldDeals} params={this.props.params}/>
         		</div>
         	</div>
         );

@@ -7,9 +7,9 @@ import moment from 'moment';
 
 
 function emailBody(usid,code){
-	var user = `http://unight.meteorapp.com/verify/ver/`+usid+`/`+code+`/loginuser`;
-	var bus = `http://unight.meteorapp.com/verify/ver/`+usid+`/`+code+`/loginorg`;
-	var unsub = `http://unight.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
+	var user = `http://Udeal.meteorapp.com/verify/ver/`+usid+`/`+code+`/loginuser`;
+	var bus = `http://Udeal.meteorapp.com/verify/ver/`+usid+`/`+code+`/loginorg`;
+	var unsub = `http://Udeal.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -30,14 +30,14 @@ function emailBody(usid,code){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
-<h1>Welcome to Unight!</h1>
+<a href="http://Udeal.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<h1>Welcome to Udeal!</h1>
 <p>We hope you enjoy great deals! Click <a href="`+user+`">here</a> to verify your account and sign in as a user. </p>
 <p>Or if you are a business owner, feel free to <a href="`+bus+`">create a page</a> and try out our services.</p>
 <p>Don't forget to go mobile with our app! Available on iOS and Android.</p>
 <div class="bump-top">
-<p>Unight.io</p>
-<p>If you wish to unsubscribe from future Unight emails click this <a href="`+unsub+`">link</a></p>
+<p>Udeal.io</p>
+<p>If you wish to unsubscribe from future Udeal emails click this <a href="`+unsub+`">link</a></p>
 </div>
 </div>
 </body>
@@ -45,7 +45,7 @@ function emailBody(usid,code){
 }
 
 Meteor.methods({
-	'profile.makeUser': function(name, cell, zip){
+	'profile.makeUser': function(name, zip){
 		const user = Meteor.users.findOne(this.userId)._id;
 		var profile = Profile.findOne({ownerId: user});
 		if(profile){
@@ -67,8 +67,8 @@ Meteor.methods({
 			var random = Math.floor(Math.random() * (999999 - 111111)) + 111111;
 			Email.send({
 			  to: Meteor.user().emails[0].address,
-			  from: "UnightMail@mail.unight.io",
-			  subject: "Welcome to Unight!",
+			  from: "UdealMail@mail.Udeal.io",
+			  subject: "Welcome to Udeal!",
 			  html: emailBody(user, random),
 			});
 			var proEmail = Meteor.user().emails[0].address.toLowerCase();
@@ -83,13 +83,13 @@ Meteor.methods({
 				memberAllowance: 1,
 				moonDate: null,
 				isSupAdmin: false,
-				cell: cell,
 				userZip: zip,
 				giftCards: [],
 				todayDeals: 0,
 				businessVerified: false,
 				liveProfile: false,
 				friendUsers: [],
+				rewards: [],
 				stripeBusiness: null,
 				code: random.toString(),
 				subscribeEmail: true,
@@ -137,7 +137,7 @@ Meteor.methods({
 		}
 		var profile = Profile.findOne({email: number});
 		if(!profile){
-			throw new Meteor.Error(530, 'Unight account not found.');
+			throw new Meteor.Error(530, 'Udeal account not found.');
 			return;
 		}
 		number = number.toString();
@@ -184,73 +184,6 @@ Meteor.methods({
 
 		var profile = Profile.findOne({ownerId: user});
 		return Profile.update(profile._id, {$set:{longlat0: longlat[0], longlat1: longlat[1]}});	
-	},
-	'profile.moonMember': function(){
-		const user = Meteor.users.findOne(this.userId)._id.toString();
-		if(!user){
-			return
-		}
-		var profile = Profile.findOne({ownerId: user});
-		if(!profile.stripeCust){
-			throw new Meteor.Error(588, 'You need a credit card on file to purchase Moon Membership.');
-			return;
-		}
-		//add email thank
-
-
-		var stripe = StripeAPI(Meteor.settings.StripePri);
-		stripe.charges.create({ 
-	        amount: 500,
-	        currency: "usd",
-	        customer: profile.stripeCust,
-	        description: "Moon Membership"
-	      	}, Meteor.bindEnvironment(function(error, result){
-	        if(error){
-	        	console.log(error)
-	        }else{
-				
-	        }
-	    }));
-		var message = "You have been charged $5.00 for Moon Membership. Thanks for supporting Unight!";
-		var type = "GCD";
-
-		Notification.insert({
-			ownerId: user,
-			pageOwner: user,
-			message: message,
-			type: type,
-			createdAt: new Date(),
-			
-		});
-		var d = new Date();
-		var expiration = moment(d).add(1,'month').format("ll");
-		return Profile.update(profile._id, {$set:{memberAllowance: 5, moonDate: expiration}});
-	},
-	'profile.noMoonMember': function(){
-		const user = Meteor.users.findOne(this.userId)._id.toString();
-		if(!user){
-			return
-		}
-		var profile = Profile.findOne({ownerId: user});
-		//remove 4 of their memberships, done
-		for(var i=0;i<profile.goldMember.length;i++){
-			Pages.update(profile.goldMember[i], {$pull: {
-				pageUsers: user
-			}})
-		}
-		
-		Profile.update(profile._id, {$set:{goldMember: []}});
-		if(profile.goldMember.length > 0){
-			Profile.update(profile._id, {$push: {
-				goldMember: profile.goldMember[0]
-			}})
-			Pages.update(profile.goldMember[0], {$push:{
-				pageUsers: user
-			}})
-		}
-		
-		
-		return Profile.update(profile._id, {$set:{memberAllowance: 1}});
 	}
 });
 

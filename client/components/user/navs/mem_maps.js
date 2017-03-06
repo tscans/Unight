@@ -208,12 +208,12 @@ class MemMaps extends React.Component {
         ]
     }
   }
-	componentWillReceiveProps(props){
+  componentWillReceiveProps(props){
     
       console.log('maps come up')
 
-    	var cube3 = props.allPages
-    	console.log(this.state.mapLoaded)
+      var cube3 = props.allPages
+      console.log(this.state.mapLoaded)
       if(this.state.mapLoaded){
         console.log('returned')
         return true;
@@ -222,8 +222,8 @@ class MemMaps extends React.Component {
         this.setMaps();
       }
       
-    	var geocoder = new google.maps.Geocoder();
-    	var uluru = {lat: 41.8781, lng: -87.6298};
+      var geocoder = new google.maps.Geocoder();
+      var uluru = {lat: 41.8781, lng: -87.6298};
         var map = new google.maps.Map(document.getElementById('mapid'), {
           zoom: 4,
           center: uluru,
@@ -263,16 +263,16 @@ class MemMaps extends React.Component {
 
         }
         cube3.map((c)=>{
-            var v = "/user/memberships/"
+            var v = "/user/businesses/"
             console.log(c._id)
-        	createMarker(new google.maps.LatLng(c.longlat0, c.longlat1), v + c._id + "/", c.proPict, c.orgName)
-        	google.maps.event.addListener(marker, 'click', (function (marker) {
+          createMarker(new google.maps.LatLng(c.longlat0, c.longlat1), v + c._id + "/", c.proPict, c.orgName)
+          google.maps.event.addListener(marker, 'click', (function (marker) {
             return function () {
                 browserHistory.push(v + c._id + "/");
             }
         })(marker));
         });
-	 }
+   }
    setMaps(){
     this.setState({mapLoaded: true})
    }
@@ -321,11 +321,11 @@ class MemMaps extends React.Component {
 
     render() {
         return (
-        	<div>
-        		<div className="col-md-6 freeze">
-        			<div id="mapid" onClick={this.logit.bind(this)}></div>
-        		</div>
-        	</div>
+          <div>
+            <div className="col-md-6 freeze">
+              <div id="mapid" onClick={this.logit.bind(this)}></div>
+            </div>
+          </div>
         );
     }
 }

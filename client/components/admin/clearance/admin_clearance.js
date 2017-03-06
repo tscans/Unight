@@ -97,7 +97,7 @@ class AdminSelectMain extends Component {
     if(!this.props.profile.stripeBusiness){
       return(
         <div>
-          <p>In order to create an organization with Unight, you must first verify your business through Stripe. Stripe is a suite of APIs that powers commerce for businesses of all sizes. It is what Unight uses to make secure transactions online. In order to get payments from customers, you must verify you have a bank account to deposit them into.</p>
+          <p>In order to create an organization with Udeal, you must first verify your business through Stripe. Stripe is a suite of APIs that powers commerce for businesses of all sizes. It is what Udeal uses to make secure transactions online. In order to get payments from customers, you must verify you have a bank account to deposit them into.</p>
             <div className="text-center col-md-6 col-md-offset-3 top-bot-not">
               <img src="http://i.imgur.com/TwejQKK.gif" height="75px" className={this.state.gif} />
               <a href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_9hhNB3fcLdZm79wctX3HQ3MMN91h6v2p&scope=read_write">
@@ -199,14 +199,14 @@ class AdminSelectMain extends Component {
 				<div className="bump-body">
 					<div className="container-fluid bg-3 text-center">
 						{this.renderModal()}
-						<h1>Verify Business Account With Unight</h1>
+						<h1>Verify Business Account With Udeal</h1>
             <div className="col-md-6 col-md-offset-3 text-center">
               <div className="text-center">
                 {this.renderTop()}
               </div>
               <div className="col-md-12 text-center">
                 <br/>
-                <p>Unight does not have monthly subscription fees but we do charge organizations monthly for the number of deals which are redeemed. In order to verify your organization, you must put forth a credit or debit card for these charges. Stripe handles the processing fees.</p>
+                <p>Udeal does not have monthly subscription fees but we do charge organizations monthly for the number of deals which are redeemed. In order to verify your organization, you must put forth a credit or debit card for these charges. Stripe handles the processing fees.</p>
                 <br/>
               </div>
               {this.renderBot()}

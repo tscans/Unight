@@ -60,7 +60,7 @@ class AdminAccount extends React.Component {
 	                </form>
 				</div>
 				<div className="col-md-6 col-md-offset-3 top-bot-not">
-					<p>For security purposes, we save all page data. This is to protect those who have investments in your organization. If you wish to turn off gift card purchases, gold memberships, or deals please see the main admin page. If you wish to deactivate this accounts user expenses please select deactivate below. <b>If you wish to have your account deleted from Unight, please contact customer support.</b></p>
+					<p>For security purposes, we save all page data. This is to protect those who have investments in your organization. If you wish to turn off gift card purchases, gold memberships, or deals please see the main admin page. If you wish to deactivate this accounts user expenses please select deactivate below. <b>If you wish to have your account deleted from Udeal, please contact customer support.</b></p>
 					<button type="button" className="btn btn-danger btn-lg btn-extend card-1" data-toggle="modal" data-target="#myModal">Deactivate Account</button>
 				</div>
 				<div className="modal fade all-black" id="myModal" role="dialog">

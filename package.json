@@ -9,6 +9,7 @@
     "cryptr": "^2.0.0",
     "dwolla-v2": "^1.2.3",
     "express": "^4.14.1",
+    "font-awesome": "^4.7.0",
     "google-maps-react": "^1.0.19",
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.15.2",

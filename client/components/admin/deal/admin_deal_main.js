@@ -2,6 +2,7 @@ import React from 'react';
 import AdminDealBody from './admin_deal_body';
 
 class AdminDealMain extends React.Component {
+	//main--body--center
     render() {
         return (
         	<div>

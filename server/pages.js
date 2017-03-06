@@ -11,8 +11,19 @@ function checker(value,typeOBJ){
 	return returnValue;
 }
 
+function ulength(s, maxl){
+	var returnValue;
+	if(s.length > maxl){
+		returnValue = false;
+	}
+	else{
+		returnValue = true;
+	}
+	return returnValue;
+}
+
 function emailBody(usid, code, business, dollars, today, expiration){
-	var unsub = `http://unight.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
+	var unsub = `http://Udeal.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -32,15 +43,15 @@ function emailBody(usid, code, business, dollars, today, expiration){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px;'>
-<a href="http://unight.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<a href="http://Udeal.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h2>You are a member of `+business+`</h2>
 <p>This means you now have access to gold deals at `+business+`.</p>
 <p>You purchased membership for $`+dollars+` on `+today+`. This membership will expire on `+expiration+` and will automatically be renewed for the same amount unless you end the membership or reach the quota for deals in a month at `+business+` and become eligible for a free month of gold.</p>
-<p>Be sure to visit `+business+` more often to use all the gold deals offered this month. Thanks for choosing Unight to be a loyal customer!</p>
+<p>Be sure to visit `+business+` more often to use all the gold deals offered this month. Thanks for choosing Udeal to be a loyal customer!</p>
 <div class="bump-top bump-bot">
-<p>Unight.io</p>
+<p>Udeal.io</p>
 </div>
-<p>If you wish to unsubscribe from future Unight emails click this <a href="`+unsub+`">link.</a></p>
+<p>If you wish to unsubscribe from future Udeal emails click this <a href="`+unsub+`">link.</a></p>
 </div>
 </body>
 </html>`;
@@ -74,14 +85,15 @@ Meteor.methods({
 			throw new Meteor.Error(590, "stripe-error");
 			return;
 		}
+		var d = new Date();
+		var today = moment(d).format("ll");
 		var profile = Profile.findOne({ownerId: theUserId});
 		return Pages.insert({
 			ownedBy: [theUserId],
-			createdAt: new Date(),
+			createdAt: today,
 			orgName: orgName,
 			proPict: proPict,
 			phyAddress: phyAddress,
-			pageUsers: [],
 			zipCode: zipCode,
 			aboutUs: aboutUs,
 			website: "",
@@ -90,12 +102,12 @@ Meteor.methods({
 			hasEvents: true,
 			hasGiftCards: true,
 			allowedGifts: [],
-			monthlyTransactions: 0,
 			requiredForGoal: 5,
 			moneyForGoal: 4,
-			whoDealsMonthly: [],
 			published: false,
-			altnotes: []
+			altnotes: [],
+			monthlyCount: 0,
+			renewPage: true
 		},
 		function(error,data){
 		  	if(error){
@@ -114,7 +126,7 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-		const forPage = Page.findOne({
+		const forPage = Pages.findOne({
 			ownedBy: {$elemMatch: {$eq: user}}
 		})
 		return Pages.update(forPage._id, {$set: {
@@ -126,7 +138,9 @@ Meteor.methods({
 			console.log('hack attempt');
 			return;
 		}
-
+		if(!(ulength(pageID, 20) && ulength(name, 50) && ulength(address, 50) && ulength(zip, 6) && ulength(website, 40) && ulength(about, 200))){
+	    	return;
+	    }
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
@@ -139,7 +153,7 @@ Meteor.methods({
 			console.log('failed authentication')
 			return;
 		}
-		if(pageID == "" || name == "" || address == "" || zip == "" || website == ""){
+		if(pageID == "" && name == "" && address == "" && zip == "" && website == ""){
 			return;
 		}
 		if(!page.published){
@@ -161,12 +175,15 @@ Meteor.methods({
 	},
 	'pages.updateGoalRequire': function(pageID,requiredForGoal, moneyForGoal){
 		var user = this.userId.toString();
-		if(isNaN(requiredForGoal) || isNaN(moneyForGoal)){
+		if(isNaN(requiredForGoal) && isNaN(moneyForGoal)){
 			console.log('hacker')
 	        return;
 	    }
-	    if(!(checker(pageID, "string") || checker(requiredForGoal, "number") || checker(moneyForGoal, "number"))){
+	    if(!(checker(pageID, "string") && checker(requiredForGoal, "number") && checker(moneyForGoal, "number"))){
 	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20))){
 	    	return;
 	    }
 		const theUserId = Meteor.users.findOne(this.userId)._id;
@@ -198,6 +215,13 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(email, "string") && checker(name, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
+	    if(!(ulength(pageID, 20) && ulength(email, 50) && ulength(name, 25))){
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -208,7 +232,7 @@ Meteor.methods({
 		email = email.toLowerCase();
 		var profile = Profile.findOne({email: email});
 		if(!profile){
-			throw new Meteor.Error(530, 'Unight account not found.');
+			throw new Meteor.Error(530, 'Udeal account not found.');
 			return;
 		}
 		var already = false;
@@ -235,6 +259,10 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(requiredForGoal, "number"))){
+	    	console.log('hacker')
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -244,7 +272,7 @@ Meteor.methods({
 		}
 		var profile = Profile.findOne({email: email});
 		if(!profile){
-			throw new Meteor.Error(530, 'Unight account not found.');
+			throw new Meteor.Error(530, 'Udeal account not found.');
 			return;
 		}
 		Profile.update(profile._id,{$set:{altnotes: null}})
@@ -258,6 +286,10 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(longlat[0], "number") && checker(longlat[1], "number"))){
+	    	console.log('hacker')
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -277,6 +309,10 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(pic, "string"))){
+	    	console.log('hacker')
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})
@@ -299,75 +335,16 @@ Meteor.methods({
 		}));
 		
 	},
-	'pages.addGoldMember': function(pageID){
-		var user = this.userId.toString();
-		const theUserId = Meteor.users.findOne(this.userId)._id;
-		if (user != theUserId){
-			return;
-		}
-		const page = Pages.findOne({
-			_id: pageID
-		})
-		const profileID = Profile.findOne({
-			ownerId: theUserId
-		})
-		if(profileID.deactivate == true){
-			throw new Meteor.Error(530, 'Your purchase abilities are deactivated.');
-			return;
-		}
-		if(profileID.goldMember.length >= profileID.memberAllowance){
-			throw new Meteor.Error(531, 'You cannot have more than '+profileID.memberAllowance.toString()+' gold memberships.');
-			return;
-		}
-		Pages.update(page._id, {$push: {
-			pageUsers: user
-		}})
-		var individual = profileID.name;
-		var message = "User, "+individual+", has just become a member of your organization.";
-		var type = "GM";
-
-		Notification.insert({
-			ownerId: page.ownedBy[0],
-			pageOwner: page._id,
-			message: message,
-			type: type,
-			createdAt: new Date(),
-			
-		});
-		Profile.update(profileID._id, {$pull: {
-			goldMember: pageID
-		}})
-		Profile.update(profileID._id, {$push: {
-			goldMember: pageID
-		}})
-	},
-	'pages.removeGoldMember': function(pageID){
-		var user = this.userId.toString();
-		const theUserId = Meteor.users.findOne(this.userId)._id;
-		if (user != theUserId){
-			return;
-		}
-		const page = Pages.findOne({
-			_id: pageID
-		})
-		const profileID = Profile.findOne({
-			ownerId: theUserId
-		})
-
-		Pages.update(page._id, {$pull: {
-			pageUsers: user
-		}})
-		
-		return Profile.update(profileID._id, {$pull: {
-			goldMember: pageID
-		}})
-	},
 	'pages.changeGifts': function(pageID, cardArray){
 		var user = this.userId.toString();
 		const theUserId = Meteor.users.findOne(this.userId)._id;
 		if (user != theUserId){
 			return;
 		}
+		if(!(checker(pageID, "string") && checker(cardArray[0], "boolean") && checker(cardArray[1], "boolean") && checker(cardArray[2], "boolean") && checker(cardArray[3], "boolean"))){
+	    	console.log('hacker')
+	    	return;
+	    }
 		const page = Pages.findOne({
 			_id: pageID
 		})

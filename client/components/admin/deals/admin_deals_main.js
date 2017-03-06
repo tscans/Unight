@@ -44,9 +44,10 @@ class AdminDealsMain extends Component {
         return (
         	<div>
         		<div className="container-fluid bg-3 text-center">
+        			<h1>Daily Deals</h1>
 	        		<div className="col-md-10 col-md-offset-1">
-		                <button className="btn btn-primary third-length card-1" onClick={this.general.bind(this)}><h4>General</h4></button>
-		                <button className="btn btn-primary third-length card-1" onClick={this.gold.bind(this)}><h4>Gold</h4></button>
+		                <button className="btn btn-primary third-length card-1" onClick={this.general.bind(this)}><h4>Daily Deals</h4></button>
+		                <button className="btn btn-primary third-length card-1" onClick={this.gold.bind(this)}><h4>Ready Deals</h4></button>
 	                </div>
 	                <div className="col-md-12">
 	                	<AdminDealsBody orgGeneralDeals={this.props.orgGeneralDeals}/>

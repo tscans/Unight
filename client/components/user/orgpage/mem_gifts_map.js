@@ -28,7 +28,7 @@ class MemGiftsMap extends React.Component {
 	        else{
 	          console.log(data)
 	          $('#giftModal').modal('hide');
-	          Bert.alert('Purchase Successful! Thanks for using Unight!', 'success', 'fixed-top' );
+	          Bert.alert('Purchase Successful! Thanks for using Udeal!', 'success', 'fixed-top' );
 	        }
 	    })
 	}
