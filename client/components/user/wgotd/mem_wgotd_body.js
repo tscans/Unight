@@ -84,6 +84,10 @@ class MemWgotdBody extends React.Component {
                 cont = true;
             }
         })
+        if(this.props.wgot.usedBy.includes(Meteor.userId())){
+            Bert.alert( "User already used this deal.", 'danger', 'growl-bottom-right' );
+            return
+        }
         if(cont){
             return(
                 <button className="btn btn-danger btn-extend" onClick={this.removeDeal.bind(this)}><h4><span className="glyphicon glyphicon-minus-sign"></span> Remove from UBook</h4></button>

@@ -109,7 +109,6 @@ Meteor.methods({
 		          	throw "error";
 		          return;
 		        }else{
-		        	console.log(error,result)
 					// if(profile.subscribeEmail){
 					// 	Email.send({
 					// 	  to: profile.email,

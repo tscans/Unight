@@ -100,7 +100,6 @@ class AdminMainCenter extends Component {
                             <img src={this.props.pages.proPict} className="panel-body card-3 surround" height="200" width="200"/>
                         </div>
                         <div className="col-md-6 push-img-down">
-                            <h5>Number of Members: {this.props.pages.pageUsers.length}</h5> 
                             <h5>{this.props.pages.phyAddress}</h5>
                             <h5><a className="white-blue" href={this.props.pages.website}>{this.props.pages.website.substring(0,25)+"..."}</a></h5>
                             {this.renderIfMembers()}

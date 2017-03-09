@@ -1,6 +1,7 @@
 import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
 import {Notification} from '../imports/collections/notification';
+import {TomBook} from '../imports/collections/tombook';
 var zipcodes = require('zipcodes');
 import moment from 'moment';
 
@@ -53,51 +54,48 @@ Meteor.methods({
 			throw new Meteor.Error(510, 'User with email already exists.');
 			return;
 		}
+		console.log(zip)
 		var zippy = zipcodes.lookup(zip);
 
-		Meteor.call('tombook.initTomBook', user, (error,data)=>{
-			if(error){
-				console.log(error)
-			}
-			else{
-				console.log('worked')
-				console.log(data)
-				var tb = data.toString()
-			}
-			var random = Math.floor(Math.random() * (999999 - 111111)) + 111111;
-			Email.send({
-			  to: Meteor.user().emails[0].address,
-			  from: "UdealMail@mail.Udeal.io",
-			  subject: "Welcome to Udeal!",
-			  html: emailBody(user, random),
-			});
-			var proEmail = Meteor.user().emails[0].address.toLowerCase();
-			return Profile.insert({
-				createdAt: new Date(),
-				name: name,
-				ownerId: user,
-				email: proEmail,
-				myPages: [],
-				tomBook: tb,
-				goldMember: [],
-				memberAllowance: 1,
-				moonDate: null,
-				isSupAdmin: false,
-				userZip: zip,
-				giftCards: [],
-				todayDeals: 0,
-				businessVerified: false,
-				liveProfile: false,
-				friendUsers: [],
-				rewards: [],
-				stripeBusiness: null,
-				code: random.toString(),
-				subscribeEmail: true,
-				deactivate: false,
-				longlat0: zippy.latitude,
-				longlat1: zippy.longitude
-			});
-		})
+		TomBook.insert({
+			topUser: user,
+			tbc: []
+		});
+		var proEmail = Meteor.user().emails[0].address.toLowerCase();
+		var random = Math.floor(Math.random() * (999999 - 111111)) + 111111;
+		Profile.insert({
+			createdAt: new Date(),
+			name: name,
+			ownerId: user,
+			email: proEmail,
+			myPages: [],
+			goldMember: [],
+			memberAllowance: 1,
+			moonDate: null,
+			isSupAdmin: false,
+			userZip: zip,
+			giftCards: [],
+			todayDeals: 0,
+			businessVerified: false,
+			liveProfile: true,
+			friendUsers: [],
+			rewards: [],
+			stripeBusiness: null,
+			code: random.toString(),
+			subscribeEmail: true,
+			deactivate: false,
+			longlat0: zippy.latitude,
+			longlat1: zippy.longitude
+		});
+
+		
+		// Email.send({
+		//   to: Meteor.user().emails[0].address,
+		//   from: "UdealMail@mail.Udeal.io",
+		//   subject: "Welcome to Udeal!",
+		//   html: emailBody(user, random),
+		// });
+		
 	},
 	'profile.verifyUser': function(usid, code){
 		var profile = Profile.findOne({ownerId: usid});

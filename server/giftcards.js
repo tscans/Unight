@@ -69,11 +69,17 @@ Meteor.methods({
 		if (user != theUserId){
 			return;
 		}
-		if(!(checker(pageID, "string") && checker(amountToken, "number") && checker(friend, "string"))){
-	    	console.log('hacker')
+		if(!(checker(pageID, "string") && checker(amountToken, "number"))){
+	    	console.log('hackers')
 	    	return;
 	    }
-	    if(!(ulength(pageID, 20) && ulength(friend, 50))){
+	    if(friend){
+	    	if(!(checker(friend, "string") && ulength(friend, 50))){
+	    		console.log('hacker')
+	    		return;
+	    	}
+	    }
+	    if(!(ulength(pageID, 20))){
 	    	return;
 	    }
 		const profile = Profile.findOne({
@@ -180,25 +186,35 @@ Meteor.methods({
 				
 			});
 			var stringAmount = giftAmount.toFixed(2).toString();
-			if(inFriendsList.subscribeEmail){
-				if(inFriendsList !=profile){
-					Email.send({
-					  to: inFriendsList.email,
-					  from: "UdealMail@mail.Udeal.io",
-					  subject: "You've Got Gift Card!",
-					  html: emailBody('other',profile.ownerId,profile.code, profile.name, pages.orgName, stringAmount),
-					});
-				}
-				else{
-					Email.send({
-					  to: profile.email,
-					  from: "UdealMail@mail.Udeal.io",
-					  subject: "You've Got Gift Card!",
-					  html: emailBody('self',profile.ownerId,profile.code, profile.name, pages.orgName, stringAmount),
-					});
-				}
-			}
-			
+			// if(inFriendsList.subscribeEmail){
+			// 	if(inFriendsList !=profile){
+			// 		Email.send({
+			// 		  to: inFriendsList.email,
+			// 		  from: "UdealMail@mail.Udeal.io",
+			// 		  subject: "You've Got Gift Card!",
+			// 		  html: emailBody('other',profile.ownerId,profile.code, profile.name, pages.orgName, stringAmount),
+			// 		});
+			// 	}
+			// 	else{
+			// 		Email.send({
+			// 		  to: profile.email,
+			// 		  from: "UdealMail@mail.Udeal.io",
+			// 		  subject: "You've Got Gift Card!",
+			// 		  html: emailBody('self',profile.ownerId,profile.code, profile.name, pages.orgName, stringAmount),
+			// 		});
+			// 	}
+			// }
+			var message = "You have just purchased a $"+giftAmount.toString()+ " gift card at "+pages.orgName+".";
+			var type = "GC";
+
+			Notification.insert({
+				ownerId: user,
+				pageOwner: user,
+				message: message,
+				type: type,
+				createdAt: new Date(),
+				
+			});
 	          console.log('successful charge and notification');
 	          var existingCard = GiftCards.findOne({pageID: pageID, ownerId: inFriendsList.ownerId});
 				if(existingCard){

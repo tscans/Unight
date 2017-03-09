@@ -16,9 +16,8 @@ class OrgSignup extends Component {
         var pss1 = this.refs.password.value.trim();
         var pss2 = this.refs.password2.value.trim();
         var name = this.refs.name.value.trim();
-        var cell = this.refs.cell.value.trim();
         var zip = this.refs.zip.value.trim();
-        if(ema == "" || pss1 == "" || pss2 == "" || name == "" || cell == "" || zip == ""){
+        if(ema == "" || pss1 == "" || pss2 == "" || name == "" || zip == ""){
             Bert.alert( "Please complete all fields!", 'warning', 'fixed-top' );
             console.log("enter data");
             this.setState({gif: "invisible"});
@@ -45,7 +44,7 @@ class OrgSignup extends Component {
             });
 
             Meteor.loginWithPassword(ema, pss1);
-            Meteor.call('profile.makeUser', name,cell,zip, (error, data)=> {
+            Meteor.call('profile.makeUser', name,zip, (error, data)=> {
             	if(error){
                     Bert.alert( error.reason, 'danger', 'fixed-top' );
             		console.log("There was an error");
@@ -60,7 +59,6 @@ class OrgSignup extends Component {
                     this.refs.password.value = "";
                     this.refs.password2.value = "";
                     this.refs.name.value = "";
-                    this.refs.cell.value = "";
                     this.refs.zip.value = "";
                     this.setState({gif: "invisible"});
                     Bert.alert( 'Way to sign up! Please check your email for confirmation!', 'info', 'fixed-top' );
@@ -88,10 +86,6 @@ class OrgSignup extends Component {
 					    <label htmlFor="exampleInputEmail1">Your Name</label>
 					    <input type="text" className="form-control foc-card" ref="name" placeholder="Name"/>
 					  </div>
-                      <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Cell Phone</label>
-                        <input type="text" className="form-control foc-card" ref="cell" placeholder="Cell Phone"/>
-                      </div>
                       <div className="form-group">
                         <label htmlFor="exampleInputEmail1">Zip Code</label>
                         <input type="text" className="form-control foc-card" ref="zip" placeholder="Zip Code"/>

@@ -18,7 +18,7 @@ class AdminSelectMain extends Component {
 	checkCleared(){
 		if(!this.props.profile.businessVerified){
 			setTimeout(()=>{
-				$('#warningModal').modal('show');
+				Bert.alert("Please fill out these fields to create a business page.", 'danger', 'fixed-top' );
 			}, 2000);	
 		}
     else{
@@ -26,28 +26,6 @@ class AdminSelectMain extends Component {
     }
 
 	}
-	renderModal(){
-        return(
-          <div>
-            <div className="modal fade all-black" id="warningModal" role="dialog">
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <button type="button" className="close" data-dismiss="modal">&times;</button>
-                    <h4 className="modal-title">Enter Data</h4>
-                  </div>
-                  <div className="modal-body">
-                    Your business account is not verified. Please fill out the following fields to become eligible for creating organization pages.
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-default" data-dismiss="modal">OK</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-    }
     addCreditCard(){
       var cardToken = {
           "number": this.refs.cred.value.trim(),
@@ -198,7 +176,6 @@ class AdminSelectMain extends Component {
 				<SelectNav />
 				<div className="bump-body">
 					<div className="container-fluid bg-3 text-center">
-						{this.renderModal()}
 						<h1>Verify Business Account With Udeal</h1>
             <div className="col-md-6 col-md-offset-3 text-center">
               <div className="text-center">

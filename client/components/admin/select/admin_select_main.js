@@ -18,7 +18,6 @@ class AdminSelectMain extends Component {
 						  	<img src={page.proPict} className="surround map-cards-img" />
 						    Address: {page.phyAddress}<br/>
 						    About: {page.aboutUs}<br/>
-						    Number of Members: {page.pageUsers.length}
 						  </div>
 						</div>
 					</Link>

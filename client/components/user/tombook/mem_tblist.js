@@ -274,6 +274,33 @@ class MemTblist extends React.Component {
     	)
 
     }
+    renderIcon(x){
+    	if(x.typeDE = "E"){
+    		return(
+    			<div>
+    				<div className="modal-body">
+	                  <h4>Date: {x.dateTime}</h4>
+	                  <h4>Description: {x.description}</h4>
+	                </div>
+    			</div>
+    		)
+    	}
+    	else{
+    		return(
+	    		<div>
+	    			<div className="modal-body show-modal">
+	                  <h4>Good For: {x.startDate}</h4>
+	                  <h4>Description: {x.description}</h4>
+	                  <h3><b>Deal Icon</b></h3>
+	                  <div className="top-bot-not">
+						<i className={"fa "+x.randomIcon+" icon-super-large "+ " ic-"+x.randomColor}></i>
+					  </div>
+	                </div>
+	    		</div>
+	    	)
+    	}
+    	
+    }
     interiorShowModal(){
     	if(this.state.currentShow){
     		var x = this.state.currentShow;
@@ -284,14 +311,7 @@ class MemTblist extends React.Component {
 	                  <button type="button" className="close" data-dismiss="modal">&times;</button>
 	                  <h3 className="modal-title">{x.title}</h3>
 	                </div>
-	                <div className="modal-body show-modal">
-	                  <h4>Good For: {x.startDate}</h4>
-	                  <h4>Description: {x.description}</h4>
-	                  <h3><b>Deal Icon</b></h3>
-	                  <div className="top-bot-not">
-						<i className={"fa "+x.randomIcon+" icon-super-large "+ " ic-"+x.randomColor}></i>
-					  </div>
-	                </div>
+	                {this.renderIcon(x)}
 	                <div className="modal-footer">
 	                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
 	                </div>
