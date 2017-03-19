@@ -155,7 +155,7 @@ class AdminManageTech extends Component {
 
                 
                 <h3>Allow Other Users Notification Privileges</h3>
-                <p>Give other users on this app (like employees) the ability to see livelook notifications. Then more devices would be able to see notifications and check if deals are accepted. Only those with Udeal accounts can be added.</p>
+                <p>Give other users on this app (like employees) the ability to see livelook notifications. Then more devices would be able to see notifications and check if deals are accepted. Only those with Unight accounts can be added.</p>
                 <div className="form-group col-md-6">
                   <input type="text" className="form-control foc-card" ref="name" placeholder="User Name"/>
                 </div>

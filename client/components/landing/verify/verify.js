@@ -28,7 +28,7 @@ class Verify extends Component {
                 }
                 else{
                     console.log('verified')
-                    Bert.alert( 'Great! You are confirmed on Udeal!', 'success', 'fixed-top' );
+                    Bert.alert( 'Great! You are confirmed on Unight!', 'success', 'fixed-top' );
                     browserHistory.push('/'+block.pref)
                 }
             })
@@ -43,7 +43,7 @@ class Verify extends Component {
         return (
         	<div>
         		<div className="container-fluid bg-3 text-center">
-				  <h2 className="margin">Udeal Verification</h2>
+				  <h2 className="margin">Unight Verification</h2>
 				  <div className="top-bot-not"></div>
                   <p className="top-bot-not">Sit tight for one second while we verify!</p>
                   <img src="http://i.imgur.com/TwejQKK.gif" height="100px" />

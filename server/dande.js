@@ -9,6 +9,15 @@ function checker(value,typeOBJ){
 	returnValue = (typeof(value) == typeOBJ);
 	return returnValue;
 }
+function isValidDate(str) {
+  var d = moment(str).format("ll");
+  if(d == "Invalid date"){
+  	return false;
+  }
+  else{
+  	return true;
+  }
+}
 
 var RANDICONS = [" fa-university"," fa-bell"," fa-bicycle"," fa-calculator"," fa-bullhorn"," fa-cube"," fa-diamond"," fa-coffee"," fa-bolt"," fa-gamepad"," fa-gift"," fa-hand-peace-o"," fa-fighter-jet"," fa-car"," fa-train"," fa-cog"," fa-money"," fa-wrench"," fa-tachometer"," fa-signal"," fa-music"," fa-heart"," fa-futbol-o"," fa-beer"," fa-cloud"," fa-bug"," fa-flag-checkered"," fa-gavel"," fa-newspaper-o"," fa-magnet"," fa-hand-rock-o","fa-anchor","fa-bullseye","fa-balance-scale","fa-binoculars","fa-cubes","fa-thumbs-up", "fa-spoon","fa-shield "];
 var RANDCOLORS = ["red","blue", "green", "yellow", "orange", "purple", "black", "pink", "turquoise"];
@@ -109,6 +118,7 @@ Meteor.methods({
 		const deal = DandE.findOne({
 			_id: dealID
 		})
+		
 		if(deal.typeDE != "GD" && deal.typeDE != "DD"){
 			console.log(deal.typeDE)
 			console.log('ah')
@@ -164,13 +174,22 @@ Meteor.methods({
 		}
 		var timesUsed;
 		if(majorType == "daily"){
-			
+			console.log(expi)
+			if(!isValidDate(expi)){
+				throw new Meteor.Error(512, 'Not a date.');
+				return;
+			}
 			timesUsed = "daily";
 			cost = 0;
 			var newExpi = moment(expi).add(1,'days').format("ll");
 			var startDate = moment(expi).format("ll");
+			if(moment().diff(expi, 'days') > 0){
+				throw new Meteor.Error(511, 'Date is in the past.');
+				return;
+			}
 		}
 		else{
+			
 			timesUsed = 0;
 			if(expi < 1 || expi > 90){
 				console.log('out of bounds')
@@ -233,7 +252,14 @@ Meteor.methods({
 		if((page.ownedBy[0] != user)){
 			return;
 		}
-		return DandE.update(dealID, {$set: {dealsOn: true}});
+		var d = new Date();
+		var today = moment(d).format("ll");
+		if(deal.startDate != today && deal.typeDE=="DD"){
+			return;
+		}
+		else{
+			return DandE.update(dealID, {$set: {dealsOn: true}});
+		}
 	},
 	'dande.imageDandE': function(pageID, dealID, pic){
 		var user = this.userId.toString();
@@ -313,6 +339,10 @@ Meteor.methods({
 			return;
 		}
 		if(event.topUser != user){
+			return;
+		}
+		if(moment().diff(dateTime, 'days') > 0){
+			throw new Meteor.Error(511, 'Date is in the past.');
 			return;
 		}
 		var newExpi = moment(dateTime).format("ll"); 

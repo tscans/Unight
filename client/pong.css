@@ -22,7 +22,7 @@ body {
   .bg-404 {
   background: #232526; /* fallback for old browsers */
   min-height:1000px;
-  background:url('http://res.cloudinary.com/dee8fnpvt/image/upload/v1486350652/Udeal_404_vyavnx.png')no-repeat center center fixed; 
+  background:url('http://res.cloudinary.com/dee8fnpvt/image/upload/v1486350652/Unight_404_vyavnx.png')no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -43,7 +43,7 @@ body {
       color: #ffffff;
   }/*http://www.publicdomainpictures.net/pictures/200000/velka/chicago-skyline-1476622708uk5.jpg*/
 .background-img {
-    background:url('http://i.imgur.com/wDoCUQq.png')no-repeat center center fixed; 
+    background:url('http://res.cloudinary.com/dee8fnpvt/image/upload/v1489629298/actual_front_page_cfr0nb.png')no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

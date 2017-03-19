@@ -19,7 +19,8 @@ export default (props) => {
 					<li className="nav-item"><Link to={`/admin/${parseID}/`}><span className="glyphicon glyphicon-home"></span> Home</Link></li>
 					<li className="nav-item"><Link to={`/admin/${parseID}/manage`}><span className="glyphicon glyphicon-stats"></span> Manage</Link></li>
 					<li className="nav-item"><Link to={`/admin/${parseID}/livelook`}><span className="glyphicon glyphicon-time"></span> Livelook</Link></li>
-					<li className="nav-item"><Link to={`/admin/${parseID}/events`}><span className="glyphicon glyphicon-calendar"></span> Events</Link></li>
+					<li className="nav-item"><Link to={`/admin/${parseID}/events`}><span className="glyphicon glyphicon-calendar"></span> Announcements</Link></li>
+					<li className="nav-item"><Link to={`/admin/${parseID}/rewards`}><span className="glyphicon glyphicon-list-alt"></span> Rewards</Link></li>
 					<li className="nav-item"><Link to={`/admin/${parseID}/gift`}><span className="glyphicon glyphicon-usd"></span> Gift Cards</Link></li>
 					<li className="nav-item"><Link to={`/admin/${parseID}/deals/`}><span className="glyphicon glyphicon-user"></span> Deals</Link></li>
 					<li className="nav-item"><Link to={`/admin-select/`}><span className="glyphicon glyphicon-dashboard"></span> Dashboard</Link></li>

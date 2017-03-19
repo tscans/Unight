@@ -103,7 +103,7 @@ class AdminMainEdit extends Component {
 			if(this.state.giftCards.includes("Allow")){
 				hasGiftCards = true;
 			}
-			if(pageID == "" || name == "" || address == "" || zip == "" || website == ""){
+			if(pageID == "" || name == "" || address == "" || zip == ""){
 				Bert.alert("Organization needs all fields completed.", 'danger', 'fixed-top' );
 				return;
 			}

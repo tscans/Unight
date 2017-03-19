@@ -17,7 +17,7 @@ class MemFinance extends React.Component {
 	        "exp_month": this.refs.mm.value.trim(),
 	        "exp_year": this.refs.yy.value.trim()
 	    }
-
+	    document.getElementById('subButton').disabled = 'disabled';
 	    if(!this.props.profile.stripeCust){
 	    	Stripe.createToken(cardToken, function(status, result){
 		        if(result.error){
@@ -93,7 +93,7 @@ class MemFinance extends React.Component {
                     	<input type="text" className="form-control foc-card input-small" ref="yy" placeholder="YY"/>
                     </div>
                     <div className="col-md-6 col-md-offset-3">
-	                    <button className="btn btn-default btn-extend card-1" onClick={this.addCreditCard.bind(this)}>
+	                    <button id="subButton" className="btn btn-default btn-extend card-1" onClick={this.addCreditCard.bind(this)}>
 			                <h4><span className="glyphicon glyphicon-credit-card"></span> Add Credit Card</h4>
 			            </button>
 		            </div>

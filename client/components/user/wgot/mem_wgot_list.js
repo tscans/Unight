@@ -64,7 +64,7 @@ class MemWgotList extends React.Component {
 							<img src={wgot.image} className="surround map-cards-img" />
 						</div>
 					  	<Link to={url}><h4>{wgot.title}</h4></Link>
-					  	<p className="small-p">Expires: {moment(wgot.expiration.toString()).format("MMMM Do YYYY")}</p>
+					  	<p className="small-p">Expires: {wgot.dateTime}</p>
 					  	<p className="small-p up-a-smidge break-off-text">Description: {wgot.description}</p>
 
 					</div>

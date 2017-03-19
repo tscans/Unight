@@ -44,14 +44,14 @@ Udeal.io
 }
 
 Meteor.startup(() => {
-	process.env.MAIL_URL = "smtp://postmaster%40mail.Udeal.io:foxtrotac39a!@@smtp.mailgun.org:587";
+	process.env.MAIL_URL = "smtp://postmaster%40mail.unight.io:foxtrotac39a!@@smtp.mailgun.org:587";
 
-	// for(var i = 0;i<3;i++){
-		// Email.send({
-		//   to: "tscanlan@mchs.org",
-		//   from: "UdealMail@mail.Udeal.io",
-		//   subject: "Welcome to Udeal",
-		//   html: emailBody("dcnlwhvsdvsa","839200"),
-		// });
+	// for(var i = 0;i<1;i++){
+	// 	Email.send({
+	// 	  to: "tscanlan@mchs.org",
+	// 	  from: "UdealMail@mail.Udeal.io",
+	// 	  subject: "Welcome to Udeal",
+	// 	  html: emailBody("dcnlwhvsdvsa","839200"),
+	// 	});
 	// }
 });

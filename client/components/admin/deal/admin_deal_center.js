@@ -7,7 +7,8 @@ class AdminDealCenter extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			dateTime: ""
+			dateTime: "",
+			error: false
 		}
 	}
 	editPageData(event){
@@ -24,20 +25,26 @@ class AdminDealCenter extends React.Component {
 	    var expi = this.state.dateTime;
 	    var maxn = 2;
 	    var cost = false;
-        
+        var isError;
 		Meteor.call('dande.updateDandE', pageID, dealID, title, desc, expi, maxn, cost,(error, data) => {
 			if(error){
         		console.log("There was an error");
         		console.log(error);
+        		Bert.alert(error.message, 'warning', 'fixed-top' );
+        		this.setState({error: true});
             }
             else{
             	console.log('completed without error');
+            	this.setState({error: false});
+            	document.getElementById('subButton').disabled = false;
             }
 		});
+		
 	}
 	
 	publish(event){
 		event.preventDefault();
+		console.log('pub')
 		var str = window.location.pathname;
 	    var res = str.substring(7, str.lastIndexOf('/deal'));
 	    var pageID = res;
@@ -49,6 +56,7 @@ class AdminDealCenter extends React.Component {
 			if(error){
         		console.log("There was an error");
         		console.log(error);
+        		Bert.alert(error.message, 'warning', 'fixed-top' );
             }
             else{
             	console.log('completed without error');
@@ -84,7 +92,7 @@ class AdminDealCenter extends React.Component {
         return (
         	<div>
 	        	<div className="col-md-6">
-	        		<form className="card-3 white-back" onSubmit={this.editPageData.bind(this)}>
+	        		<form className="card-3 white-back" onSubmit={this.publish.bind(this)}>
 	    			<div className="lower"></div>
 		    			<div className="col-md-10 col-md-offset-1">
 						  <div className="form-group">
@@ -106,9 +114,9 @@ class AdminDealCenter extends React.Component {
 						    </div>
 						  </div>
 					  </div>
-					  <button type="submit" className="btn btn-default card-1 top-bot-not"><span className="glyphicon glyphicon-pencil"></span> Save and View</button>
+					  <button onClick={this.editPageData.bind(this)} className="btn btn-default card-1 top-bot-not"><span className="glyphicon glyphicon-pencil"></span> Save and View</button>
 					  <br/>
-					  <div onClick={this.publish.bind(this)} className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save and Publish</div>
+					  <button id="subButton" disabled className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save and Publish</button>
 					</form>
 
 				</div>

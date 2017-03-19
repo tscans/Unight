@@ -99,8 +99,6 @@ Meteor.methods({
 			website: "",
 			hasDeals: true,
 			hasMembers: true,
-			hasEvents: true,
-			hasGiftCards: true,
 			allowedGifts: [],
 			requiredForGoal: 5,
 			moneyForGoal: 4,
@@ -153,7 +151,7 @@ Meteor.methods({
 			console.log('failed authentication')
 			return;
 		}
-		if(pageID == "" && name == "" && address == "" && zip == "" && website == ""){
+		if(pageID == "" && name == "" && address == "" && zip == ""){
 			return;
 		}
 		if(!page.published){

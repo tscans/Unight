@@ -2,15 +2,24 @@ import {Profile} from '../imports/collections/profile';
 import {Pages} from '../imports/collections/pages';
 import {Notification} from '../imports/collections/notification';
 import {TomBook} from '../imports/collections/tombook';
+import {PageData} from '../imports/collections/page_data';
 var zipcodes = require('zipcodes');
 import moment from 'moment';
 
+function makePass(){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+    for( var i=0; i < 10; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 
 function emailBody(usid,code){
-	var user = `http://Udeal.meteorapp.com/verify/ver/`+usid+`/`+code+`/loginuser`;
-	var bus = `http://Udeal.meteorapp.com/verify/ver/`+usid+`/`+code+`/loginorg`;
-	var unsub = `http://Udeal.meteorapp.com/verify/email/`+usid+`/`+code+`/loginuser`;
+	var user = `http://Unight.io/verify/ver/`+usid+`/`+code+`/loginuser`;
+	var bus = `http://Unight.io/verify/ver/`+usid+`/`+code+`/loginorg`;
+	var unsub = `http://Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -31,14 +40,85 @@ function emailBody(usid,code){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://Udeal.meteorapp.com"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
-<h1>Welcome to Udeal!</h1>
+<a href="http://Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<h1>Welcome to Unight!</h1>
 <p>We hope you enjoy great deals! Click <a href="`+user+`">here</a> to verify your account and sign in as a user. </p>
 <p>Or if you are a business owner, feel free to <a href="`+bus+`">create a page</a> and try out our services.</p>
 <p>Don't forget to go mobile with our app! Available on iOS and Android.</p>
 <div class="bump-top">
-<p>Udeal.io</p>
-<p>If you wish to unsubscribe from future Udeal emails click this <a href="`+unsub+`">link</a></p>
+<p>Unight.io</p>
+<p>If you wish to unsubscribe from future Unight emails click this <a href="`+unsub+`">link</a></p>
+</div>
+</div>
+</body>
+</html>`;
+}
+
+function emailRecover(usid,code){
+	var rec = `http://Unight.io/recover/`+code+`/`+usid;
+	var unsub = `http://Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
+	return `<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .bg-2 {
+      background-color: #64CDF4;
+      background-image: -webkit-linear-gradient(30deg, #64CDF4 65%, #682c6d 65%);
+      background-color: #522256;
+      color: #666666;
+  }
+  .bump-top{
+    margin-top: 50px;
+  }
+  .bump-bot{
+  	margin-bottom:150px;
+  }
+</style>
+</head>
+<body class="bg-2">
+<div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
+<a href="http://Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<h1>Unight Recover Account</h1>
+<p>Please user the following `+code.toString()+` to verify yourself and reset your password.</p>
+<div class="bump-top">
+<p>Unight.io</p>
+<p>If you wish to unsubscribe from future Unight emails click this <a href="`+unsub+`">link</a></p>
+</div>
+</div>
+</body>
+</html>`;
+}
+
+function newPass(usid,code){
+	var rec = `http://Unight.io/recover/`+code+`/`+usid;
+	var unsub = `http://Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
+	return `<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .bg-2 {
+      background-color: #64CDF4;
+      background-image: -webkit-linear-gradient(30deg, #64CDF4 65%, #682c6d 65%);
+      background-color: #522256;
+      color: #666666;
+  }
+  .bump-top{
+    margin-top: 50px;
+  }
+  .bump-bot{
+  	margin-bottom:150px;
+  }
+</style>
+</head>
+<body class="bg-2">
+<div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
+<a href="http://Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<h1>Unight Recover Account</h1>
+<p>Here is your new password: `+code+`</p>
+<p>Please login and change your password as soon as possible.</p>
+<div class="bump-top">
+<p>Unight.io</p>
+<p>If you wish to unsubscribe from future Unight emails click this <a href="`+unsub+`">link</a></p>
 </div>
 </div>
 </body>
@@ -77,9 +157,10 @@ Meteor.methods({
 			giftCards: [],
 			todayDeals: 0,
 			businessVerified: false,
-			liveProfile: true,
+			liveProfile: false,
 			friendUsers: [],
 			rewards: [],
+			favPages: [],
 			stripeBusiness: null,
 			code: random.toString(),
 			subscribeEmail: true,
@@ -89,12 +170,12 @@ Meteor.methods({
 		});
 
 		
-		// Email.send({
-		//   to: Meteor.user().emails[0].address,
-		//   from: "UdealMail@mail.Udeal.io",
-		//   subject: "Welcome to Udeal!",
-		//   html: emailBody(user, random),
-		// });
+		Email.send({
+		  to: Meteor.user().emails[0].address,
+		  from: "UnightMail@mail.Unight.io",
+		  subject: "Welcome to Unight!",
+		  html: emailBody(user, random),
+		});
 		
 	},
 	'profile.verifyUser': function(usid, code){
@@ -135,7 +216,7 @@ Meteor.methods({
 		}
 		var profile = Profile.findOne({email: number});
 		if(!profile){
-			throw new Meteor.Error(530, 'Udeal account not found.');
+			throw new Meteor.Error(530, 'Unight account not found.');
 			return;
 		}
 		number = number.toString();
@@ -182,6 +263,82 @@ Meteor.methods({
 
 		var profile = Profile.findOne({ownerId: user});
 		return Profile.update(profile._id, {$set:{longlat0: longlat[0], longlat1: longlat[1]}});	
+	},
+	'profile.resetPass': function(email){
+		var thisGuy = Profile.findOne({email: email});
+		if(thisGuy){
+			var d = new Date();
+			var tomorrow = moment(d).add(1,'day').format("ll");
+			var code = Math.floor(Math.random() * (999999 - 111111)) + 111111;
+			PageData.insert({
+				type: "recover",
+				expiration: tomorrow,
+				user: thisGuy.ownerId,
+				code: code.toString()
+			})
+			Email.send({
+			  to: thisGuy.email,
+			  from: "UnightMail@mail.Unight.io",
+			  subject: "Unight Recover Password",
+			  html: emailRecover(thisGuy.ownerId, code.toString()),
+			});
+			return;
+		}
+		else{
+			throw new Meteor.Error(588, 'Unight account not found.');
+			return;
+		}
+	},
+	'profile.newPass': function(code){
+		code = code.toString();
+		var pd = PageData.findOne({type: "recover", code: code});
+		var np = makePass();
+		console.log(np)
+		console.log(pd.user)
+		if(pd){
+			var thisGuy = Profile.findOne({ownerId: pd.user});
+			console.log('reseting')
+			Accounts.setPassword(pd.user, np);
+			Email.send({
+			  to: thisGuy.email,
+			  from: "UnightMail@mail.Unight.io",
+			  subject: "Unight Recover Password",
+			  html: newPass(thisGuy.ownerId, np),
+			});
+			return;
+		}
+		else{
+			throw new Meteor.Error(589, 'Incorrect Code.');
+			return;
+		}
+	},
+	'profile.addFavPage': function(pageID){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+		var page = Pages.findOne({_id: pageID});
+		if(!page){
+			throw new Meteor.Error(587, 'Business not found.');
+			return;
+		}
+		var profile = Profile.findOne({ownerId: user});
+		return Profile.update(profile._id, {$push:{favPages: pageID}});	
+
+	},
+	'profile.removeFavPage': function(pageID){
+		const user = Meteor.users.findOne(this.userId)._id.toString();
+		if(!user){
+			return
+		}
+		var page = Pages.findOne({_id: pageID});
+		if(!page){
+			throw new Meteor.Error(587, 'Business not found.');
+			return;
+		}
+		var profile = Profile.findOne({ownerId: user});
+		return Profile.update(profile._id, {$pull:{favPages: pageID}});	
+
 	}
 });
 

@@ -11,7 +11,9 @@ import AdminMainBody from './components/admin/main/admin_main_body';
 import Login from './components/landing/login/login';
 import LoginUser from './components/landing/login/login_user';
 import LoginOrg from './components/landing/login/login_org';
+import ForgotPass from './components/landing/login/forgot_pass';
 import Verify from './components/landing/verify/verify';
+
 //admin pages
 import AdminSelect from './components/admin/admin_select';
 import AltNotes from './components/admin/altnotes/altnotes';
@@ -66,6 +68,7 @@ const routes = (
 			<Route path="login" component={Login} />
 			<Route path="loginuser" component={LoginUser} />
 			<Route path="loginorg" component={LoginOrg} />
+			<Route path="forgotpass" component={ForgotPass} />
 			<Route path="verify/:call/:userID/:code/:pref" component={Verify} />
 		</Route>
 		<Route path="/admin-select/" component={AdminSelect}>

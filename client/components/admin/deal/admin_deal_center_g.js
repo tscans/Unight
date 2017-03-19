@@ -30,15 +30,14 @@ class AdminDealCenterG extends React.Component {
             }
             else{
             	console.log('completed without error');
+            	document.getElementById('subButton').disabled = false;
             }
 		});
 	}
 	publish(event){
 		event.preventDefault();
-		
 	    var pageID = this.props.params.pageId[0];
 
-        
 	    var dealID = this.props.params.pageId[1];
 	    console.log(pageID,dealID)
 		Meteor.call('dande.publishDandE', pageID, dealID, (error, data) => {
@@ -73,7 +72,7 @@ class AdminDealCenterG extends React.Component {
 						  </div>
 						  <div className="form-group">
 						    <label htmlFor="exampleInputEmail1">Deal Cost $</label>
-						    <input type="number" className="form-control foc-card" ref="cost" defaultValue={this.props.deals.cost} placeholder="$ amount user will pay"/>
+						    <input type="string" className="form-control foc-card" ref="cost" defaultValue={this.props.deals.cost} placeholder="$ amount user will pay"/>
 						  </div>
 						  <div className="form-group">
 						    <label htmlFor="exampleInputEmail1">Days to Last (1-90) #</label>
@@ -92,7 +91,7 @@ class AdminDealCenterG extends React.Component {
 					  </div>
 					  <div onClick={this.editPageData.bind(this)} className="btn btn-default card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save and View</div>
 					  <br/>
-					  <button type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save and Publish</button>
+					  <button id="subButton" disabled type="submit" className="btn btn-primary card-1 top-bot-not"><span className="glyphicon glyphicon-ok"></span> Save and Publish</button>
 					  <br/>
 					  
 					</form>

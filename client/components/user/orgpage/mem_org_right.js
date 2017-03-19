@@ -82,10 +82,10 @@ class MemOrgRight extends Component {
     }
     renderIfMembers(){
       if(this.props.pages.hasMembers){
-        return(<h5>This organization offers memberships.</h5>)
+        return(<h5>This organization offers rewards.</h5>)
       }
       else{
-        return(<h5>This organization does not offer memberships.</h5>)
+        return(<h5>This organization does not offer rewards.</h5>)
       }
     }
     renderCashReward(){
@@ -136,6 +136,45 @@ class MemOrgRight extends Component {
         }
       })
     }
+    handleFavPage(){
+      if(this.props.pro.favPages.includes(this.props.pageID)){
+        Meteor.call('profile.removeFavPage', this.props.pageID,(error,data)=>{
+          if(error){
+            console.log(error);
+          }
+          else{
+            console.log(data);
+          }
+        })
+        
+      }
+      else{
+        Meteor.call('profile.addFavPage', this.props.pageID,(error,data)=>{
+          if(error){
+            console.log(error);
+          }
+          else{
+            console.log(data);
+          }
+        })
+      }
+    }
+    renderFav(){
+      if(this.props.pro.favPages.includes(this.props.pageID)){
+        return(
+          <div className="card-2">
+              <button onClick={this.handleFavPage.bind(this)} className="btn btn-danger btn-extend"><h4><span className="glyphicon glyphicon-remove"></span> Remove From Favorite Pages</h4></button>
+          </div>
+        )
+      }
+      else{
+        return(
+          <div className="card-2">
+            <button onClick={this.handleFavPage.bind(this)} className="btn btn-success btn-extend"><h4><span className="glyphicon glyphicon-ok"></span> Add To Favorite Pages</h4></button>
+          </div>
+        )
+      }
+    }
     render() {
       if(!this.props.pages){
         return <div>loading</div>
@@ -180,10 +219,11 @@ class MemOrgRight extends Component {
                   </div>
 
               </div>
+              {this.renderFav()}
               {this.renderCashReward()}
               <div className="card-2">
                 <a href="#" onClick={this.openModal.bind(this)}><button className="btn btn-default btn-extend"><h4><span className="glyphicon glyphicon-transfer"></span> Redeem Rewards Code</h4></button></a>
-            </div>
+              </div>
         	</div>
         );
     }

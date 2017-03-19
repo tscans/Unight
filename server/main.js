@@ -45,6 +45,16 @@ Meteor.startup(() => {
 					createdAt: new Date(),
 				});
 			}
+			var goingLive = DandE.find({startDate: today}).fetch();
+			for(var i =0;i<goingLive.length;i++){
+				DandE.update(goingLive[i]._id, {$set:{dealsOn: true}});
+			}
+			var allWrong = DandE.find({expiration: "Invalid date"}).fetch();
+			console.log(allWrong.length, " Deals have an incorrect expiration.")
+			for(var i =0;i<allWrong.length;i++){
+				DandE.remove(allWrong[i]._id);
+
+			}
 			console.log(allDandEs.length, "deals went offline today.")
 			//END of daily deal expiration check.
 			//START daily rewards code recycle check.
@@ -59,36 +69,36 @@ Meteor.startup(() => {
 			for(var i = 0; i < pageMonth.length; i++){
 				Pages.update(pageMonth[i]._id, {$set: {monthlyCount: pageMonth[i].monthlyCount + 1}})
 			}
-			var pagePay = Pages.find({createdAt: today, renewPage: true, monthlyCount: {$gt: 2}}).fetch();
-			var stripe = StripeAPI(Meteor.settings.StripePri);
-			for(var i = 0; i<pagePay.length;i++){
-				var profile = Profile.findOne({ownerId: pagePay.ownedBy[0]})
-				stripe.charges.create({
-			        amount: 1500,
-			        currency: "usd",
-			        customer: profile.stripeBusCust,
-			        description: "Monthly Udeal Charge.",
-			      	}, Meteor.bindEnvironment(function(error, result){
-			        if(error){
-			        	console.log(error)
-			          	throw "error";
-			          return;
-			        }else{
-				        var individual = profile.name;
-						var message = "User, "+individual+", has just purchased a $"+giftAmount.toString()+ " gift card at your organization for the user "+inFriendsList.name+".";
-						var type = "GC";
+			//var pagePay = Pages.find({createdAt: today, renewPage: true, monthlyCount: {$gt: 2}}).fetch();
+			// var stripe = StripeAPI(Meteor.settings.StripePri);
+			// for(var i = 0; i<pagePay.length;i++){
+			// 	var profile = Profile.findOne({ownerId: pagePay.ownedBy[0]})
+			// 	stripe.charges.create({
+			//         amount: 1500,
+			//         currency: "usd",
+			//         customer: profile.stripeBusCust,
+			//         description: "Monthly Udeal Charge.",
+			//       	}, Meteor.bindEnvironment(function(error, result){
+			//         if(error){
+			//         	console.log(error)
+			//           	throw "error";
+			//           return;
+			//         }else{
+			// 	        var individual = profile.name;
+			// 			var message = "User, "+individual+", has just purchased a $"+giftAmount.toString()+ " gift card at your organization for the user "+inFriendsList.name+".";
+			// 			var type = "GC";
 
-						Notification.insert({
-							ownerId: pages.ownedBy[0],
-							pageOwner: pages._id,
-							message: message,
-							type: type,
-							createdAt: new Date(),
+			// 			Notification.insert({
+			// 				ownerId: pages.ownedBy[0],
+			// 				pageOwner: pages._id,
+			// 				message: message,
+			// 				type: type,
+			// 				createdAt: new Date(),
 							
-						});
-					}
-				}))
-			}
+			// 			});
+			// 		}
+			// 	}))
+			// }
 		}
 		
 	}, 300000);
@@ -119,6 +129,15 @@ Meteor.startup(() => {
 			_id: pageID
 		})
 	});
+	Meteor.publish('favPages', function(){
+		var user = this.userId.toString();
+		if(!user){
+			return;
+		}
+		var profile = Profile.findOne({ownerId: user});
+		return Pages.find({_id: {$in: profile.favPages}});
+
+	})
 	Meteor.publish('arrayPage', function(){
 		var user = this.userId.toString();
 		if(!user){
@@ -154,7 +173,7 @@ Meteor.startup(() => {
 			var range = .1;
 		}
 		//add published:true
-		return Pages.find({ longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}})
+		return Pages.find({published:true, longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}})
 	});
 
 	Meteor.publish('memOrgPage', function(pageID){

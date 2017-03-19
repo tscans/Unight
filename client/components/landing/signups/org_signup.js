@@ -11,6 +11,7 @@ class OrgSignup extends Component {
     }
 	register(event){
         event.preventDefault();
+        document.getElementById('subButton').disabled = 'disabled';
         this.setState({gif: ""});
         var ema = this.refs.email.value.trim();
         var pss1 = this.refs.password.value.trim();
@@ -75,7 +76,7 @@ class OrgSignup extends Component {
         return (
         	<div>
         		<div className="container-fluid bg-1 text-center">
-				  <h2 className="margin">Udeal Sign Up</h2>
+				  <h2 className="margin">Unight Sign Up</h2>
 				  <form className="col-xs-6 col-xs-offset-3 card-3 white-back" onSubmit={this.register.bind(this)}>
         			<div className="lower"></div>
 					  <div className="form-group">
@@ -98,7 +99,7 @@ class OrgSignup extends Component {
 					    <label htmlFor="exampleInputPassword1">Confirm Password</label>
 					    <input type="password" className="form-control foc-card" ref="password2" id="exampleInputPassword2" placeholder="Confirm Password"/>
 					  </div>
-					  <button type="submit" className="btn btn-success card-1 top-bot-not">Sign Up</button>
+					  <button type="submit" id="subButton" className="btn btn-success card-1 top-bot-not">Sign Up</button>
                       <br/>
                       <img src="http://i.imgur.com/TwejQKK.gif" height="35px" className={this.state.gif} />
 					</form>

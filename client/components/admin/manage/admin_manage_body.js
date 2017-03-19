@@ -6,22 +6,25 @@ class AdminManageBody extends Component {
       this.props.adminCards.map((t)=>{
         total = total + t.amount
       });
-      var numUsers = this.props.thisPage.pageUsers.length
       var someStats = [];
       someStats[0] = total;
-      someStats[1] = numUsers;
+      someStats[1] = this.props.thisPage.monthlyCount;
+      someStats[2] = this.props.thisPage.createdAt;
       return someStats
     }
     render() {
       if(!this.props.adminCards){
         return<div></div>
       }
-      var total = this.someStats()[0]
-      var numUsers = this.someStats()[1]
+      var total = this.someStats()[0];
+      var accountLength = this.someStats()[1];
+      var created = this.someStats()[2];
       return (
       	<div className="white-back card-3">
+          <h3>This page was created: {created}</h3>
+          <h3>Months this page has been active: {accountLength.toString()}</h3>
           <h3>The total amount of gift cards outstanding: {total.toFixed(2)}</h3>
-          <h3>Number of Members to Page: {numUsers}</h3>
+          
       	</div>
       );
     }

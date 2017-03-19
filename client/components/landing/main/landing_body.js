@@ -6,19 +6,30 @@ class LandingBody extends Component {
         return (
         	<div>
         		<div className="background-img">
-	        		<div className="container-fluid bg-1-alpha text-center">
-					  <h1 className="margin welcome">WELCOME TO Udeal</h1>
-					  <img src="http://i.imgur.com/vXs2ksV.png" className="img-responsive margin center-img card-sup obj-buffer" width="350" height="350" />
-					  <form className="form-inline obj-buffer">
-					    <Link to="/org_signup"><button type="button" className="btn btn-success obj-buffer-sides card-1"><h3>Udeal Sign Up</h3></button></Link>
-					  </form>
+	        		<div className="container-fluid text-center">
+					  <h1 className="margin welcome">WELCOME TO UNIGHT</h1>
+					  <div className="col-md-4">
+					  	<h3 className="dl-app">Download the App!</h3>
+					  	<a href="https://www.android.com/">
+					      <img className="img-pull-bot card-sup" src="http://res.cloudinary.com/dee8fnpvt/image/upload/v1489629262/androidunight_dhaouz.png" />
+					    </a>
+					    <a href="http://www.apple.com/ios/ios-10/">
+					      <img className="second-phone-img card-sup" src="http://res.cloudinary.com/dee8fnpvt/image/upload/v1489629262/iosunight_ypzf4s.png" width="250" />
+					  	</a>
+					  </div>
+					  <div className="col-md-4">
+						  <img src="http://i.imgur.com/vXs2ksV.png" className="img-responsive margin center-img card-sup obj-buffer" width="350" height="350" />
+						  <form className="form-inline obj-buffer">
+						    <Link to="/org_signup"><button type="button" className="btn btn-success obj-buffer-sides card-1"><h3>Unight Sign Up</h3></button></Link>
+						  </form>
+					  </div>
 					</div>
 				</div>
 				<div className="container-fluid bg-3 text-center">
-				  <h1 className="pos-up">What Is Udeal?</h1>
-				  <h2>Udeal is the easiest way to get the deals you want.</h2>
+				  <h1 className="pos-up">What Is Unight?</h1>
+				  <h2>Unight is the easiest way to get the deals you want.</h2>
 				  <div className="col-md-5 bump-body col-md-offset-1">
-				  	<h3>Our goal was to make being a customer at a local business easier with technology. Udeal makes that possible.</h3>
+				  	<h3>Our goal was to make being a customer at a local business easier with technology. Unight makes that possible.</h3>
 				  </div>
 				  <div className="col-md-6">
 				  	<img src="http://i.imgur.com/YCFF4Bm.gif" height="300px" className="round-img"/>
@@ -32,7 +43,7 @@ class LandingBody extends Component {
 					  	<img src="http://i.imgur.com/0laqjxs.png" height="300px" className="round-img"/>
 					  </div>
 					  <div className="col-md-5 bump-body col-md-offset-1">
-					  	<h3>Udeal is an inclusive system which gives you the most tools to present your business online.</h3>
+					  	<h3>Unight is an inclusive system which gives you the most tools to present your business online.</h3>
 					  </div>
 					</div>
 				</div>

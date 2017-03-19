@@ -306,7 +306,7 @@ class MemMaps extends React.Component {
 
         }
         cube3.map((c)=>{
-            var v = "/user/memberships/"
+            var v = "/user/businesses/"
             console.log(c._id)
           createMarker(new google.maps.LatLng(c.longlat0, c.longlat1), v + c._id + "/", c.proPict, c.orgName, this.state.map)
           google.maps.event.addListener(marker, 'click', (function (marker) {

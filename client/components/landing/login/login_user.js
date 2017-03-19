@@ -36,6 +36,7 @@ class LoginUser extends React.Component {
                     <h1><Link to={'/login'}><span className="glyphicon glyphicon-arrow-left card-sup"></span></Link></h1>
                 </div>
                   <h2 className="margin">LOGIN USER</h2>
+                  <Link to={'/forgotpass'}><p>Forgot Password?</p></Link>
                   <form className="col-xs-6 col-xs-offset-3 card-3 white-back" onSubmit={this.login.bind(this)}>
         			<div className="lower"></div>
 					  <div className="form-group black-text">
