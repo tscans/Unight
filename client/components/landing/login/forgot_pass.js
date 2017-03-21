@@ -16,7 +16,7 @@ class ForgotPass extends React.Component {
 
 		Meteor.call("profile.resetPass", email, (error, data) => {
 			if(error){
-                Bert.alert( error.message, 'danger', 'fixed-top' );
+                Bert.alert( error.message, 'danger', 'growl-bottom-right' );
         		console.log("There was an error");
                 this.setState({gif: "invisible"});
         		console.log(error);
@@ -25,7 +25,7 @@ class ForgotPass extends React.Component {
             	this.refs.signemail.value = "";
                 this.setState({gif: "invisible"});
                 $('#myModal').modal('toggle');
-                Bert.alert( "Check your email.", 'info', 'fixed-top' );
+                Bert.alert( "Check your email.", 'info', 'growl-bottom-right' );
             }
 		});
 	}
@@ -33,12 +33,12 @@ class ForgotPass extends React.Component {
         var code = this.refs.code.value.trim();
         Meteor.call("profile.newPass", code, (error,data)=>{
             if(error){
-                Bert.alert( error.message, 'danger', 'fixed-top' );
+                Bert.alert( error.message, 'danger', 'growl-bottom-right' );
             }
             else{
                 $('#myModal').modal('toggle');
                 browserHistory.push('/loginuser');
-                Bert.alert( "Check your email for your new password.", 'success', 'fixed-top' );
+                Bert.alert( "Check your email for your new password.", 'success', 'growl-bottom-right' );
             }
         });
     }

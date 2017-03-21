@@ -15,7 +15,7 @@ class UserAccount extends React.Component {
 		var newp = this.refs.newp.value;
 		var conp = this.refs.conp.value;
 		if(newp != conp){
-			Bert.alert("Unmatched Passwords", 'danger', 'fixed-top' );
+			Bert.alert("Unmatched Passwords", 'danger', 'growl-bottom-right' );
 			return;
 		}
 		if(newp ==""){
@@ -23,7 +23,7 @@ class UserAccount extends React.Component {
 		}
 		Accounts.changePassword(oldp, newp, (error, data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				this.refs.oldp.value = "";
 				this.refs.newp.value = "";
 				this.refs.conp.value = "";
@@ -31,7 +31,7 @@ class UserAccount extends React.Component {
 			}
 			else{
 				console.log(data)
-				Bert.alert("Password Changed.", 'success', 'fixed-top' );
+				Bert.alert("Password Changed.", 'success', 'growl-bottom-right' );
 				this.refs.oldp.value = "";
 				this.refs.newp.value = "";
 				this.refs.conp.value = "";
@@ -67,7 +67,7 @@ class UserAccount extends React.Component {
 	removeFriend(f){
 		Meteor.call('profile.removeFriend', f.number, (error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				console.log(error);
 			}
 			else{
@@ -80,13 +80,13 @@ class UserAccount extends React.Component {
 		var name = this.refs.name.value.trim();
 		Meteor.call('profile.addFriend', number,name, (error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				this.refs.phone.value = "";
 				this.refs.name.value = "";
 				console.log(error);
 			}
 			else{
-				Bert.alert("Friend Added", 'default', 'fixed-top' );
+				Bert.alert("Friend Added", 'default', 'growl-bottom-right' );
 				this.refs.phone.value = "";
 				this.refs.name.value = "";
 				console.log(data);
@@ -103,7 +103,7 @@ class UserAccount extends React.Component {
 		}
 		Meteor.call('profile.deactivateUser', delp, (error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				console.log(error);
 			}
 			else{
@@ -120,7 +120,7 @@ class UserAccount extends React.Component {
 		}
 		Meteor.call('profile.activateUser', delp, (error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				console.log(error);
 			}
 			else{
@@ -149,7 +149,7 @@ class UserAccount extends React.Component {
 	chag(){
 		Meteor.call('profile.updateZip', "60643",(error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				console.log(error);
 			}
 			else{

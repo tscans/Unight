@@ -55,12 +55,12 @@ class AltNotesBody extends Component {
         Meteor.call('notification.acceptNotification',nid,(error,data)=>{
             if(error){
                 console.log(error);
-                Bert.alert(error.message, 'danger', 'fixed-top' );
+                Bert.alert(error.message, 'danger', 'growl-bottom-right' );
             }
             else{
                 console.log(data);
                 this.forceUpdate();
-                Bert.alert('Deal Accepted', 'success', 'fixed-top' );
+                Bert.alert('Deal Accepted', 'success', 'growl-bottom-right' );
             }
         });
     }

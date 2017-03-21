@@ -33,7 +33,7 @@ class AdminDealsMain extends Component {
 	checkDeals(){
 		if(!this.props.pages.hasDeals){
 			var warn = "Warning! Your page does not currently allow deals. In order to reverse this go to the Home page."
-			setTimeout(()=>{Bert.alert( warn, 'warning', 'fixed-top' )},1000)
+			setTimeout(()=>{Bert.alert( warn, 'warning', 'growl-bottom-right' )},1000)
 		}
 	}
     render() {

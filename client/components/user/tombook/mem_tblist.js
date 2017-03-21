@@ -185,13 +185,13 @@ class MemTblist extends React.Component {
     		Meteor.call('giftcards.subtractCredit', Meteor.userId(), this.state.currentP._id, this.state.payAmount, (error,data)=>{
 		        if(error){
 		          console.log(error)
-		          Bert.alert(error.message, 'danger', 'fixed-top' );
+		          Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 		        }
 		        else{
 		          console.log(data);
 		          this.setState({payWrite: false});
 		          $('#payModal').modal('hide');
-		          Bert.alert('Payment of $'+this.state.payAmount.toString()+' Successful.', 'success', 'fixed-top' );
+		          Bert.alert('Payment of $'+this.state.payAmount.toString()+' Successful.', 'success', 'growl-bottom-right' );
 		        }
 		    })
     	}
@@ -233,7 +233,7 @@ class MemTblist extends React.Component {
     }
     checkVerified(){
     	if(!this.props.profile.liveProfile){
-    		Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
+    		Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'growl-bottom-right' );
     	}
     }
     renderDisplay(){
@@ -275,7 +275,7 @@ class MemTblist extends React.Component {
 
     }
     renderIcon(x){
-    	if(x.typeDE = "E"){
+    	if(x.typeDE == "E"){
     		return(
     			<div>
     				<div className="modal-body">

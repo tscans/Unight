@@ -18,11 +18,11 @@ class AdminSelectMain extends Component {
 	checkCleared(){
 		if(!this.props.profile.businessVerified){
 			setTimeout(()=>{
-				Bert.alert("Please fill out these fields to create a business page.", 'danger', 'fixed-top' );
+				Bert.alert("Please fill out these fields to create a business page.", 'danger', 'growl-bottom-right' );
 			}, 2000);	
 		}
     else{
-      Bert.alert("You are already verified!", 'info', 'fixed-top' );
+      Bert.alert("You are already verified!", 'info', 'growl-bottom-right' );
     }
 
 	}
@@ -36,11 +36,11 @@ class AdminSelectMain extends Component {
       document.getElementById('subButton').disabled = 'disabled';
       Stripe.createToken(cardToken, function(status, result){
         if(result.error){
-          Bert.alert(result.error.message, 'danger', 'fixed-top' );
+          Bert.alert(result.error.message, 'danger', 'growl-bottom-right' );
         }else{
           Meteor.call('stripe.makeAccount', result.id, (error, data)=>{
               if(error){
-                Bert.alert(error.message, 'danger', 'fixed-top' );
+                Bert.alert(error.message, 'danger', 'growl-bottom-right' );
                 return;
               }else{
                 console.log('worked fine')
@@ -144,7 +144,7 @@ class AdminSelectMain extends Component {
   findCredit(){
     Meteor.call("stripe.obtainCardInfoBus", (error,data)=>{
       if(error){
-        Bert.alert(error.message, 'danger', 'fixed-top' );
+        Bert.alert(error.message, 'danger', 'growl-bottom-right' );
         console.log(error);
       }
       else{

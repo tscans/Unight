@@ -21,15 +21,15 @@ class MemFinance extends React.Component {
 	    if(!this.props.profile.stripeCust){
 	    	Stripe.createToken(cardToken, function(status, result){
 		        if(result.error){
-		          Bert.alert(result.error.message, 'danger', 'fixed-top' );
+		          Bert.alert(result.error.message, 'danger', 'growl-bottom-right' );
 		        }else{
 		          Meteor.call('stripe.userBuyCard', result.id, (error, data)=>{
 			            if(error){
-			              Bert.alert(error.message, 'danger', 'fixed-top' );
+			              Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 			              return;
 			            }else{
 			              console.log('worked fine')
-			              Bert.alert('Card Successfully Addeed', 'success', 'fixed-top' );
+			              Bert.alert('Card Successfully Addeed', 'success', 'growl-bottom-right' );
 		            	}
 		          	})
 	        	}
@@ -39,10 +39,10 @@ class MemFinance extends React.Component {
 	removeCreditCard(){
 		Meteor.call('stripe.removeCust', (error, data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 			}
 			else{
-				Bert.alert('Card Removed', 'default', 'fixed-top' );
+				Bert.alert('Card Removed', 'default', 'growl-bottom-right' );
 				this.setState({custCard: null})
 			}
 		})
@@ -104,7 +104,7 @@ class MemFinance extends React.Component {
 	findCredit(){
 		Meteor.call("stripe.obtainCardInfo", (error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				console.log(error);
 			}
 			else{

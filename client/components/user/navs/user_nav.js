@@ -35,7 +35,7 @@ class UserNav extends Component {
                   <ul className="nav navbar-nav navbar-right">
                     <li><Link to="/user/mem_notes"><span className="glyphicon glyphicon-bell"></span>NOTES</Link></li>
                     <li><Link to="/user/"><span className="glyphicon glyphicon-bookmark"></span>UBOOK</Link></li>
-                    <li><Link to="/user/wgot"><span className="glyphicon glyphicon-calendar"></span>TONIGHT</Link></li>
+                    <li><Link to="/user/wgot"><span className="glyphicon glyphicon-calendar"></span>DAILY</Link></li>
                     <li><Link to="/user/businesses"><span className="glyphicon glyphicon-globe"></span>BUSINESSES</Link></li>
                     <li className="dropdown">
                       <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span className="glyphicon glyphicon-cog"></span> ACCOUNT<span className="glyphicon glyphicon-triangle-bottom"></span></a>

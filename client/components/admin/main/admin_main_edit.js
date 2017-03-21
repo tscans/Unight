@@ -104,18 +104,18 @@ class AdminMainEdit extends Component {
 				hasGiftCards = true;
 			}
 			if(pageID == "" || name == "" || address == "" || zip == ""){
-				Bert.alert("Organization needs all fields completed.", 'danger', 'fixed-top' );
+				Bert.alert("Organization needs all fields completed.", 'danger', 'growl-bottom-right' );
 				return;
 			}
 			Meteor.call('pages.updatePage', pageID, name, address, zip, website, about, hasDeals, hasMembers, hasEvents, hasGiftCards, (error, data) => {
 				if(error){
 	        		console.log("There was an error");
 	        		console.log(error);
-	        		Bert.alert(error.message, 'danger', 'fixed-top' );
+	        		Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 	            }
 	            else{
 	            	console.log('completed without error')
-	            	Bert.alert( 'Changes Saved!', 'success', 'fixed-top' );
+	            	Bert.alert( 'Changes Saved!', 'success', 'growl-bottom-right' );
 	            	this.setState({savedClass: "btn btn-success top-bot-not", savedWords: "Changes Saved", invis: "saved-green"})
 	            	setTimeout(()=>{this.setState({savedClass: "btn btn-primary card-1 top-bot-not", savedWords: "Save Changes", invis: "transparent"})},2500)
 	            }

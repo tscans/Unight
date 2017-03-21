@@ -30,7 +30,7 @@ class AdminDealCenter extends React.Component {
 			if(error){
         		console.log("There was an error");
         		console.log(error);
-        		Bert.alert(error.message, 'warning', 'fixed-top' );
+        		Bert.alert(error.message, 'warning', 'growl-bottom-right' );
         		this.setState({error: true});
             }
             else{
@@ -56,7 +56,7 @@ class AdminDealCenter extends React.Component {
 			if(error){
         		console.log("There was an error");
         		console.log(error);
-        		Bert.alert(error.message, 'warning', 'fixed-top' );
+        		Bert.alert(error.message, 'warning', 'growl-bottom-right' );
             }
             else{
             	console.log('completed without error');

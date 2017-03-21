@@ -56,7 +56,7 @@ class AdminManageMain extends Component {
       Meteor.call('pages.addAltNotes', pageID, email, name, (error,data)=>{
         if(error){
           console.log(error)
-          Bert.alert( error.message, 'danger', 'fixed-top' )
+          Bert.alert( error.message, 'danger', 'growl-bottom-right' )
         }
         else{
 

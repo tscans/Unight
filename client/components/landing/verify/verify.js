@@ -11,11 +11,11 @@ class Verify extends Component {
             Meteor.call('profile.unSubEmail', block.userID, block.code,(error,data)=>{
                 if (error){
                     console.log(error)
-                    Bert.alert( error.message, 'danger', 'fixed-top' );
+                    Bert.alert( error.message, 'danger', 'growl-bottom-right' );
                 }
                 else{
                     console.log('verified')
-                    Bert.alert( 'You will no longer be on our email list.', 'info', 'fixed-top' );
+                    Bert.alert( 'You will no longer be on our email list.', 'info', 'growl-bottom-right' );
                     browserHistory.push('/'+block.pref)
                 }
             })
@@ -24,11 +24,11 @@ class Verify extends Component {
             Meteor.call('profile.verifyUser', block.userID, block.code,(error,data)=>{
                 if (error){
                     console.log(error)
-                    Bert.alert( error.message, 'danger', 'fixed-top' );
+                    Bert.alert( error.message, 'danger', 'growl-bottom-right' );
                 }
                 else{
                     console.log('verified')
-                    Bert.alert( 'Great! You are confirmed on Unight!', 'success', 'fixed-top' );
+                    Bert.alert( 'Great! You are confirmed on Unight!', 'success', 'growl-bottom-right' );
                     browserHistory.push('/'+block.pref)
                 }
             })

@@ -6,44 +6,21 @@ import {Profile} from '../../../../imports/collections/profile';
 import MemMainList from './mem_main_list';
 
 class MemMainBody extends Component {
-    zipcode(event){
-        event.preventDefault();
-        var zipcode = this.refs.zipcode.value.trim();
-        Meteor.subscribe('allPages', zipcode);
-        Meteor.call('profile.updateZip', zipcode, (error, data) => {
-            if(error){
-                console.log("There was an error");
-                console.log(error);
-            }
-            else{
-                console.log('completed without error');
-                this.forceUpdate();
-            }
-        });
-    }
     checkVerified(){
         if(!this.props.profile.liveProfile){
-            Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
+            Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'growl-bottom-right' );
         }
     }
     render() {
-        if(!this.props.profile){
+        if(!this.props.profile || !this.props.allPages){
             return<div></div>
         }
         this.checkVerified();
         return (
         	<div className="container-fluid bg-3 text-center">
         		<div>
-                <div className="col-md-4 col-md-offset-2">
-                    <form onSubmit={this.zipcode.bind(this)}>
-                    <div className="lower"></div>
-                    <div className="col-md-10 col-md-offset-1">
-                      
-                    </div>
-                    </form>
-                </div>
-                    <div className="col-md-6">
-				        <MemMainList allPages={this.props.allPages} />
+                    <div className="col-md-6 col-md-offset-6">
+				        <MemMainList allPages={this.props.allPages} profile={this.props.profile} />
                     </div>
 				</div>
         	</div>
@@ -55,6 +32,7 @@ export default createContainer((props)=>{
     
     Meteor.subscribe('allPages');
     Meteor.subscribe('profile');
+    Meteor.subscribe('favPages');
     return {allPages: Pages.find({}).fetch(), profile: Profile.findOne({})}
 	
 }, MemMainBody);  

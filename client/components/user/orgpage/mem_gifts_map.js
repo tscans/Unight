@@ -22,13 +22,13 @@ class MemGiftsMap extends React.Component {
 		console.log('should not run if error');
 		Meteor.call('giftcards.addGiftCard', Meteor.userId(), this.props.pageID, this.state.giftClicked, friend, (error,data)=>{
 	        if(error){
-	        	Bert.alert(error.message, 'danger', 'fixed-top' );
+	        	Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 	          console.log(error)
 	        }
 	        else{
 	          console.log(data)
 	          $('#giftModal').modal('hide');
-	          Bert.alert('Purchase Successful! Thanks for using Unight!', 'success', 'fixed-top' );
+	          Bert.alert('Purchase Successful! Thanks for using Unight!', 'success', 'growl-bottom-right' );
 	        }
 	    })
 	}
@@ -59,7 +59,7 @@ class MemGiftsMap extends React.Component {
 		var custCard = null;
 		Meteor.call("stripe.obtainCardInfo", (error,data)=>{
 			if(error){
-				Bert.alert(error.message, 'danger', 'fixed-top' );
+				Bert.alert(error.message, 'danger', 'growl-bottom-right' );
 				console.log(error);
 			}
 			else{

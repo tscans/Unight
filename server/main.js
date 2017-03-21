@@ -250,12 +250,14 @@ Meteor.startup(() => {
 		else{
 			var range = .1;
 		}
+		var d = new Date();
+		var today = moment(d).format("ll");
 		var pages = Pages.find({ longlat0: {$gt: (longlat[0]-range), $lt: (longlat[0]+range)}, longlat1: {$gt: (longlat[1]-range), $lt: (longlat[1]+range)}}).fetch();
 		var pageIDs = [];
 		for(var i = 0; i < pages.length;i++){
 			pageIDs.push(pages[i]._id);
 		}
-		return DandE.find({dealsOn: true, forPage: {$in: pageIDs}}, { sort: {upvotes: -1}})
+		return DandE.find({dealsOn: true, forPage: {$in: pageIDs}, startDate: today}, { sort: {upvotes: -1}})
 	});
 	Meteor.publish('singleWgot', function(single){
 		var user = this.userId.toString();

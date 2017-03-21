@@ -19,12 +19,12 @@ class OrgSignup extends Component {
         var name = this.refs.name.value.trim();
         var zip = this.refs.zip.value.trim();
         if(ema == "" || pss1 == "" || pss2 == "" || name == "" || zip == ""){
-            Bert.alert( "Please complete all fields!", 'warning', 'fixed-top' );
+            Bert.alert( "Please complete all fields!", 'warning', 'growl-bottom-right' );
             console.log("enter data");
             this.setState({gif: "invisible"});
         }
         else if(pss1 != pss2){
-            Bert.alert( "Passwords don't match!", 'warning', 'fixed-top' );
+            Bert.alert( "Passwords don't match!", 'warning', 'growl-bottom-right' );
         	console.log('mismatch passwords');
             this.setState({gif: "invisible"});
         }
@@ -32,14 +32,14 @@ class OrgSignup extends Component {
         else{
             var zippy = zipcodes.lookup(zip);
             if(!zippy){
-                Bert.alert( "Please use a real zip code.", 'warning', 'fixed-top' );
+                Bert.alert( "Please use a real zip code.", 'warning', 'growl-bottom-right' );
             }
             Accounts.createUser({
                 email: ema,
                 password: pss1
             },(error)=>{
                 if(error){
-                    Bert.alert( error.reason, 'danger', 'fixed-top' );
+                    Bert.alert( error.reason, 'danger', 'growl-bottom-right' );
                     console.log(error);
                 }
             });
@@ -47,7 +47,7 @@ class OrgSignup extends Component {
             Meteor.loginWithPassword(ema, pss1);
             Meteor.call('profile.makeUser', name,zip, (error, data)=> {
             	if(error){
-                    Bert.alert( error.reason, 'danger', 'fixed-top' );
+                    Bert.alert( error.reason, 'danger', 'growl-bottom-right' );
             		console.log("There was an error");
             		console.log(error);
                     this.setState({gif: "invisible"});
@@ -62,7 +62,7 @@ class OrgSignup extends Component {
                     this.refs.name.value = "";
                     this.refs.zip.value = "";
                     this.setState({gif: "invisible"});
-                    Bert.alert( 'Way to sign up! Please check your email for confirmation!', 'info', 'fixed-top' );
+                    Bert.alert( 'Way to sign up! Please check your email for confirmation!', 'info', 'growl-bottom-right' );
                     browserHistory.push('/login')
             	}
             	

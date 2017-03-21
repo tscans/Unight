@@ -30,7 +30,7 @@ class MemWgotBody extends React.Component {
     }
     checkVerified(){
         if(!this.props.profile.liveProfile){
-            Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'fixed-top' );
+            Bert.alert("Your account is not verified. Please check your email to verify.", 'warning', 'growl-bottom-right' );
         }
     }
     render() {
