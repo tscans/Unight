@@ -25,7 +25,7 @@ function ulength(s, maxl){
 }
 
 Meteor.methods({
-	'pagedata.createCode': function(){
+	'pagedata.createCode': function(gc){
 		var user = this.userId.toString();
 		if (!user){
 			return;
@@ -33,6 +33,16 @@ Meteor.methods({
 		const page = Pages.findOne({
 			ownedBy: {$elemMatch: {$eq: user}}
 		})
+		if(!checker(gc,"number")){
+			return;
+		}
+		var amount = gc;
+		amount = amount * 100;
+		amount = parseInt(amount);
+		if(isNaN(gc)){
+	        
+	        return;
+	      }
 		var d = new Date();
 		var n = d.getMinutes();
 		var tomorrow = moment(d).add(1,'day').format("ll");
@@ -41,7 +51,8 @@ Meteor.methods({
 			type: "code",
 			expiration: tomorrow,
 			pageID: page._id,
-			code: code
+			code: code,
+			amount: amount
 		})
 		return {code: code};
 	},
@@ -63,6 +74,7 @@ Meteor.methods({
 		if(!profile){
 			return;
 		}
+
 		var RA = profile.rewards;
 		var found = false;
 		var currentCount = 0;
@@ -73,18 +85,27 @@ Meteor.methods({
 			}
 		}
 		if(found){
+			var newPoints = (currentCount + codeData.amount);
+			newPoints = parseInt(newPoints);
+		}
+		else{
+			var newPoints = (codeData.amount);
+			newPoints = parseInt(newPoints);
+		}
+		
+		if(found){
 			Profile.update(profile._id, {$pull: {rewards: {pageID: pageID}}});
-			Profile.update(profile._id, {$push: {rewards: {pageID: pageID, count: (currentCount + 1), pageName: page.orgName, pageGoal: page.requiredForGoal}}});
+			Profile.update(profile._id, {$push: {rewards: {pageID: pageID, points: newPoints, pageName: page.orgName, pageGoal: page.requiredForGoal}}});
 			Notification.insert({
 				ownerId: user,
 				pageOwner: user,
-				message: "Code redeemed for "+page.orgName+". "+(currentCount+1).toString()+" out of "+page.requiredForGoal.toString()+" needed for rewards.",
+				message: "Code redeemed for "+page.orgName+". "+(newPoints).toString()+" out of "+page.requiredForGoal.toString()+" needed for rewards.",
 				type: "GC",
 				createdAt: new Date(),
 			});
 		}
 		else{
-			Profile.update(profile._id, {$push: {rewards: {pageID: pageID, count: 1, pageName: page.orgName, pageGoal: page.requiredForGoal}}});
+			Profile.update(profile._id, {$push: {rewards: {pageID: pageID, count: newPoints, pageName: page.orgName, pageGoal: page.requiredForGoal}}});
 			Notification.insert({
 				ownerId: user,
 				pageOwner: user,
@@ -94,9 +115,13 @@ Meteor.methods({
 			});
 		}
 		//check if they got the reward. Give if they do.
-		if((currentCount+1) >= page.requiredForGoal){
+		console.log(newPoints, page.requiredForGoal)
+		console.log(((newPoints) >= page.requiredForGoal))
+		if((newPoints) >= page.requiredForGoal){
+			var newPoints = (newPoints - page.requiredForGoal);
+			newPoints = parseInt(newPoints);
 			Profile.update(profile._id, {$pull: {rewards: {pageID: pageID}}});
-			Profile.update(profile._id, {$push: {rewards: {pageID: pageID, count: ((currentCount+1) - page.requiredForGoal), pageName: page.orgName, pageGoal: page.requiredForGoal}}});
+			Profile.update(profile._id, {$push: {rewards: {pageID: pageID, count: newPoints, pageName: page.orgName, pageGoal: page.requiredForGoal}}});
 			Notification.insert({
 				ownerId: user,
 				pageOwner: user,

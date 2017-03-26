@@ -17,9 +17,9 @@ function makePass(){
 }
 
 function emailBody(usid,code){
-	var user = `http://Unight.io/verify/ver/`+usid+`/`+code+`/loginuser`;
-	var bus = `http://Unight.io/verify/ver/`+usid+`/`+code+`/loginorg`;
-	var unsub = `http://Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
+	var user = `http://www.Unight.io/verify/ver/`+usid+`/`+code+`/loginuser`;
+	var bus = `http://www/Unight.io/verify/ver/`+usid+`/`+code+`/loginorg`;
+	var unsub = `http://www.Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -40,7 +40,7 @@ function emailBody(usid,code){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<a href="http://www.Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h1>Welcome to Unight!</h1>
 <p>We hope you enjoy great deals! Click <a href="`+user+`">here</a> to verify your account and sign in as a user. </p>
 <p>Or if you are a business owner, feel free to <a href="`+bus+`">create a page</a> and try out our services.</p>
@@ -55,8 +55,8 @@ function emailBody(usid,code){
 }
 
 function emailRecover(usid,code){
-	var rec = `http://Unight.io/recover/`+code+`/`+usid;
-	var unsub = `http://Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
+	var rec = `http://www.Unight.io/recover/`+code+`/`+usid;
+	var unsub = `http://www.Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -77,7 +77,7 @@ function emailRecover(usid,code){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<a href="http://www.Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h1>Unight Recover Account</h1>
 <p>Please user the following `+code.toString()+` to verify yourself and reset your password.</p>
 <div class="bump-top">
@@ -90,8 +90,8 @@ function emailRecover(usid,code){
 }
 
 function newPass(usid,code){
-	var rec = `http://Unight.io/recover/`+code+`/`+usid;
-	var unsub = `http://Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
+	var rec = `http://www.Unight.io/recover/`+code+`/`+usid;
+	var unsub = `http://www.Unight.io/verify/email/`+usid+`/`+code+`/loginuser`;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -112,7 +112,7 @@ function newPass(usid,code){
 </head>
 <body class="bg-2">
 <div style='text-align:center; font-family: Arial, Helvetica, sans-serif; font-size:20px; color: white;'>
-<a href="http://Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
+<a href="http://www.Unight.io"><img src='http://i.imgur.com/vXs2ksV.png' height='200px' class="bump-top"/></a>
 <h1>Unight Recover Account</h1>
 <p>Here is your new password: `+code+`</p>
 <p>Please login and change your password as soon as possible.</p>

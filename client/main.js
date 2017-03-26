@@ -29,6 +29,7 @@ import AdminEventMain from './components/admin/event/admin_event_main';
 import AdminAccount from './components/admin/account/admin_account';
 import AdminGiftMain from './components/admin/gift/admin_gift_main';
 import AdminClearance from './components/admin/clearance/admin_clearance';
+import AdminRewardsMain from './components/admin/rewards/admin_rewards_main';
 //user pages
 import User from './components/user/user';
 import MemMainBody from './components/user/businesses/mem_main_body';
@@ -88,6 +89,7 @@ const routes = (
 			<Route path="deals-gold/:pageId/" component={AdminDealMainG} />
 			<Route path="events/:pageId/" component={AdminEventMain} />
 			<Route path="gift" component={AdminGiftMain} />
+			<Route path="rewards" component={AdminRewardsMain} />
 		</Route>
 		<Route path="/user/" component={User}>
 			<IndexRoute component={MemTomBook} />

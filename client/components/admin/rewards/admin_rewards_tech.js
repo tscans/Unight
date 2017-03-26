@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import {GiftCards} from '../../../../imports/collections/giftcards';
 import {Pages} from '../../../../imports/collections/pages';
 import {PageData} from '../../../../imports/collections/page_data';
-import AdminManageBody from './admin_manage_body';
 
-class AdminManageTech extends Component {
+class AdminRewardsTech extends Component {
     constructor(props) {
       super(props);
       this.state={
@@ -115,7 +114,21 @@ class AdminManageTech extends Component {
       }
     }
     genCode(){
-      Meteor.call('pagedata.createCode', (error,data)=>{
+      var genCode = this.refs.gencode.value.trim();
+      if(genCode == ""){
+        Bert.alert( "Please enter a dollar amount.", 'info', 'growl-bottom-right' );
+        return;
+      }
+      
+      genCode = parseFloat(genCode);
+      genCode = genCode.toFixed(2);
+      genCode = parseFloat(genCode);
+      console.log(genCode)
+      if(isNaN(genCode)){
+        Bert.alert( "Please enter a dollar amount.", 'info', 'growl-bottom-right' );
+        return;
+      }
+      Meteor.call('pagedata.createCode', genCode, (error,data)=>{
         if(error){
           console.log(error);
         }
@@ -136,20 +149,31 @@ class AdminManageTech extends Component {
         	<div>
         		<div className="white-back card-3">
               
-              <div>                
-                <h3>Allow Other Users Notification Privileges</h3>
-                <p>Give other users on this app (like employees) the ability to see livelook notifications. Then more devices would be able to see notifications and check if deals are accepted. Only those with Unight accounts can be added.</p>
-                <div className="form-group col-md-6">
-                  <input type="text" className="form-control foc-card" ref="name" placeholder="User Name"/>
+              <div>
+                <h3>Rewards Code</h3>
+                <p>Generate a rewards code for a customer.</p>
+                <div className="form-group">
+                  <div className="input-group  col-md-4 col-md-offset-4">
+                    <input type="text" className="form-control foc-card" ref="gencode" placeholder="$0.00"/>
+                    <span className="input-group-btn">
+                      <button onClick={this.genCode.bind(this)} className="btn btn-default foc-card" type="button">Generate</button>
+                    </span>
+                  </div>
+                  {this.recentCode()} 
+                  <br/>
                 </div>
-                <div className="form-group col-md-6">
-                  <input type="email" className="form-control foc-card" ref="email" placeholder="User Email"/>
+
+                <div className="col-md-12 card-3 white-back">
+                  <h3>Set Rewards Requirement</h3>
+                  <p>Set the number of points a user needs to obtain (1000 - 5000) before being eligible for reward potential ($2.00 - $12.00). Every $1.00 spent earns 100 points. Current Points Needed: {this.renderNum()} Current Reward: {this.renderNum2()}</p>
+                  <div className="form-group col-md-6">
+                    <input type="number" className="form-control foc-card" ref="goldreq" defaultValue={this.props.thisPage.requiredForGoal} placeholder="Deals Needed"/>
+                  </div>
+                  <div className="form-group col-md-6">
+                    <input type="number" className="form-control foc-card" ref="goldmon" defaultValue={this.props.thisPage.moneyForGoal} placeholder="Reward"/>
+                  </div>
+                  <button className="btn btn-success card-1" onClick={this.setGoldReq.bind(this)}>Set Requirement</button>
                 </div>
-                <button className="btn btn-success card-1" onClick={this.addAltNotes.bind(this)}>Add User</button>
-                <br/>
-                <br/>
-                <button className="btn btn-default card-1" onClick={this.showUsers.bind(this)}>Show Users</button>
-                {this.showNoters()}
               </div>
             </div> 
         	</div>
@@ -157,4 +181,4 @@ class AdminManageTech extends Component {
     }
 }
 
-export default AdminManageTech;
+export default AdminRewardsTech;

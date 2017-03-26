@@ -602,3 +602,6 @@ input::-webkit-inner-spin-button {
 .dl-app{
   color: purple;
 }
+.space-down{
+  margin-bottom: 100px;
+}
