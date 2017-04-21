@@ -6,7 +6,7 @@ Meteor.methods({
   'stripe.busAccount':function(auth_code){
     var user = Meteor.users.findOne(this.userId)._id;
     var profile = Profile.findOne({ownerId: user});
-    var CLIENT_ID = "ca_9hhNB3fcLdZm79wctX3HQ3MMN91h6v2p";
+    var CLIENT_ID = "SECRET";
     var API_KEY = Meteor.settings.StripePri;
     if(profile.stripeBusiness || !auth_code){
       return;
