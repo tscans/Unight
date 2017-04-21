@@ -44,7 +44,7 @@ Udeal.io
 }
 
 Meteor.startup(() => {
-	process.env.MAIL_URL = "smtp://postmaster%40mail.unight.io:foxtrotac39a!@@smtp.mailgun.org:587";
+	process.env.MAIL_URL = SECRET;
 
 	// for(var i = 0;i<1;i++){
 	// 	Email.send({
