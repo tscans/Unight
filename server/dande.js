@@ -286,7 +286,7 @@ Meteor.methods({
 		if(deal.topUser != user){
 			return;
 		}
-		cloudinary.config({cloud_name: 'dee8fnpvt' , api_key: '723549153244873' , api_secret: 'rooq670hgNK0JnoOSpxnZ7vFtG8'});
+		cloudinary.config({cloud_name: 'dee8fnpvt' , api_key: 'SECRET' , api_secret: 'SECRET'});
 		cloudinary.v2.uploader.upload("data:image/png;base64,"+pic, function(error, result){
 			if(error){
 				console.log(error)
